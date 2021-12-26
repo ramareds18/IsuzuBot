@@ -196,7 +196,7 @@ def main():
     client = commands.Bot(command_prefix = get_prefix, intents = intents, help_command = None)
 
     WIB = 'Asia/Jakarta'
-    myid = 302064098739355652
+    myid = 302064098739355652 # Change this with your own discord user ID if you're going to host this bot yourself
 
     async def status_task():
         while True:
