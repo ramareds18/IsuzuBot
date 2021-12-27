@@ -239,8 +239,8 @@ def main():
     async def on_message(message):
         if not message.guild: return
         
-        if filtering_toggle(message):
-            if not message.author.bot:
+        if not message.author.bot:
+            if filtering_toggle(message):    
                 await asyncio.sleep(1)
                 collection = loadblacklistedYT()
                 blacklistedID = collection.find({})
