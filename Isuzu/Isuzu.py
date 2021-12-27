@@ -91,17 +91,23 @@ def filtering_func(ctx, arg):
 def check_minage_msg(context, collection, min_age):
     default_message = f"You have been kicked from {context.guild.name} due to your account age being less than {min_age} day(s). Please feel free to attempt to rejoin after your account has had some time to mature."
     minage_msg = collection.find({"minage.message": {"$exists": True, "$ne": None}})
+    found = False
     if collection.count_documents({}) == collection.count_documents({"minage.message": {"$exists": False}}):
         return default_message
     else:
         for msg in minage_msg:
             if msg["_id"] == context.guild.id:
-                msg_var = msg["minage"]["message"]
-                if '{minage}' in msg["minage"]["message"]:
-                    converted_minage_message = msg_var.replace('{minage}', str(min_age))
-                    return converted_minage_message
+                found = True
+                break
+        if found:
+            msg_var = msg["minage"]["message"]
+            if '{minage}' in msg["minage"]["message"]:
+                converted_minage_message = msg_var.replace('{minage}', str(min_age))
+                return converted_minage_message
             else:
-                return default_message
+                return msg_var
+        else:
+            return default_message
 
 def check_minage_channel(context, collection):
     logging_channel = collection.find({"minage.logging_channel": {"$exists": True, "$ne": None}})
@@ -534,7 +540,7 @@ def main():
         collection = loadsettings()
         if not days: 
             days = 0
-        collection.update_one({"_id": ctx.guild.id}, {"$set":{"minage":{"days":days}}})
+        collection.update_one({"_id": ctx.guild.id}, {"$set":{"minage.days":days}})   
         await ctx.reply(f"Minimum age setting has been set to `{days}` day(s).\nSee more information in `help minage`.")
 
     @minage.command(name='message')
