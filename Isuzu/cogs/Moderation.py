@@ -36,11 +36,12 @@ class Moderation(commands.Cog):
                 comment = ''
                 if reason and len(reason) <= 450:
                     reason += f' | Banned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                    await ctx.guild.ban(member, reason = reason)
-                else:
+                elif reason and len(reason) > 450:
                     reason = f'Banned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
                     comment = 'Reason too long.'
-                    await ctx.guild.ban(member, reason = reason)
+                else:
+                    reason = f'Banned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                await ctx.guild.ban(member, reason = reason)
                 
                 embed_body = f'**Banned** {member.mention} ({member.id})\n'
                 embed_body += '\n'
