@@ -100,8 +100,8 @@ def check_minage_msg(context, collection, min_age):
                 if '{minage}' in msg["minage"]["message"]:
                     converted_minage_message = msg_var.replace('{minage}', str(min_age))
                     return converted_minage_message
-                else:
-                    return msg_var
+            else:
+                return default_message
 
 def check_minage_channel(context, collection):
     logging_channel = collection.find({"minage.logging_channel": {"$exists": True, "$ne": None}})
