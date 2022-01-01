@@ -85,16 +85,16 @@ class Misc(commands.Cog):
             embed_body = f'**Current singer: {current_singer}**\n'
             em = discord.Embed(title = 'Karaoke Queue', description = embed_body, color = 0xcaa686)
             em.set_thumbnail(url = MoonaSinging.url)
-            await ctx.send(embed = em)
+            await ctx.reply(embed = em, mention_author = False)
         elif q:
             list_of_users = "".join(f"{q.index(userid) + 1}. {ctx.guild.get_member(int(userid)).display_name}\n" for userid in q)
             embed_body = f'**Current singer: {current_singer}**\n'
             embed_body += f'\n{list_of_users}'
             em = discord.Embed(title = 'Karaoke Queue', description = embed_body, color = 0xcaa686)
             em.set_thumbnail(url = MoonaSinging.url)
-            await ctx.send(embed = em)
+            await ctx.reply(embed = em, mention_author = False)
         else:
-            await ctx.send(f"No karaoke {str(discord.utils.get(self.client.emojis, name='MoonaPain'))}")
+            await ctx.reply(f"No karaoke {str(discord.utils.get(self.client.emojis, name='MoonaPain'))}", mention_author = False)
 
     @commands.command(aliases=['qn'])
     async def queuenext(self, ctx):
@@ -107,7 +107,7 @@ class Misc(commands.Cog):
         except:
             fq = ""
         if q:
-            await ctx.send(f"<@{q[0]}>, it's your turn! Go wild! {str(discord.utils.get(self.client.emojis, name='MoonaSinging'))}")
+            await ctx.reply(f"<@{q[0]}>, it's your turn! Go wild! {str(discord.utils.get(self.client.emojis, name='MoonaSinging'))}", mention_author = False)
             fq = q[0]
             q.pop(0)
             new_queue = "".join(f"{user}\n" for user in q)
@@ -115,9 +115,9 @@ class Misc(commands.Cog):
             writefirstqueue(fq, ctx)
         elif not q and fq:
             os.remove(f'./resources/{ctx.guild.id}-karaokefirstqueue.txt')
-            await ctx.send("Queue is empty. That was the last singer.")
+            await ctx.reply("Queue is empty. That was the last singer.", mention_author = False)
         else:
-            await ctx.send("Queue is empty.")
+            await ctx.reply("Queue is empty.", mention_author = False)
 
     @commands.command(aliases=['qr'])
     async def queueremove(self, ctx, idx = None):
@@ -192,10 +192,6 @@ class Misc(commands.Cog):
 
     # ==== END OF QUEUE RELATED COMMANDS ==
 
-    @commands.command(aliases=['waki'])
-    async def wakipai(self, ctx):
-        await ctx.send('Stop it. Get some help.')
-
     @commands.command()
     @commands.has_permissions(manage_messages = True)
     async def echo(self, ctx, channel : typing.Union[discord.TextChannel, discord.Thread], *, msg = None):
@@ -215,15 +211,15 @@ class Misc(commands.Cog):
             else:
                 await channel.send(msg)
 
-            await ctx.send(f"Message sent to {channel.mention}.")
+            await ctx.reply(f"Message sent to {channel.mention}.", mention_author = False)
         except Forbidden as f:
             if '50081' in str(f):
-                await ctx.send("Bot doesn't have access to that sticker.")
+                await ctx.reply("Bot doesn't have access to that sticker.")
             elif '50001' in str(f):
-                await ctx.send("Bot doesn't have access or can't send messages to that channel/thread.")
+                await ctx.reply("Bot doesn't have access or can't send messages to that channel/thread.")
         except Exception as e:
             if '50006' in str(e):
-                await ctx.send("Cannot send empty message. Please provide the message/file/sticker that you want to send.")
+                await ctx.reply("Cannot send empty message. Please provide the message/file/sticker that you want to send.")
 
     @commands.command()
     @commands.has_permissions(manage_messages = True)
@@ -231,15 +227,15 @@ class Misc(commands.Cog):
         try:
             current_message = await ch.fetch_message(msg)
             await current_message.edit(msg_edit)
-            await ctx.send(f"Message in {ch.mention} has been edited. Click the link below to jump to the message.\n{current_message.jump_url}")
+            await ctx.reply(f"Message in {ch.mention} has been edited. Click the link below to jump to the message.\n{current_message.jump_url}", mention_author = False)
         except Forbidden:
-            await ctx.send("Bot doesn't have access or can't send messages to that channel/thread.")
+            await ctx.reply("Bot doesn't have access or can't send messages to that channel/thread.", mention_author = False)
         except Exception as e:
-            await ctx.send(e)
+            await ctx.reply(e)
 
     @commands.command()
     async def ping(self, ctx):
-        await ctx.send(f'Pong! `{round(self.client.latency * 1000)}ms`')
+        await ctx.reply(f'Pong! `{round(self.client.latency * 1000)}ms`', mention_author = False)
 
     @commands.command(aliases = ['stealsticker', 'ss'])
     @commands.has_permissions(manage_messages = True)
@@ -260,9 +256,9 @@ class Misc(commands.Cog):
     @echo.error
     async def echo_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send('Please provide channel and the message/file/sticker that you want to send.')
+            await ctx.reply('Please provide channel and the message/file/sticker that you want to send.', mention_author = False)
         elif isinstance(error, commands.BadUnionArgument):
-            await ctx.send('Please input a valid channel (channel name, id or just mention the channel/thread).')
+            await ctx.reply('Please input a valid channel (channel name, id or just mention the channel/thread).', mention_author = False)
         else:
             return
 
