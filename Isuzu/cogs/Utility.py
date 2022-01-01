@@ -11,8 +11,8 @@ def invalidtz():
 def invalidargstz():
     return 'Missing argument(s). Please provide `timezone` and `date` in that order. Below are the supported timezones:\n```\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
 
-def invalidinputtz():
-    return 'Invalid data input. Please provide `timezone` and `date` in that order. Below are the supported formats and timezones:\n```[timezone] [talent] day/month/year hour:minute\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
+def invalidargssch():
+    return 'Missing argument(s). Below are the supported formats and timezones:\n```[timezone] [talent] day/month/year hour:minute\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
 
 def timezonecheck(timezone):
     tzcheck = True
@@ -68,9 +68,11 @@ class Utility(commands.Cog):
                         msg += f"{str(round(hour))}h{str(round(minutes))}m"
                 msg += f'\nUnix Timestamp: `<t:{epoch}:F>` <t:{epoch}:F>'
                 msg += f'\nUnix Timestamp: `<t:{epoch}:R>` <t:{epoch}:R>'
-                await ctx.send(msg)
+                await ctx.reply(msg, mention_author = False)
+            elif len(timezone) <= 4:
+                await ctx.reply(invalidtz(), mention_author = False)
             else:
-                await ctx.send(invalidtz())
+                await ctx.reply('Invalid data input. Run `help when` for more information.', mention_author = False)
         except:
             await ctx.send('Invalid data input. Run `help when` for more information.')
 
@@ -90,9 +92,9 @@ class Utility(commands.Cog):
                             if user.bot:
                                 links += message.jump_url + "\n"
             if links == "":
-                await ctx.send("Everything looks good.")
+                await ctx.reply("Everything looks good.", mention_author = False)
             else:
-                await ctx.send("Membership not processed yet: \n" + links)
+                await ctx.reply("Membership not processed yet:\n" + links, mention_author = False)
         except Forbidden:
             await ctx.reply("Bot doesn't have access to that channel.")
 
@@ -127,13 +129,17 @@ class Utility(commands.Cog):
                     output += f"{activity}\n"
                 output += "\n*Times displayed are automatically converted into your local timezone.*"
                 
-                output += f'```{output}```'
+                output += f'\n```{output}```'
                 
-                await ctx.send(output)
+                await ctx.reply(output, mention_author = False)
+            elif len(timezone) <= 4:
+                errouput = invalidtz()
+                errouput += "\nRun `help schedule` for more information."
+                await ctx.reply(errouput, mention_author = False)
             else:
-                await ctx.send(invalidtz())
+                await ctx.reply('Invalid data input. Run `help schedule` for more information.', mention_author = False)
         except:
-            await ctx.send('Invalid data input. Run `help schedule` for more information.')
+            await ctx.reply('Invalid data input. Run `help schedule` for more information.', mention_author = False)
 
     @commands.command(aliases=['who', 'userinfo'])
     @commands.has_permissions(manage_messages = True)
@@ -184,7 +190,7 @@ class Utility(commands.Cog):
         em.set_thumbnail(url = url)
 
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        await ctx.send(embed = em)
+        await ctx.reply(embed = em, mention_author = False)
 
     @commands.command(aliases=['bn'])
     @commands.has_permissions(manage_messages = True)
@@ -209,7 +215,7 @@ class Utility(commands.Cog):
             em.set_image(url = user.banner)
 
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        await ctx.send(embed = em)
+        await ctx.reply(embed = em, mention_author = False)
 
     # Error-handling section
 
@@ -226,7 +232,7 @@ class Utility(commands.Cog):
     @schedule.error
     async def schedule_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(invalidargstz())
+            await ctx.send(invalidargssch())
 
     @whois.error
     async def whois_error(self, ctx, error):
