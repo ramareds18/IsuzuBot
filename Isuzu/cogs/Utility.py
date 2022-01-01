@@ -222,27 +222,27 @@ class Utility(commands.Cog):
     @checkvera.error
     async def cv_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send('Please provide vera logs channel.')
+            await ctx.reply('Please provide vera logs channel.', mention_author = False)
 
     @when.error
     async def when_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(invalidargstz())
+            await ctx.reply(invalidargstz(), mention_author = False)
 
     @schedule.error
     async def schedule_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(invalidargssch())
+            await ctx.reply(invalidargssch(), mention_author = False)
 
     @whois.error
     async def whois_error(self, ctx, error):
         if isinstance(error, commands.BadUnionArgument):
-            await ctx.send ("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
+            await ctx.reply ("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.", mention_author = False)
 
     @banner.error
     async def banner_error(self, ctx, error):
         if isinstance(error, commands.BadUnionArgument):
-            await ctx.send ("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
+            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.", mention_author = False)
 
 def setup(client):
     client.add_cog(Utility(client))
