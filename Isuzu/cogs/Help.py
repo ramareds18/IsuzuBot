@@ -17,7 +17,7 @@ class Help(commands.Cog):
         em.add_field(name = 'Moderation', value = '`ban`, `unban`, `massban`, `minage`, `filtering`, `prune`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
-        await ctx.send(embed = em)
+        await ctx.reply(embed = em, mention_author = False)
 
     @help.command(aliases = ['q'])
     async def queue(self, ctx):
@@ -67,6 +67,7 @@ class Help(commands.Cog):
     async def schedule(self, ctx):
         em = discord.Embed(title = '**schedule**', description = "Gets unix timestamp for a given date.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Aliases', value = '`sch`')
+        em.add_field(name = 'Supported Timezones', value = '```\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```')
         em.add_field(name = 'Usage', value = '```schedule timezone talent\nday/month/year hour:minute~Stream Title\nyear/month/day hour:minute~Stream Title\n```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
@@ -87,7 +88,7 @@ class Help(commands.Cog):
         command_addition = '`prune` to kick members with no role AND default avatar\n'
         command_addition += '`prune norole` to kick members with no role\n'
         command_addition += '`prune noavatar` to kick members with default avatar'
-        em.add_field(name = 'Command addition options', value = command_addition, inline = False)
+        em.add_field(name = 'Command options', value = command_addition, inline = False)
         command_Usage = '\nprune\nprune norole\nprune noavatar'
         em.add_field(name = 'Usage', value = f'```{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
@@ -106,14 +107,14 @@ class Help(commands.Cog):
     @help.command()
     async def minage(self, ctx):
         em = discord.Embed(title = '**minage**', description = "Set a minimum age to join the server. Turned off by default.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Command addition options', value = '`message`, `channel`, `settings`')
+        em.add_field(name = 'Command options', value = '`message`, `channel`, `settings`')
         command_addition = "`minage` to set the minimum age (in day format).\n"
         command_addition += "`minage message` to set a message to send to the user kicked. Will use the default message if not set.\n"
         command_addition += "`minage message remove` to delete the set message and go back using the default message.\n"
         command_addition += "`minage channel` to set a channel where bot will log when do any minage actions.\n"
         command_addition += "`minage settings` to see the current settings of minage module of the server."
         em.add_field(name = 'Description', value = command_addition, inline = False)
-        command_Usage = "minage <days>\n"
+        command_Usage = "minage <days> ex: minage 30\n"
         command_Usage += "minage message <your message> (you can also put '{minage}')\n"
         command_Usage += "minage channel <logchannel>\n"
         command_Usage += "minage settings"
@@ -126,7 +127,7 @@ class Help(commands.Cog):
     async def filter(self, ctx):
         em = discord.Embed(title = '**filter**', description = "Toggle on or off content filtering module. Turned off by default", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Description', value = 'Filter message containing video from a blacklisted clipper.')
-        em.add_field(name = 'Command addition options', value = '`on`, `off`, `list`, `status`', inline = False)        
+        em.add_field(name = 'Command options', value = '`on`, `off`, `list`, `status`', inline = False)        
         command_Usage = "filter on\n"
         command_Usage += "filter off\n"
         command_Usage += "filter list\n"
@@ -139,7 +140,7 @@ class Help(commands.Cog):
     @help.command(aliases=['logging'])
     async def log(self, ctx):
         em = discord.Embed(title = '**log**', description = "Logs deleted and edited messages to a given channel.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Command addition options', value = '`on`, `off`, `status`, `channel remove`, `channel deleted`, `channel edited`, `ignore`, `unignore`, `ignored`')
+        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `channel remove`, `channel deleted`, `channel edited`, `ignore`, `unignore`, `ignored`')
         command_addition = "`log on/off/status` to turn on/off or see the current settings of logging.\n"
         command_addition += "`log ignore` to set channels the bot will ignore from logging the messages.\n"
         command_addition += "`log unignore` to unignore channels which was ignored before.\n"
