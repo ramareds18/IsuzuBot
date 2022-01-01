@@ -79,7 +79,7 @@ def filtering_func(ctx, arg):
         collectionYT = loadblacklistedYT()
         channels = collectionYT.find({})
         output = "".join(f'{channel["name"]}\n' for channel in channels)
-        return f'Blacklisted channels:```{output}```'
+        return f'Blacklisted channels:\n```{output}```'
     elif arg == 'status':
         if not current_settings:
             return 'Current state of filtering: disabled.'
@@ -503,7 +503,7 @@ def main():
         output = f'Prefix in db = `{prefix}`\n'
         output += f'Datas in db blacklist = {count_all}\n'
         output += f'Datas not containing minage message in db blacklist = {count_mng_msg}'
-        await ctx.send(output)
+        await ctx.reply(output, mention_author = False)
 
     @client.command(aliases=["r"])
     @commands.is_owner()
@@ -552,7 +552,7 @@ def main():
             await ctx.reply("Minage message has been removed. Will be back using the default one.", mention_author = False)
         else:
             collection.update_one({"_id": ctx.guild.id}, {"$set":{"minage.message":msg}})
-            await ctx.reply(f"Message has been set to ```{msg}```", mention_author = False)
+            await ctx.reply(f"Message has been set to\n```{msg}```", mention_author = False)
 
     @minage.command(name='channel')
     @commands.has_permissions(manage_guild = True)
@@ -585,7 +585,7 @@ def main():
         if chk_minage_ch:
             log_channel = client.get_channel(chk_minage_ch)
             embed_body += f'Minage logging channel: {log_channel.mention}\n'
-        embed_body += f"Minage message: ```{chk_minage_msg}```"
+        embed_body += f"Minage message:\n```{chk_minage_msg}```"
         em = discord.Embed(title = 'Current minage settings for this server', description = embed_body, colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         await ctx.reply(embed = em, mention_author = False)
@@ -790,17 +790,13 @@ def main():
             message = f"This command is on cooldown. Please try again after {round(error.retry_after, 1)} seconds."
             await ctx.reply(message, delete_after=round(error.retry_after), mention_author = False)
         elif isinstance(error, commands.MissingPermissions):
-            link = 'https://tenor.com/view/power-lord-of-the-rings-lotr-gif-9197188'
             await ctx.reply("You don't have permission to run this command.")
-            await ctx.send(link)
         elif isinstance(error, commands.CheckAnyFailure):
-            link = 'https://tenor.com/view/power-lord-of-the-rings-lotr-gif-9197188'
             await ctx.reply("You don't have permission to run this command.")
-            await ctx.send(link)
         elif isinstance(error, commands.NotOwner):
             await ctx.reply("Only bot owner can run this command.")
         elif isinstance(error, commands.CommandNotFound): return
-        else:
+        else: # You can delete this whole else section if you don't want it or just put `return`
             user = await client.fetch_user(myid)
             await user.send(f"Caught an error from {ctx.guild.name} when executing `{ctx.command.name}` command: ```{error}```")
 
