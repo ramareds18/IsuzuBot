@@ -72,7 +72,7 @@ class Moderation(commands.Cog):
             em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
             await msg.edit(content=None, embed = em)
         else:
-            await ctx.send('That is not a banned user.')
+            await ctx.reply('That is not a banned user.', mention_author = False)
 
     @commands.command(aliases = ['nuke'])
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -205,9 +205,9 @@ class Moderation(commands.Cog):
                 if wait:
                     await msg.edit(content = None, embed = em)
                 else:
-                    await ctx.send(embed = em)
+                    await ctx.reply(embed = em, mention_author = False)
             else:
-                await ctx.send("Won't work, lol")
+                await ctx.reply('Please provide userID(s) and reason (optional) or file to ban.')
         else:
             await ctx.reply('Please provide userID(s) and reason (optional) or file to ban.')
 
@@ -289,7 +289,7 @@ class Moderation(commands.Cog):
         elif isinstance(error, commands.BotMissingPermissions):
             await ctx.reply('Missing `Ban Members` permission.')
         elif isinstance(error, commands.BadUnionArgument):
-            await ctx.send ("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
+            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
 
     @unban.error
     async def unban_error(self, ctx, error):
@@ -298,7 +298,7 @@ class Moderation(commands.Cog):
         elif isinstance(error, commands.BotMissingPermissions):
             await ctx.reply('Missing `Ban Members` permission.')
         elif isinstance(error, commands.BadUnionArgument):
-            await ctx.send ("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
+            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
 
     @massban.error
     async def massban_error(self, ctx, error):
