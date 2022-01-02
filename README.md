@@ -1,6 +1,6 @@
 # IsuzuBot
 
-IsuzuBot is free for custom
+IsuzuBot is free to be customize.
 
 Bot for moderation purposes and some other convenience features.
 
