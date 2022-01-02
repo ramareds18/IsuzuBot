@@ -66,8 +66,9 @@ class Utility(commands.Cog):
                         msg += f"{str(round(minutes))}m"
                     else:
                         msg += f"{str(round(hour))}h{str(round(minutes))}m"
-                msg += f'\nUnix Timestamp: `<t:{epoch}:F>` <t:{epoch}:F>'
-                msg += f'\nUnix Timestamp: `<t:{epoch}:R>` <t:{epoch}:R>'
+                msg += "\nUnix Timestamp:\n"
+                msg += f'\n`<t:{epoch}:F>` <t:{epoch}:F>'
+                msg += f'\n`<t:{epoch}:R>` <t:{epoch}:R>'
                 await ctx.reply(msg, mention_author = False)
             elif len(timezone) <= 4:
                 await ctx.reply(invalidtz(), mention_author = False)
