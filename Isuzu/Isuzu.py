@@ -544,6 +544,23 @@ def main():
             pass
         await client.process_commands(message)
 
+    @client.event
+    async def on_voice_state_update(member, before, after):
+        if member.bot: return
+        if not voicelink_toggle(member): return
+
+        collection = loadsettings()
+        role = check_voicelink_role(member, collection)
+        if member.guild.me.guild_permissions.manage_roles:
+            if after.channel != None:
+                if role:
+                    member.add_roles(role, reason = 'Joined voice chat')
+                else: return
+            else:
+                if role:
+                    member.remove_roles(role, reason = 'Left voice chat')
+                else: return
+        
     # commands (all commands here will be eventually moved to a cog so main file won't be as long)
 
     @client.command()
@@ -586,6 +603,32 @@ def main():
         output = filtering_func(ctx, arg)
         await ctx.reply(output, mention_author = False)
 
+    # Voice Link
+
+    @client.group(invoke_without_command=True, aliases = ['vl'])
+    @commands.bot_has_permissions(manage_roles = True)
+    async def voicelink(ctx, arg):
+        collection = loadsettings(ctx, arg)
+        voicelink_role = check_voicelink_role(ctx, collection)
+        if voicelink_role:
+            voicelink_role = ctx.guild.get_role(voicelink_role)
+        output = voicelink_func(ctx, arg, voicelink_role, collection)
+        await ctx.reply(output, mention_author = False, allowed_mentions = discord.AllowedMentions.none())
+
+    @voicelink.command(name='role')
+    @commands.has_permissions(manage_roles = True)
+    async def voicelink_role(ctx, role: discord.Role = None):
+        collection = loadsettings()
+        if role:
+            await ctx.reply(f"Voice link role has been set to {role.mention}", mention_author = False)
+            collection.update_one({"_id": ctx.guild.id}, {"$set":{"voicelink.role":role.id}})
+        else:
+            role = check_voicelink_role(ctx, collection)
+            if not role:
+                await ctx.reply('No voice link role was set.', mention_author = False)
+            else:
+                await ctx.reply(f"Voice link role is set to {role.mention}\nRun `voicelink off` to turn off voice link.", mention_author = False, allowed_mentions = discord.AllowedMentions.none())
+        
     # Minage
 
     @client.group(invoke_without_command=True)
