@@ -90,7 +90,7 @@ class Help(commands.Cog):
         command_addition += '`prune noavatar` to kick members with default avatar'
         em.add_field(name = 'Command options', value = command_addition, inline = False)
         command_Usage = '\nprune\nprune norole\nprune noavatar'
-        em.add_field(name = 'Usage', value = f'```{command_Usage}```', inline = False)
+        em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
         await ctx.reply(embed = em, mention_author = False)
@@ -118,7 +118,7 @@ class Help(commands.Cog):
         command_Usage += "minage message <your message> (you can also put '{minage}')\n"
         command_Usage += "minage channel <logchannel>\n"
         command_Usage += "minage settings"
-        em.add_field(name = 'Usage', value = f'```{command_Usage}```', inline = False)
+        em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
         await ctx.reply(embed = em, mention_author = False)
@@ -132,7 +132,7 @@ class Help(commands.Cog):
         command_Usage += "filter off\n"
         command_Usage += "filter list\n"
         command_Usage += "filter status"
-        em.add_field(name = 'Usage', value = f'```{command_Usage}```', inline = False)
+        em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -158,11 +158,25 @@ class Help(commands.Cog):
         command_Usage += "log channel edited <logchannel>\n"
         command_Usage += "log channel deleted <logchannel>\n"
         command_Usage += "log channel remove"
-        em.add_field(name = 'Usage', value = f'```{command_Usage}```', inline = False)
+        em.add_field(name = 'Usage', value = f'```n{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
         await ctx.reply(embed = em, mention_author = False)
 
+    @help.command(aliases=['vl'])
+    async def voicelink(self, ctx):
+        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to users joining voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
+        command_addition = "`voicelink on/off/status` to turn on/off or see the current settings of logging.\n"
+        command_addition += "`voicelink role` to set a role which bot will give to users who join voice chat.\n"
+        em.add_field(name = 'Description', value = command_addition, inline = False)
+        command_Usage = "voicelink on/off/status\n"
+        command_Usage += "voicelink role <role>\n"
+        em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        
+        await ctx.reply(embed = em, mention_author = False)
+        
     @help.command()
     async def echo(self, ctx):
         em = discord.Embed(title = '**echo**', description = "Send a message you set to a certain channel. You can also send files or sticker.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
