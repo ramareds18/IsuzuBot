@@ -906,7 +906,7 @@ def main():
     @voicelink.error
     async def voicelink_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply('Wrong module to execute. Run `help voicelink` to see full information.', mention_author = False)
+            await ctx.reply('Missing argument, see `help voicelink` to see full information.', mention_author = False)
         elif isinstance(error, commands.BotMissingPermissions):
             await ctx.reply("Can't set voicelink when the bot lacking `Manage Roles` permission.", mention_author = False)
             
