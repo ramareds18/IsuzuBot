@@ -130,7 +130,7 @@ class Utility(commands.Cog):
                     output += f"{activity}\n"
                 output += "\n*Times displayed are automatically converted into your local timezone.*"
                 
-                output += f'\n```{output}```'
+                output += f'\n```\n{output}```'
                 
                 await ctx.reply(output, mention_author = False)
             elif len(timezone) <= 4:
