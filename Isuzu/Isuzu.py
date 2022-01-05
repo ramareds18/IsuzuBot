@@ -554,11 +554,13 @@ def main():
         if member.guild.me.guild_permissions.manage_roles:
             if after.channel != None:
                 if role:
-                    member.add_roles(role, reason = 'Joined voice chat')
+                    role = member.guild.get_role(role)
+                    member.add_roles(role)
                 else: return
             else:
                 if role:
-                    member.remove_roles(role, reason = 'Left voice chat')
+                    role = member.guild.get_role(role)
+                    member.remove_roles(role)
                 else: return
         
     # commands (all commands here will be eventually moved to a cog so main file won't be as long)
@@ -627,6 +629,7 @@ def main():
             if not role:
                 await ctx.reply('No voice link role was set.', mention_author = False)
             else:
+                role = ctx.guild.get_role(role)
                 await ctx.reply(f"Voice link role is set to {role.mention}\nRun `voicelink off` to turn off voice link.", mention_author = False, allowed_mentions = discord.AllowedMentions.none())
         
     # Minage
