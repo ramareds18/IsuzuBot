@@ -118,6 +118,8 @@ def voicelink_func(ctx, arg, voicelink_role, collection):
             if state["_id"] == ctx.guild.id:
                 current_setting = state["voicelink"]["state"]
                 break
+            else:
+                current_setting = None
             
     if arg == 'on':
         if not current_setting:
@@ -221,6 +223,8 @@ def logging_func(ctx, arg, deleted_log_channel, edited_log_channel, collection):
             if state["_id"] == ctx.guild.id:
                 current_setting = state["logging"]["state"]
                 break
+            else:
+                current_setting = None
             
     if arg == 'on':
         if not current_setting:
