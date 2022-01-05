@@ -79,7 +79,7 @@ def filtering_func(ctx, arg):
         collectionYT = loadblacklistedYT()
         channels = collectionYT.find({})
         output = "".join(f'{channel["name"]}\n' for channel in channels)
-        return f'Blacklisted channels:\n```{output}```'
+        return f'Blacklisted channels:\n```\n{output}```'
     elif arg == 'status':
         if not current_settings:
             return 'Current state of filtering: disabled.'
@@ -88,6 +88,61 @@ def filtering_func(ctx, arg):
     else:
         return "Invalid argument. Please run `help filtering` to see full information."
 
+def voicelink_toggle(ctx):
+    collection = loadsettings()
+    toggle = False
+    logging_state = collection.find({"voicelink.state": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"voicelink.state": {"$exists": False}}):
+        return toggle
+    else:
+        for state in logging_state:
+            if state["_id"] == ctx.guild.id:
+                toggle = state["voicelink"]["state"]
+    return toggle
+
+def check_voicelink_role(ctx, collection):
+    voicelink_role = collection.find({"voicelink.role": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"voicelink.role": {"$exists": False}}):
+        return None
+    else:
+        for role in voicelink_role:
+            if role["_id"] == ctx.guild.id:
+                return role["voicelink"]["role"]
+
+def voicelink_func(ctx, arg, voicelink_role, collection):
+    states = collection.find({"voicelink.state": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"voicelink.state": {"$exists": False}}):
+        current_setting = None
+    else:
+        for state in states:
+            if state["_id"] == ctx.guild.id:
+                current_setting = state["voicelink"]["state"]
+                break
+            
+    if arg == 'on':
+        if not current_setting:
+            collection.update_one({"_id": ctx.guild.id}, {"$set":{"voicelink.state":True}})
+            return "Voice link has been enabled. Don't forget to set voice link role.\nRun `help voicelink` for more information."
+        else:
+            return "Voice link is already enabled."
+    elif arg == 'off':
+        if current_setting:
+            collection.update_one({"_id": ctx.guild.id}, {"$set":{"voicelink.state":False}})
+            return "Voice link has been disabled."
+        else:
+            return "Voice link is already disabled."
+    elif arg == 'status':
+        output = "Current state of voice link: "
+        if not current_setting:
+            output += "disabled.\n"
+        else:
+            output += "enabled.\n"
+        if voicelink_role:
+            output += f"Voice link role: {voicelink_role.mention}\n"
+        return output
+    else:
+        return "Invalid argument. Please run `help voicelink` to see full information."
+    
 def check_minage_msg(context, collection, min_age):
     default_message = f"You have been kicked from {context.guild.name} due to your account age being less than {min_age} day(s). Please feel free to attempt to rejoin after your account has had some time to mature."
     minage_msg = collection.find({"minage.message": {"$exists": True, "$ne": None}})
@@ -489,7 +544,7 @@ def main():
             pass
         await client.process_commands(message)
 
-    # commands
+    # commands (all commands here will be eventually moved to a cog so main file won't be as long)
 
     @client.command()
     @commands.is_owner()
@@ -538,10 +593,13 @@ def main():
     @commands.bot_has_permissions(kick_members = True)
     async def minage(ctx, days: int = None):
         collection = loadsettings()
-        if not days: 
-            days = 0
-        collection.update_one({"_id": ctx.guild.id}, {"$set":{"minage.days":days}})   
-        await ctx.reply(f"Minimum age setting has been set to `{days}` day(s).\nSee more information in `help minage`.")
+        if not days:
+            guild_settings = collection.find_one({"_id": ctx.guild.id})
+            min_age = guild_settings['minage']['days']
+            await ctx.reply(f"Current minimum age setting is set to `{min_age}` day(s).\nSet to `0` to disable minage.")
+        else:
+            collection.update_one({"_id": ctx.guild.id}, {"$set":{"minage.days":days}})
+            await ctx.reply(f"Minimum age setting has been set to `{days}` day(s).\nSee more information in `help minage`.")
 
     @minage.command(name='message')
     @commands.has_permissions(manage_guild = True)
@@ -552,7 +610,7 @@ def main():
             await ctx.reply("Minage message has been removed. Will be back using the default one.", mention_author = False)
         else:
             collection.update_one({"_id": ctx.guild.id}, {"$set":{"minage.message":msg}})
-            await ctx.reply(f"Message has been set to\n```{msg}```", mention_author = False)
+            await ctx.reply(f"Message has been set to\n```\n{msg}```", mention_author = False)
 
     @minage.command(name='channel')
     @commands.has_permissions(manage_guild = True)
@@ -585,7 +643,7 @@ def main():
         if chk_minage_ch:
             log_channel = client.get_channel(chk_minage_ch)
             embed_body += f'Minage logging channel: {log_channel.mention}\n'
-        embed_body += f"Minage message:\n```{chk_minage_msg}```"
+        embed_body += f"Minage message:\n```\n{chk_minage_msg}```"
         em = discord.Embed(title = 'Current minage settings for this server', description = embed_body, colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         await ctx.reply(embed = em, mention_author = False)
@@ -599,12 +657,12 @@ def main():
         deleted_log_channel = check_deleted_logging_channel(ctx, collection)
         edited_log_channel = check_edited_logging_channel(ctx, collection)
         if deleted_log_channel:
-            deleted_channel = client.get_channel(deleted_log_channel)
-        else: deleted_channel = None
+            deleted_log_channel = client.get_channel(deleted_log_channel)
+        else: deleted_log_channel = None
         if edited_log_channel:
             edited_log_channel = client.get_channel(edited_log_channel)
         else: edited_log_channel = None
-        output = logging_func(ctx, arg, deleted_channel, edited_log_channel, collection)
+        output = logging_func(ctx, arg, deleted_log_channel, edited_log_channel, collection)
         await ctx.reply(output, mention_author = False)
 
     @log.group(name='channel')
@@ -647,13 +705,12 @@ def main():
                 for guild in check:
                     if guild["_id"] == ctx.guild.id:
                         collection.update_one({"_id": ctx.guild.id}, {"$unset":{"logging.deleted_msg_channel":""}})
-                        collection.update_one({"_id": ctx.guild.id}, {"$set":{"logging.state":False}})
                         found = True
                         break
                 if not found:
                     await ctx.reply('No logging channel was set.', mention_author = False)
                 else:
-                    await ctx.reply("Logging channel has been removed. Deleted message logs has been stopped", mention_author = False)
+                    await ctx.reply("Logging channel has been removed. Deleted message logs has been stopped.", mention_author = False)
             else:
                 await ctx.reply("No logging channel was set.", mention_author = False)
 
@@ -676,13 +733,12 @@ def main():
                 for guild in check:
                     if guild["_id"] == ctx.guild.id:
                         collection.update_one({"_id": ctx.guild.id}, {"$unset":{"logging.edited_msg_channel":""}})
-                        collection.update_one({"_id": ctx.guild.id}, {"$set":{"logging.state":False}})
                         found = True
                         break
                 if not found:
                     await ctx.reply('No logging channel was set.', mention_author = False)
                 else:
-                    await ctx.reply("Logging channel has been removed. Edited message logs has been stopped", mention_author = False)
+                    await ctx.reply("Logging channel has been removed. Edited message logs has been stopped.", mention_author = False)
             else:
                 await ctx.reply("No logging channel was set.", mention_author = False)
 
@@ -709,12 +765,13 @@ def main():
                     found2 = True
                     break
 
+        collection.update_one({"_id": ctx.guild.id}, {"$set":{"logging.state":False}})
         if found and found2:
             collection.update_one({"_id": ctx.guild.id}, {"$set":{"logging.state":False}})
             await ctx.reply("Logging channels has been removed.\nMessage logs has been stopped.", mention_author = False)
         elif found and not found2:
             await ctx.reply('Deleted messages logging channel has been removed.\nDeleted message logs has been stopped.', mention_author = False)
-        elif not found and found:
+        elif not found and found2:
             await ctx.reply('Edited messages logging channel has been removed.\nEdited message logs has been stopped.', mention_author = False)
         else:
             await ctx.reply('No log channels have been set.', mention_author = False)
@@ -798,7 +855,7 @@ def main():
         elif isinstance(error, commands.CommandNotFound): return
         else: # You can delete this whole else section if you don't want it or just put `return`
             user = await client.fetch_user(myid)
-            await user.send(f"Caught an error from {ctx.guild.name} when executing `{ctx.command.name}` command: ```{error}```")
+            await user.send(f"Caught an error from {ctx.guild.name} when executing `{ctx.command.name}` command: ```\n{error}```")
 
     @minage.error
     async def minage_error(ctx, error):
