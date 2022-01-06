@@ -300,6 +300,16 @@ def main():
         collection = loadsettings()
         collection.delete_one({"_id":guild.id})
 
+    @client.event
+    async def on_message(message):
+        if not message.guild: return
+
+        if (message.content == f"<@!{client.user.id}>" or message.content == f"<@{client.user.id}>"):
+            await message.channel.send(f'My prefix here is `{get_prefix_str(message)}`')
+        else:
+            pass
+        await client.process_commands(message)
+        
     @client.listen()
     async def on_message(message):
         if not message.guild: return
@@ -537,16 +547,6 @@ def main():
                 em.set_footer(text = f"{member.display_name} ({member.id})", icon_url = member.display_avatar)
                 await log_channel.send(embed = em)
             else: return
-
-    @client.event
-    async def on_message(message):
-        if not message.guild: return
-
-        if (message.content == f"<@!{client.user.id}>" or message.content == f"<@{client.user.id}>"):
-            await message.channel.send(f'My prefix here is `{get_prefix_str(message)}`')
-        else:
-            pass
-        await client.process_commands(message)
 
     @client.event
     async def on_voice_state_update(member, before, after):
