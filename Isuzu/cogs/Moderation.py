@@ -29,7 +29,7 @@ class Moderation(commands.Cog):
     @commands.bot_has_permissions(ban_members = True)
     async def ban(self, ctx, member: typing.Union[discord.Member, discord.User], *, reason = None):
         try:
-            msg = await ctx.send('Banning...')
+            msg = await ctx.reply('Banning...', mention_author = False)
             if isinstance(member, discord.Member) and member.top_role >= ctx.author.top_role:
                 await msg.edit('You are not allowed to ban this user.')
             else:
@@ -51,7 +51,7 @@ class Moderation(commands.Cog):
                 em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
                 await msg.edit(content=None, embed = em)
         except Forbidden:
-            await msg.edit("Can't ban user with equal or higher role.")
+            await msg.edit("Can't ban user with equal or higher role.", allowed_mentions = discord.AllowedMentions.none())
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -60,7 +60,7 @@ class Moderation(commands.Cog):
     async def unban(self, ctx, member: typing.Union[discord.Member, discord.User], *, reason = None):
         is_banned = await ctx.guild.fetch_ban(member)
         if is_banned:
-            msg = await ctx.send('Unbanning...')
+            msg = await ctx.reply('Unbanning...', mention_author = False)
             if reason:
                 reason += f' | Unbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
             else:
@@ -72,7 +72,7 @@ class Moderation(commands.Cog):
             em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
             await msg.edit(content=None, embed = em)
         else:
-            await ctx.reply('That is not a banned user.', mention_author = False)
+            await ctx.reply('That is not a banned user.', mention_author = False, allowed_mentions = discord.AllowedMentions.none())
 
     @commands.command(aliases = ['nuke'])
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -129,7 +129,7 @@ class Moderation(commands.Cog):
                     reason = f'Massbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
 
                 if len(users) > 10:
-                    msg = await ctx.send('This might take a while, please wait...')
+                    msg = await ctx.reply('This might take a while, please wait...', mention_author = False)
                     wait = True
 
                 for user in users:
@@ -203,7 +203,7 @@ class Moderation(commands.Cog):
                 em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
                 await ctx.message.remove_reaction('🔄', self.client.user)
                 if wait:
-                    await msg.edit(content = None, embed = em)
+                    await msg.edit(content = None, embed = em, allowed_mentions = discord.AllowedMentions.none())
                 else:
                     await ctx.reply(embed = em, mention_author = False)
             else:
@@ -262,18 +262,18 @@ class Moderation(commands.Cog):
                 await msg1.add_reaction("❌")
                 reaction1, user1 = await self.client.wait_for('reaction_add', timeout=180.0, check=check)
                 if str(reaction1.emoji) == yas:
-                    processing_message = await ctx.send('Pruning...')
+                    processing_message = await ctx.reply('Pruning...', mention_author = False)
                     for kick in to_be_kicked:
                         await ctx.guild.kick(kick, reason = reason)
-                    await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.')
+                    await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
                 else:
                     await ctx.send('Prune cancelled.')
                 await msg1.clear_reactions()
             elif str(reaction.emoji) == nay:
-                processing_message = await ctx.send('Pruning...')
+                processing_message = await ctx.reply('Pruning...', mention_author = False)
                 for kick in to_be_kicked:
                     await ctx.guild.kick(kick, reason = reason)
-                await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.')
+                await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
             else:
                 await ctx.send('Prune cancelled.')
             await msg.clear_reactions()
