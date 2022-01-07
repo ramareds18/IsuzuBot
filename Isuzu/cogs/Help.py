@@ -67,7 +67,7 @@ class Help(commands.Cog):
     async def schedule(self, ctx):
         em = discord.Embed(title = '**schedule**', description = "Gets unix timestamp for a given date.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Aliases', value = '`sch`')
-        em.add_field(name = 'Supported Timezones', value = '```\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```')
+        em.add_field(name = 'Supported Timezones', value = '```\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```', inline = False)
         em.add_field(name = 'Usage', value = '```schedule timezone talent\nday/month/year hour:minute~Stream Title\nyear/month/day hour:minute~Stream Title\n```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
