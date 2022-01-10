@@ -14,6 +14,13 @@ def invalidargstz():
 def invalidargssch():
     return 'Missing argument(s). Below are the supported formats and timezones:\n```[timezone] [talent] day/month/year hour:minute\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
 
+def validtimezone(arg):
+    valid = ['wib', 'jst', 'msk', 'utc', 'gmt', 'edt', 'est', 'et', 'pdt', 'pst', 'pt']
+    if arg.lower() in valid:
+        return True
+    else:
+        return False
+
 def timezonecheck(timezone):
     tzcheck = True
     if(timezone.lower() == 'wib'):
@@ -133,9 +140,8 @@ class Utility(commands.Cog):
                 output += f'\n```\n{output}```'
                 
                 await ctx.reply(output, mention_author = False)
-            elif len(timezone) <= 4:
-                errouput = invalidtz()
-                errouput += "\nRun `help schedule` for more information."
+            elif validtimezone(talent):
+                errouput = f"Wrong order of input.\nYour input:\n```\n{timezone} {talent}```\nCorrect input:\n```\n{talent} {timezone}```"
                 await ctx.reply(errouput, mention_author = False)
             else:
                 await ctx.reply('Invalid data input. Run `help schedule` for more information.', mention_author = False)
