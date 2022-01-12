@@ -12,7 +12,7 @@ class Help(commands.Cog):
         em = discord.Embed(title = '**Help**', description = 'Use `help <command>` for extended information on a command.', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
 
         em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `whois`, `banner`', inline = False)
-        em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`')
+        em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`')
         em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `ping`')
         em.add_field(name = 'Moderation', value = '`ban`, `unban`, `massban`, `minage`, `filtering`, `prune`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
