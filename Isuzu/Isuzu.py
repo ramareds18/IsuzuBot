@@ -15,6 +15,8 @@ default_prefix = 'i/'
 DB_URL = os.getenv('DB_URL')
 connection_url = str(DB_URL)
 
+# Essential functions
+
 def loadsettings():
     cluster = MongoClient(connection_url)
     db = cluster["IsuzuDB"]
@@ -53,6 +55,8 @@ def is_guild_owner():
         return ctx.guild is not None and ctx.guild.owner_id == ctx.author.id
     return commands.check(predicate)
 
+# Filtering functions
+
 def filtering_toggle(message):
     collection = loadsettings()
     data = collection.find_one({"_id": message.guild.id})
@@ -87,6 +91,8 @@ def filtering_func(ctx, arg):
             return 'Current state of filtering: enabled.'
     else:
         return "Invalid argument. Please run `help filtering` to see full information."
+
+# Voicelink functions
 
 def voicelink_toggle(ctx):
     collection = loadsettings()
@@ -145,6 +151,67 @@ def voicelink_func(ctx, arg, voicelink_role, collection):
     else:
         return "Invalid argument. Please run `help voicelink` to see full information."
     
+# Streamlink functions
+
+def streamlink_toggle(ctx):
+    collection = loadsettings()
+    toggle = False
+    logging_state = collection.find({"streamlink.state": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"streamlink.state": {"$exists": False}}):
+        return toggle
+    else:
+        for state in logging_state:
+            if state["_id"] == ctx.guild.id:
+                toggle = state["streamlink"]["state"]
+    return toggle
+
+def check_streamlink_role(ctx, collection):
+    streamlink_role = collection.find({"streamlink.role": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"streamlink.role": {"$exists": False}}):
+        return None
+    else:
+        for role in streamlink_role:
+            if role["_id"] == ctx.guild.id:
+                return role["streamlink"]["role"]
+
+def streamlink_func(ctx, arg, streamlink_role, collection):
+    states = collection.find({"streamlink.state": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"streamlink.state": {"$exists": False}}):
+        current_setting = None
+    else:
+        for state in states:
+            if state["_id"] == ctx.guild.id:
+                current_setting = state["streamlink"]["state"]
+                break
+            else:
+                current_setting = None
+                
+    if arg == 'on':
+        if not current_setting:
+            collection.update_one({"_id": ctx.guild.id}, {"$set":{"streamlink.state":True}})
+            return "Stream link has been enabled. Don't forget to set stream link role.\nRun `help streamlink` for more information."
+        else:
+            return "Stream link is already enabled."
+    elif arg == 'off':
+        if current_setting:
+            collection.update_one({"_id": ctx.guild.id}, {"$set":{"streamlink.state":False}})
+            return "Stream link has been disabled."
+        else:
+            return "Stream link is already disabled."
+    elif arg == 'status':
+        output = "Current state of stream link: "
+        if not current_setting:
+            output += "disabled.\n"
+        else:
+            output += "enabled.\n"
+        if streamlink_role:
+            output += f"Stream link role: {streamlink_role.mention}\n"
+        return output
+    else:
+        return "Invalid argument. Please run `help streamlink` to see full information."
+
+# Minage functions
+
 def check_minage_msg(context, collection, min_age):
     default_message = f"You have been kicked from {context.guild.name} due to your account age being less than {min_age} day(s). Please feel free to attempt to rejoin after your account has had some time to mature."
     minage_msg = collection.find({"minage.message": {"$exists": True, "$ne": None}})
@@ -174,6 +241,8 @@ def check_minage_channel(context, collection):
         for channel in logging_channel:
             if channel["_id"] == context.guild.id:
                 return channel["minage"]["logging_channel"]
+
+# Logging functions
 
 def logging_toggle(message):
     collection = loadsettings()
@@ -567,6 +636,25 @@ def main():
                     member.remove_roles(role)
                 else: return
         
+    @client.listen()
+    async def on_voice_state_update(member, before, after):
+        if member.bot: return
+        if not streamlink_toggle(member): return
+        
+        collection = loadsettings()
+        role = check_streamlink_role(member, collection)
+        if member.guild.me.guild_permissions.manage_roles:
+            if after.self_stream:
+                if role:
+                    role = member.guild.get_role(role)
+                    await member.add_roles(role)
+                else: return
+            else:
+                if role:
+                    role = member.guild.get_role(role)
+                    await member.remove_roles(role)
+                else: return
+                
     # commands (all commands here will be eventually moved to a cog so main file won't be as long)
 
     @client.command()
@@ -635,7 +723,34 @@ def main():
             else:
                 role = ctx.guild.get_role(role)
                 await ctx.reply(f"Voice link role is set to {role.mention}\nRun `voicelink off` to turn off voice link.", mention_author = False, allowed_mentions = discord.AllowedMentions.none())
-        
+    
+    # Stream Link
+
+    @client.group(invoke_without_command=True, aliases = ['sl'])
+    @commands.bot_has_permissions(manage_roles = True)
+    async def streamlink(ctx, arg):
+        collection = loadsettings()
+        streamlink_role = check_streamlink_role(ctx, collection)
+        if streamlink_role:
+            streamlink_role = ctx.guild.get_role(streamlink_role)
+        output = streamlink_func(ctx, arg, streamlink_role, collection)
+        await ctx.reply(output, mention_author = False, allowed_mentions = discord.AllowedMentions.none())
+
+    @streamlink.command(name='role')
+    @commands.has_permissions(manage_roles = True)
+    async def streamlink_role(ctx, role: discord.Role = None):
+        collection = loadsettings()
+        if role:
+            await ctx.reply(f"Stream link role has been set to {role.mention}", mention_author = False)
+            collection.update_one({"_id": ctx.guild.id}, {"$set":{"streamlink.role":role.id}})
+        else:
+            role = check_streamlink_role(ctx, collection)
+            if not role:
+                await ctx.reply('No stream link role was set.', mention_author = False)
+            else:
+                role = ctx.guild.get_role(role)
+                await ctx.reply(f"Stream link role is set to {role.mention}\nRun `streamlink off` to turn off stream link.", mention_author = False, allowed_mentions = discord.AllowedMentions.none())
+
     # Minage
 
     @client.group(invoke_without_command=True)
@@ -913,6 +1028,13 @@ def main():
             await ctx.reply('Missing argument, see `help voicelink` to see full information.', mention_author = False)
         elif isinstance(error, commands.BotMissingPermissions):
             await ctx.reply("Can't set voicelink when the bot lacking `Manage Roles` permission.", mention_author = False)
+    
+    @streamlink.error
+    async def streamlink_error(ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply('Missing argument, see `help streamlink` to see full information.', mention_author = False)
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.reply("Can't set streamlink when the bot lacking `Manage Roles` permission.", mention_author = False)
             
     @minage.error
     async def minage_error(ctx, error):
