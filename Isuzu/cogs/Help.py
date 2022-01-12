@@ -12,8 +12,8 @@ class Help(commands.Cog):
         em = discord.Embed(title = '**Help**', description = 'Use `help <command>` for extended information on a command.', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
 
         em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `whois`, `banner`', inline = False)
-        em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`')
-        em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `ping`')
+        em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`', inline = False)
+        em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `ping`', inline = False)
         em.add_field(name = 'Moderation', value = '`ban`, `unban`, `massban`, `minage`, `filtering`, `prune`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
@@ -165,7 +165,7 @@ class Help(commands.Cog):
 
     @help.command(aliases=['vl'])
     async def voicelink(self, ctx):
-        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to users going live in voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to users joining voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
         command_addition = "`voicelink on/off/status` to turn on/off or see the current settings of voicelink.\n"
         command_addition += "`voicelink role` to set a role which bot will give to users who join voice chat.\n"
