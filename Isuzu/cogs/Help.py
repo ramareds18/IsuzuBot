@@ -165,13 +165,27 @@ class Help(commands.Cog):
 
     @help.command(aliases=['vl'])
     async def voicelink(self, ctx):
-        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to users joining voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to users going live in voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
-        command_addition = "`voicelink on/off/status` to turn on/off or see the current settings of logging.\n"
+        command_addition = "`voicelink on/off/status` to turn on/off or see the current settings of voicelink.\n"
         command_addition += "`voicelink role` to set a role which bot will give to users who join voice chat.\n"
         em.add_field(name = 'Description', value = command_addition, inline = False)
         command_Usage = "voicelink on/off/status\n"
         command_Usage += "voicelink role <role>\n"
+        em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command(aliases=['sl'])
+    async def streamlink(self, ctx):
+        em = discord.Embed(title = '**streamlink**', description = "Automatically give a set role to users going live in voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
+        command_addition = "`streamlink on/off/status` to turn on/off or see the current settings of streamlink.\n"
+        command_addition += "`streamlink role` to set a role which bot will give to users who go live in voice chat.\n"
+        em.add_field(name = 'Description', value = command_addition, inline = False)
+        command_Usage = "streamlink on/off/status\n"
+        command_Usage += "streamlink role <role>\n"
         em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
