@@ -2,7 +2,7 @@ import nextcord as discord
 import os
 import sys
 import json
-import moonatimezone as m
+import Isuzu as m
 import pendulum as pen
 from nextcord.ext import commands
 from nextcord.errors import Forbidden
