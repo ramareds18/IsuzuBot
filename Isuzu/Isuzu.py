@@ -446,12 +446,21 @@ def main():
         reason = f"Account's age ({round(age//86400)} days) is less than the set requirement (>{min_age} days)."
         if member.guild.me.guild_permissions.kick_members:
             if age < minage_seconds:
-                await member.send(minage_message)
+                sent = False
+                try:
+                    await member.send(minage_message)
+                    sent = True
+                except:
+                    sent = False
                 await member.kick(reason = reason)
                 if channel:
                     embed_body = f'**Kicked** {member.mention} ({member.id})\n'
                     embed_body += '\n'
                     embed_body += f"**For reason:** {reason}"
+
+                    if not sent:
+                        embed_body += '\n*Failed to message the user due to their privacy settings.*'
+
                     em = discord.Embed(title = "Minage Report", description = embed_body, colour=0xf00000, timestamp = pen.now(WIB))
                     em.set_thumbnail(url = member.display_avatar)
                     em.set_footer(text = f"{member.display_name} ({member.id})", icon_url = member.display_avatar)
@@ -521,9 +530,8 @@ def main():
             await ctx.reply("Only bot owner can run this command.")
         elif isinstance(error, commands.CommandNotFound): return
         else: # You can delete this whole else section if you don't want it or just put `return`
-            if ctx.guild.id in ServersImod:
-                user = await client.fetch_user(myid)
-                await user.send(f"Uncaught error encountered in {ctx.guild.name} when executing `{ctx.command.name}` command:\n```\n{error}```")
+            user = await client.fetch_user(myid)
+            await user.send(f"Uncaught error encountered in {ctx.guild.name} when executing `{ctx.command.name}` command:\n```\n{error}```")
 
     # Load cogs
 
