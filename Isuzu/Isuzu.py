@@ -299,7 +299,9 @@ def main():
                 embed_body = f"**{len(messages)} messages deleted in bulk in {message.channel.mention}**\n"
                 embed_body += f'\n**Perpetrator:** {executor}'
                 em = discord.Embed(description= embed_body, colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-                await deleted_log_channel.send(embed = em)
+                if deleted_log_channel.permissions_for(message.guild.me).send_messages:
+                    await deleted_log_channel.send(embed = em)
+                else: return
 
     @client.event
     async def on_message_delete(message):
@@ -315,8 +317,22 @@ def main():
                     deleted_log_channel = client.get_channel(channel_deleted)
                 else: return
 
+                # if message.guild.me.guild_permissions.view_audit_log:
+                #     async for entry in message.guild.audit_logs(action=discord.AuditLogAction.message_delete):
+                        
+                #         if entry.target == message.author.id and entry.extra.channel == message.channel and (pen.now() - entry.created_at).total_seconds() <= 30:
+                #             executor = f'{entry.user.mention} ({entry.user.name}#{entry.user.discriminator})'
+                #             break
+                #         else: 
+                #             executor = "*the author or a bot*"
+                #             break
+                # else:
+                #     executor = "*(bot doesn't have view audit log permission)*"             
+                
                 embed_body = f"**Message by {message.author.mention} deleted in {message.channel.mention}**"
                 embed_body1 = f"**Message by {message.author.mention} deleted in {message.channel.mention}**"
+                # embed_body += f'\n**Perpetrator:** {executor}'
+                    
                 if message.content: 
                     embed_body += f'\n{message.content}'
                 file_contained = discord.Attachment
@@ -340,40 +356,38 @@ def main():
                 em.set_footer(text = f"Author ID: {message.author.id} | Message ID {message.id}")
                 em1.set_footer(text = f"Author ID: {message.author.id} | Message ID {message.id}")
 
-                if message.stickers:
-                    for sticker in message.stickers:
-                        sticker_url = sticker.url
+                if deleted_log_channel.permissions_for(message.guild.me).send_messages:
+                    if message.attachments and len(message.attachments) == 1:
+                        if message.stickers:
+                            em.set_image(url = sticker_url)
+                            await deleted_log_channel.send(embed = em)
+                            for image in message.attachments:
+                                if (image.content_type).startswith("image"):
+                                    em1.set_image(url = image.url)
+                                    await deleted_log_channel.send(embed = em1)
+                        else: 
+                            for image in message.attachments:
+                                if (image.content_type).startswith("image"):
+                                    em.set_image(url = image.url)
+                                await deleted_log_channel.send(embed = em)
 
-                if message.attachments and len(message.attachments) == 1:
-                    if message.stickers:
-                        em.set_image(url = sticker_url)
-                        await deleted_log_channel.send(embed = em)
+                    elif message.attachments and len(message.attachments) > 1:
+                        if message.stickers:
+                            em.set_image(url = sticker_url)
+                            await deleted_log_channel.send(embed = em)
+                        else: await deleted_log_channel.send(embed = em)
                         for image in message.attachments:
                             if (image.content_type).startswith("image"):
                                 em1.set_image(url = image.url)
                                 await deleted_log_channel.send(embed = em1)
-                    else: 
-                        for image in message.attachments:
-                            if (image.content_type).startswith("image"):
-                                em.set_image(url = image.url)
-                            await deleted_log_channel.send(embed = em)
 
-                elif message.attachments and len(message.attachments) > 1:
-                    if message.stickers:
+                    elif message.stickers:
                         em.set_image(url = sticker_url)
                         await deleted_log_channel.send(embed = em)
-                    else: await deleted_log_channel.send(embed = em)
-                    for image in message.attachments:
-                        if (image.content_type).startswith("image"):
-                            em1.set_image(url = image.url)
-                            await deleted_log_channel.send(embed = em1)
 
-                elif message.stickers:
-                    em.set_image(url = sticker_url)
-                    await deleted_log_channel.send(embed = em)
-
-                else:
-                    await deleted_log_channel.send(embed = em)
+                    else:
+                        await deleted_log_channel.send(embed = em)
+                else: return
 
     @client.event
     async def on_message_edit(before, after):
@@ -425,7 +439,9 @@ def main():
                     for sticker in before.stickers:
                         em.set_image(url = sticker.url)
 
-            await edited_log_channel.send(embed = em)
+            if edited_log_channel.permissions_for(before.guild.me).send_messages:
+                await edited_log_channel.send(embed = em)
+            else: return
 
     @client.event
     async def on_member_join(member):
@@ -464,7 +480,9 @@ def main():
                     em = discord.Embed(title = "Minage Report", description = embed_body, colour=0xf00000, timestamp = pen.now(WIB))
                     em.set_thumbnail(url = member.display_avatar)
                     em.set_footer(text = f"{member.display_name} ({member.id})", icon_url = member.display_avatar)
-                    await log_channel.send(embed = em)
+                    if log_channel.permissions_for(member.guild.me).send_messages:
+                        await log_channel.send(embed = em)
+                    else: return
             else: return
         else:
             if channel:
@@ -474,7 +492,9 @@ def main():
                 em = discord.Embed(title = "Minage Report", description = embed_body, colour=0xf1e40f, timestamp = pen.now(WIB))
                 em.set_thumbnail(url = member.display_avatar)
                 em.set_footer(text = f"{member.display_name} ({member.id})", icon_url = member.display_avatar)
-                await log_channel.send(embed = em)
+                if log_channel.permissions_for(member.guild.me).send_messages:
+                     await log_channel.send(embed = em)
+                else: return
             else: return
 
     @client.event
