@@ -59,7 +59,7 @@ def voicelink_toggle(ctx):
     toggle = False
     logging_state = collection.find({"voicelink.state": {"$exists": True, "$ne": None}})
     if collection.count_documents({}) == collection.count_documents({"voicelink.state": {"$exists": False}}):
-        return toggle
+        toggle = False
     else:
         for state in logging_state:
             if state["_id"] == ctx.guild.id:
@@ -82,7 +82,7 @@ def streamlink_toggle(ctx):
     toggle = False
     logging_state = collection.find({"streamlink.state": {"$exists": True, "$ne": None}})
     if collection.count_documents({}) == collection.count_documents({"streamlink.state": {"$exists": False}}):
-        return toggle
+        toggle = False
     else:
         for state in logging_state:
             if state["_id"] == ctx.guild.id:
@@ -98,6 +98,29 @@ def check_streamlink_role(ctx, collection):
             if role["_id"] == ctx.guild.id:
                 return role["streamlink"]["role"]
 
+# Nodiscussion functions
+
+def nodiscussion_toggle(message):
+    collection = loadsettings()
+    toggle = False
+    nodiscussion_state = collection.find({"nodiscussion.state": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"nodiscussion.state": {"$exists": False}}):
+        toggle = False
+    else:
+        for state in nodiscussion_state:
+            if state["_id"] == message.guild.id:
+                toggle = state["nodiscussion"]["state"]
+    return toggle
+
+def check_nodiscussion_channels(context, collection):
+    channels = collection.find({"nodiscussion.channels": {"$exists": True, "$ne": None}})
+    if collection.count_documents({}) == collection.count_documents({"nodiscussion.channels": {"$exists": False}}):
+        return None
+    else:
+        for channel in channels:
+            if channel["_id"] == context.guild.id:
+                return channel["nodiscussion"]["channels"]
+            
 # Minage functions
 
 def check_minage_msg(context, collection, min_age):
@@ -137,7 +160,7 @@ def logging_toggle(message):
     toggle = False
     logging_state = collection.find({"logging.state": {"$exists": True, "$ne": None}})
     if collection.count_documents({}) == collection.count_documents({"logging.state": {"$exists": False}}):
-        return toggle
+        toggle = False
     else:
         for state in logging_state:
             if state["_id"] == message.guild.id:
@@ -273,12 +296,24 @@ def main():
             else: return
         else:
             return
-
+        
+    @client.listen()
+    async def on_message(message):
+        x = re.search("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})", message.content)
+        if message.author.bot or not message.guild or message.attachments or x or not nodiscussion_toggle(message): return
+        collection = loadsettings()
+        set_channels = check_nodiscussion_channels(message, collection)
+        if not set_channels or message.channel.id not in set_channels: return
+        msgs = []
+        async for message in message.channel.history(limit = 2):
+            msgs.append(message)
+        if msgs[0].author != msgs[1].author:
+            await msgs[0].delete()
+        
     @client.event
     async def on_bulk_message_delete(messages):
         for message in messages:
-            if not message.guild: return
-            if message.author.bot: return
+            if not message.guild or message.author.bot: return
         if logging_toggle(message):
             collection = loadsettings()
             ignored_channels = check_ignored_channel(message, collection)
@@ -305,8 +340,7 @@ def main():
 
     @client.event
     async def on_message_delete(message):
-        if not message.guild: return
-        if message.author.bot: return
+        if not message.guild or message.author.bot: return
         if logging_toggle(message):
             collection = loadsettings()
             ignored_channels = check_ignored_channel(message, collection)
@@ -391,9 +425,7 @@ def main():
 
     @client.event
     async def on_message_edit(before, after):
-        if not before.guild: return
-        if before.author.bot: return
-        if before.content == after.content: return
+        if not before.guild or before.author.bot or before.content == after.content: return
         if logging_toggle(before):
             collection = loadsettings()
             ignored_channels = check_ignored_channel(before, collection)
@@ -499,8 +531,7 @@ def main():
 
     @client.event
     async def on_voice_state_update(member, before, after):
-        if member.bot: return
-        if not voicelink_toggle(member): return
+        if member.bot or not voicelink_toggle(member): return
         
         collection = loadsettings()
         role = check_voicelink_role(member, collection)
@@ -518,8 +549,7 @@ def main():
 
     @client.listen()
     async def on_voice_state_update(member, before, after):
-        if member.bot: return
-        if not streamlink_toggle(member): return
+        if member.bot or not streamlink_toggle(member): return
         
         collection = loadsettings()
         role = check_streamlink_role(member, collection)
