@@ -579,7 +579,7 @@ class Management(commands.Cog):
         else:
             await ctx.reply('Please provide channels to implement nodiscussion.', mention_author = False)
 
-    @log.command(name='remove')
+    @nodiscussion.command(name='remove')
     @commands.has_permissions(manage_guild = True)
     async def nodiscussion_remove(self, ctx, *args: discord.TextChannel):
         collection = m.loadsettings()
