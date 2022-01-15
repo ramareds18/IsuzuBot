@@ -165,7 +165,7 @@ class Help(commands.Cog):
 
     @help.command(aliases=['nd'])
     async def nodiscussion(self, ctx):
-                em = discord.Embed(title = '**nodiscussion**', description = "Deletes message that doesn't contain link or attachments. If a message doesn't contain either, it will delete the latest message sent(if the author of the last 2 messages weren't sent by the same user).", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+                em = discord.Embed(title = '**nodiscussion**', description = "Deletes message that doesn't contain link or attachments. If a message doesn't contain either, it will delete the latest message sent (if the author of the last 2 messages aren't the same user).", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `channel`, `remove`')
         command_addition = "`nodiscussion on/off/status` to turn on/off or see the current settings of nodiscussion.\n"
         command_addition += "`nodiscussion ignore` to set channels the bot will implement nodiscussion.\n"
