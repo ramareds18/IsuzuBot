@@ -670,17 +670,19 @@ class Management(commands.Cog):
             await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to unignore to avoid minor mistakes.")
 
     @nodiscussion.error
-    async def log_error(self, ctx, error):
+    async def nodiscussion_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply('Missing argument, see `help nodiscussion` for full information.')
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.reply("Can't set nodiscussion when the bot lacking `Manage Messages` permission.", mention_author = False)
 
     @nodiscussion_channels.error
-    async def log_ignore_error(self, ctx, error):
+    async def nodiscussion_channels_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to ignore to avoid minor mistakes.")
 
     @nodiscussion_remove.error
-    async def log_unignore_error(self, ctx, error):
+    async def nodiscussion_remove_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to unignore to avoid minor mistakes.")
 
