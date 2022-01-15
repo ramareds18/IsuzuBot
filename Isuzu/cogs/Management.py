@@ -507,6 +507,103 @@ class Management(commands.Cog):
         else:
             await ctx.reply('Please provide channels to unignore.', mention_author = False)
 
+    # nodiscussion
+
+    @commands.group(invoke_without_command=True, aliases = ['nd'])
+    @commands.bot_has_permissions(manage_messages = True)
+    async def nodiscussion(self, ctx, arg):
+        collection = m.loadsettings()
+        nodiscussion_channels = m.check_nodiscussion_channels(ctx, collection)
+        states = collection.find({"nodiscussion.state": {"$exists": True, "$ne": None}})
+        if collection.count_documents({}) == collection.count_documents({"nodiscussion.state": {"$exists": False}}):
+            current_setting = None
+        else:
+            for state in states:
+                if state["_id"] == ctx.guild.id:
+                    current_setting = state["nodiscussion"]["state"]
+                    break
+                else:
+                    current_setting = None
+                    
+        if arg == 'on':
+            if not current_setting:
+                collection.update_one({"_id": ctx.guild.id}, {"$set":{"nodiscussion.state":True}})
+                output = "NoDiscussion has been enabled. Don't forget to nodiscussion channels.\nRun `help nodiscussion` for more information."
+            else:
+                output = "NoDiscussion is already enabled."
+        elif arg == 'off':
+            if current_setting:
+                collection.update_one({"_id": ctx.guild.id}, {"$set":{"nodiscussion.state":False}})
+                output = "NoDiscussion has been disabled."
+            else:
+                output = "NoDiscussion is already disabled."
+        elif arg == 'status':
+            output = "Current state of NoDiscussion: "
+            if not current_setting:
+                output += "disabled.\n"
+            else:
+                output += "enabled.\n"
+            if nodiscussion_channels:
+                ch = ''
+                for channel in nodiscussion_channels:
+                    valid_channel = self.client.get_channel(channel)
+                    ch += f"{valid_channel.mention} "
+                output += f"NoDiscussion channels: {ch}\n"
+        else:
+            output = "Invalid argument. Please run `help nodiscussion` to see full information."
+
+        await ctx.reply(output, mention_author = False, allowed_mentions = discord.AllowedMentions.none())
+
+    @nodiscussion.command(name='channel')
+    @commands.has_permissions(manage_guild = True)
+    async def nodiscussion_channels(self, ctx, *args: discord.TextChannel):
+        collection = m.loadsettings()
+        embed_body = ''
+        dupes = []
+        not_dupes = []
+        if args:
+            for arg in args:
+                dupe = collection.find_one({"_id":ctx.guild.id, "nodiscussion.channels": {"$in": [arg.id], "$ne":None}})
+                if not dupe:
+                    collection.update_one({"_id": ctx.guild.id}, {"$addToSet":{"nodiscussion.channels":arg.id}})
+                    not_dupes.append(arg)
+                else:
+                    dupes.append(arg)
+            channels = "".join(f"{not_dupe.mention} "for not_dupe in not_dupes)
+            dupe_output = "".join(f"{channel.mention} " for channel in dupes)
+            embed_body += f'**Channels added:** {channels}\n'
+            embed_body += f'**Duplicates:** {dupe_output}'
+            em = discord.Embed(description= f'{embed_body}', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+            em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+            await ctx.reply(embed = em, mention_author = False)
+        else:
+            await ctx.reply('Please provide channels to implement nodiscussion.', mention_author = False)
+
+    @log.command(name='remove')
+    @commands.has_permissions(manage_guild = True)
+    async def nodiscussion_remove(self, ctx, *args: discord.TextChannel):
+        collection = m.loadsettings()
+        embed_body = ''
+        dupes = []
+        not_dupes = []
+        if args:
+            for arg in args:
+                dupe = collection.find_one({"_id":ctx.guild.id, "nodiscussion.channels": {"$in": [arg.id], "$ne":None}})
+                if dupe:
+                    collection.update_one({"_id": ctx.guild.id}, {"$pull":{"nodiscussion.channels":arg.id}})
+                    dupes.append(arg)
+                else:
+                    not_dupes.append(arg)
+            not_found = "".join(f"{not_dupe.mention} "for not_dupe in not_dupes)
+            dupe_output = "".join(f"{channel.mention} " for channel in dupes)
+            embed_body += f'**Channels removed:** {dupe_output}\n'
+            embed_body += f'**Not found:** {not_found}'
+            em = discord.Embed(description= f'{embed_body}', colour=0x00ff10, timestamp = pen.now('Asia/Jakarta'))
+            em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+            await ctx.reply(embed = em, mention_author = False)
+        else:
+            await ctx.reply('Please provide channels to remove from nodiscussion.', mention_author = False)
+            
     # Error handler
 
     @voicelink.error
@@ -568,6 +665,21 @@ class Management(commands.Cog):
             await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to ignore to avoid minor mistakes.")
 
     @log_unignore.error
+    async def log_unignore_error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to unignore to avoid minor mistakes.")
+
+    @nodiscussion.error
+    async def log_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply('Missing argument, see `help nodiscussion` for full information.')
+
+    @nodiscussion_channels.error
+    async def log_ignore_error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to ignore to avoid minor mistakes.")
+
+    @nodiscussion_remove.error
     async def log_unignore_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to unignore to avoid minor mistakes.")
