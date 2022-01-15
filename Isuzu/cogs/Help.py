@@ -12,7 +12,7 @@ class Help(commands.Cog):
         em = discord.Embed(title = '**Help**', description = 'Use `help <command>` for extended information on a command.', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
 
         em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `whois`, `banner`', inline = False)
-        em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`', inline = False)
+        em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`, `nodiscussion`', inline = False)
         em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `ping`', inline = False)
         em.add_field(name = 'Moderation', value = '`ban`, `unban`, `massban`, `minage`, `filtering`, `prune`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
@@ -163,6 +163,22 @@ class Help(commands.Cog):
         
         await ctx.reply(embed = em, mention_author = False)
 
+    @help.command(aliases=['nd'])
+    async def nodiscussion(self, ctx):
+        em = discord.Embed(title = '**nodiscussion**', description = "Deletes message that doesn't contain link or attachments. If a message doesn't contain either, it will deletes the newest message sent if the author of the last 2 messages weren't sent by the same user.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `channel`, `remove`')
+        command_addition = "`nodiscussion on/off/status` to turn on/off or see the current settings of nodiscussion.\n"
+        command_addition += "`nodiscussion ignore` to set channels the bot will implement nodiscussion.\n"
+        command_addition += "`nodiscussion unignore` to remove channels which was implemented nodiscussion before.\n"
+        em.add_field(name = 'Description', value = command_addition, inline = False)
+        command_Usage = "nodiscussion on/off/status\n"
+        command_Usage += "nodiscussion ignore <channel><channel><channel> (or more)\n"
+        command_Usage += "nodiscussion unignore <channel><channel><channel> (or more)\n"
+        em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        
+        await ctx.reply(embed = em, mention_author = False)
+        
     @help.command(aliases=['vl'])
     async def voicelink(self, ctx):
         em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to users joining voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
@@ -218,6 +234,7 @@ class Help(commands.Cog):
     @help.command()
     async def massban(self, ctx):
         em = discord.Embed(title = '**massban**', description = "Ban a bulk of users from the server. Reason is optional", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Aliases', value = '`nuke`')
         em.add_field(name = 'Usage', value = '```massban <userID>\n<userID> <userID> <reason>```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
