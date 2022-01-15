@@ -111,12 +111,12 @@ class Help(commands.Cog):
         command_addition = "`minage` to set the minimum age (in day format).\n"
         command_addition += "`minage message` to set a message to send to the user kicked. Will use the default message if not set.\n"
         command_addition += "`minage message remove` to delete the set message and go back using the default message.\n"
-        command_addition += "`minage channel` to set a channel where bot will log when do any minage actions.\n"
-        command_addition += "`minage settings` to see the current settings of minage module of the server."
+        command_addition += "`nodiscussion channel` to set channels the bot will implement nodiscussion.\n"
+        command_addition += "`nodiscussion remove` to remove channels which was implemented nodiscussion before.\n"
         em.add_field(name = 'Description', value = command_addition, inline = False)
-        command_Usage = "minage <days> ex: minage 30\n"
-        command_Usage += "minage message <your message> (you can also put '{minage}')\n"
-        command_Usage += "minage channel <logchannel>\n"
+        command_Usage = "nodiscussion on/off/status\n"
+        command_Usage += "nodiscussion channel <channel><channel><channel> (or more)\n"
+        command_Usage += "nodiscussion remove <channel><channel><channel> (or more)\n"
         command_Usage += "minage settings"
         em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
