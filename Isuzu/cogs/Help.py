@@ -165,15 +165,21 @@ class Help(commands.Cog):
 
     @help.command(aliases=['nd'])
     async def nodiscussion(self, ctx):
-                em = discord.Embed(title = '**nodiscussion**', description = "Deletes message that doesn't contain link or attachments. If a message doesn't contain either, it will delete the latest message sent (if the author of the last 2 messages aren't the same user).", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `channel`, `remove`')
+        em = discord.Embed(title = '**nodiscussion**', description = "Deletes message that doesn't contain link or attachments. If a message doesn't contain either, it will delete the latest message sent (if the author of the last 2 messages aren't the same user).", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `channel`, `ignore`, `unignore`, `ignored`, `remove`')
         command_addition = "`nodiscussion on/off/status` to turn on/off or see the current settings of nodiscussion.\n"
-        command_addition += "`nodiscussion ignore` to set channels the bot will implement nodiscussion.\n"
-        command_addition += "`nodiscussion unignore` to remove channels which was implemented nodiscussion before.\n"
+        command_addition += "`nodiscussion channel` to set channels the bot will implement nodiscussion.\n"
+        command_addition += "`nodiscussion ignore` to set roles the bot will ignore from implementing nodiscussion.\n"
+        command_addition += "`nodiscussion ignored` to see all the ignored roles.\n"
+        command_addition += "`nodiscussion unignore` to unignore roles which was ignored before.\n"
+        command_addition += "`nodiscussion remove` to remove channels which was implemented nodiscussion before.\n"
         em.add_field(name = 'Description', value = command_addition, inline = False)
         command_Usage = "nodiscussion on/off/status\n"
-        command_Usage += "nodiscussion ignore <channel><channel><channel> (or more)\n"
-        command_Usage += "nodiscussion unignore <channel><channel><channel> (or more)\n"
+        command_Usage += "nodiscussion channel <channel><channel><channel> (or more)\n"
+        command_Usage += "nodiscussion ignore <role><role><role> (or more)\n"
+        command_Usage += "nodiscussion unignore <role><role><role> (or more)\n"
+        command_Usage += "nodiscussion ignored\n"
+        command_Usage += "nodiscussion remove <channel><channel><channel> (or more)\n"
         em.add_field(name = 'Usage', value = f'```\n{command_Usage}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
@@ -240,6 +246,14 @@ class Help(commands.Cog):
 
         await ctx.reply(embed = em, mention_author = False)
 
+    @help.command()
+    async def massunban(self, ctx):
+        em = discord.Embed(title = '**massunban**', description = "Unban a bulk of users from the server. Reason is optional", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Usage', value = '```massunban <userID>\n<userID> <userID> <reason>```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+        
     @help.command()
     async def ping(self, ctx):
         em = discord.Embed(title = '**ping**', description = "Pong.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
