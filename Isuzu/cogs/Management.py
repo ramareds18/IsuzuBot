@@ -470,7 +470,7 @@ class Management(commands.Cog):
             await ctx.reply('Please provide channels to ignore.', mention_author = False)
 
     @log.command(name='ignored')
-    @commands.has_permissions(manage_guild = True)
+    @commands.has_permissions(manage_messages = True)
     async def log_ignored(self, ctx):
         collection = m.loadsettings()
         embed_body = ''
@@ -579,6 +579,69 @@ class Management(commands.Cog):
         else:
             await ctx.reply('Please provide channels to implement nodiscussion.', mention_author = False)
 
+    @nodiscussion.command(name='ignore')
+    @commands.has_permissions(manage_guild = True)
+    async def nodiscussion_ignore_role(self, ctx, *args: discord.Role):
+        collection = m.loadsettings()
+        embed_body = ''
+        dupes = []
+        not_dupes = []
+        if args:
+            for arg in args:
+                dupe = collection.find_one({"_id":ctx.guild.id, "nodiscussion.ignored_roles": {"$in": [arg.id], "$ne":None}})
+                if not dupe:
+                    collection.update_one({"_id": ctx.guild.id}, {"$addToSet":{"nodiscussion.ignored_roles":arg.id}})
+                    not_dupes.append(arg)
+                else:
+                    dupes.append(arg)
+            roles = "".join(f"{not_dupe.mention} "for not_dupe in not_dupes)
+            dupe_output = "".join(f"{role.mention} " for role in dupes)
+            embed_body += f'**Ignored** {roles}\n'
+            embed_body += f'**Duplicates:** {dupe_output}'
+            em = discord.Embed(description= f'{embed_body}', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+            em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+            await ctx.reply(embed = em, mention_author = False)
+        else:
+            await ctx.reply('Please provide roles to be ignored by nodiscussion.', mention_author = False)
+
+    @nodiscussion.command(name='unignore')
+    @commands.has_permissions(manage_guild = True)
+    async def nodiscussion_unignore_role(self, ctx, *args: discord.TextChannel):
+        collection = m.loadsettings()
+        embed_body = ''
+        dupes = []
+        not_dupes = []
+        if args:
+            for arg in args:
+                dupe = collection.find_one({"_id":ctx.guild.id, "nodiscussion.ignored_roles": {"$in": [arg.id], "$ne":None}})
+                if dupe:
+                    collection.update_one({"_id": ctx.guild.id}, {"$pull":{"nodiscussion.ignored_roles":arg.id}})
+                    dupes.append(arg)
+                else:
+                    not_dupes.append(arg)
+            not_found = "".join(f"{not_dupe.mention} "for not_dupe in not_dupes)
+            dupe_output = "".join(f"{role.mention} " for role in dupes)
+            embed_body += f'**Unignored** {dupe_output}\n'
+            embed_body += f'**Not found:** {not_found}'
+            em = discord.Embed(description= f'{embed_body}', colour=0x00ff10, timestamp = pen.now('Asia/Jakarta'))
+            em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+            await ctx.reply(embed = em, mention_author = False)
+        else:
+            await ctx.reply('Please provide channels to unignore.', mention_author = False)
+
+    @nodiscussion.command(name='ignored')
+    @commands.has_permissions(manage_messages = True)
+    async def nodiscussion_ignored(self, ctx):
+        collection = m.loadsettings()
+        embed_body = ''
+        ignored_roles = m.check_ignored_role_nd(ctx, collection)
+        for role in ignored_roles:
+            valid_role = ctx.guild.get_role(role)
+            embed_body += f'{valid_role.mention} '
+        em = discord.Embed(title= 'Ignored roles:', description= f'{embed_body}', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        await ctx.reply(embed = em, mention_author = False)
+
     @nodiscussion.command(name='remove')
     @commands.has_permissions(manage_guild = True)
     async def nodiscussion_remove(self, ctx, *args: discord.TextChannel):
@@ -603,7 +666,7 @@ class Management(commands.Cog):
             await ctx.reply(embed = em, mention_author = False)
         else:
             await ctx.reply('Please provide channels to remove from nodiscussion.', mention_author = False)
-            
+
     # Error handler
 
     @voicelink.error
@@ -679,12 +742,22 @@ class Management(commands.Cog):
     @nodiscussion_channels.error
     async def nodiscussion_channels_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want nodiscussion to be implemented to avoid minor mistakes.")
+            await ctx.reply("Channel(s) can't be recognized. Please mention channel you want to set to avoid minor mistakes.")
+
+    @nodiscussion_ignore_role.error
+    async def nodiscussion_ignore_role_error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            await ctx.reply("Role(s) can't be recognized. Please mention roles you want to ignore to avoid minor mistakes.")
+
+    @nodiscussion_unignore_role.error
+    async def nodiscussion_unignore_role_error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            await ctx.reply("Role(s) can't be recognized. Please mention roles you want to unignore to avoid minor mistakes.")
 
     @nodiscussion_remove.error
     async def nodiscussion_remove_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to remove from nodiscussion to avoid minor mistakes.")
+            await ctx.reply("Channel(s) can't be recognized. Please mention channel you want to set to avoid minor mistakes.")
 
 def setup(client):
     client.add_cog(Management(client))
