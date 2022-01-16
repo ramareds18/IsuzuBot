@@ -611,21 +611,21 @@ class Management(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply('Missing argument, see `help voicelink` to see full information.', mention_author = False)
         elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply("Can't set voicelink when the bot lacking `Manage Roles` permission.", mention_author = False)
+            await ctx.reply("Can't set voicelink when I don't have `Manage Roles` permission.", mention_author = False)
 
     @streamlink.error
     async def streamlink_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply('Missing argument, see `help streamlink` to see full information.', mention_author = False)
         elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply("Can't set streamlink when the bot lacking `Manage Roles` permission.", mention_author = False)
+            await ctx.reply("Can't set streamlink when I don't have `Manage Roles` permission.", mention_author = False)
 
     @minage.error
     async def minage_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             await ctx.reply('Wrong module to execute. Run `help minage` to see full information.', mention_author = False)
         elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply("Can't set minage when the bot lacking `Kick Members` permission.", mention_author = False)
+            await ctx.reply("Can't set minage when I don't have `Kick Members` permission.", mention_author = False)
 
     @minage_message.error
     async def minage_message_error(self, ctx, error):
@@ -674,17 +674,17 @@ class Management(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply('Missing argument, see `help nodiscussion` for full information.')
         elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply("Can't set nodiscussion when the bot lacking `Manage Messages` permission.", mention_author = False)
+            await ctx.reply("Can't set nodiscussion when I don't have `Manage Messages` permission.", mention_author = False)
 
     @nodiscussion_channels.error
     async def nodiscussion_channels_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to ignore to avoid minor mistakes.")
+            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want nodiscussion to be implemented to avoid minor mistakes.")
 
     @nodiscussion_remove.error
     async def nodiscussion_remove_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to unignore to avoid minor mistakes.")
+            await ctx.reply("Channel(s) can't be recognized. Please mention channels you want to remove from nodiscussion to avoid minor mistakes.")
 
 def setup(client):
     client.add_cog(Management(client))
