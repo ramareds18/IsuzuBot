@@ -209,7 +209,7 @@ class Management(commands.Cog):
         collection = m.loadsettings()
         voicelink_role = m.check_voicelink_role(ctx, collection)
         if voicelink_role:
-            voicelink_role = self.client.guild.get_role(voicelink_role)
+            voicelink_role = ctx.guild.get_role(voicelink_role)
         output = voicelink_func(ctx, arg, voicelink_role, collection)
         await ctx.reply(output, mention_author = False, allowed_mentions = discord.AllowedMentions.none())
 
@@ -236,7 +236,7 @@ class Management(commands.Cog):
         collection = m.loadsettings()
         streamlink_role = m.check_streamlink_role(ctx, collection)
         if streamlink_role:
-            streamlink_role = self.client.guild.get_role(streamlink_role)
+            streamlink_role = ctx.guild.get_role(streamlink_role)
         output = streamlink_func(ctx, arg, streamlink_role, collection)
         await ctx.reply(output, mention_author = False, allowed_mentions = discord.AllowedMentions.none())
 
