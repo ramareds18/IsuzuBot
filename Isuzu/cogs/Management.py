@@ -225,7 +225,7 @@ class Management(commands.Cog):
             if not role:
                 await ctx.reply('No voice link role was set.', mention_author = False)
             else:
-                role = self.client.guild.get_role(role)
+                role = ctx.guild.get_role(role)
                 await ctx.reply(f"Voice link role is set to {role.mention}\nRun `voicelink off` to turn off voice link.", mention_author = False, allowed_mentions = discord.AllowedMentions.none())
 
     # Stream Link
@@ -252,7 +252,7 @@ class Management(commands.Cog):
             if not role:
                 await ctx.reply('No stream link role was set.', mention_author = False)
             else:
-                role = self.client.guild.get_role(role)
+                role = ctx.guild.get_role(role)
                 await ctx.reply(f"Stream link role is set to {role.mention}\nRun `streamlink off` to turn off stream link.", mention_author = False, allowed_mentions = discord.AllowedMentions.none())
 
     # Minage
