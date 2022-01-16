@@ -61,18 +61,24 @@ class Moderation(commands.Cog):
         is_banned = await ctx.guild.fetch_ban(member)
         if is_banned:
             msg = await ctx.reply('Unbanning...', mention_author = False)
-            if reason:
+            comment = ''
+            if reason and len(reason) <= 450:
                 reason += f' | Unbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+            elif reason and len(reason) > 450:
+                reason = f'Unbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                comment = 'Reason too long.'
             else:
                 reason = f'Unbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
             await ctx.guild.unban(member, reason = reason)
             embed_body = f'**Unbanned** {member.mention} ({member.id})\n'
             embed_body += '\n'
-            embed_body += f'**For reason:** {reason}'
+            embed_body += f'**For reason:** {reason}\n'
+            if comment:
+                embed_body += f'**Note**: {comment}'
             em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
-            await msg.edit(content=None, embed = em)
+            await msg.edit(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
         else:
-            await ctx.reply('That is not a banned user.', mention_author = False, allowed_mentions = discord.AllowedMentions.none())
+            await ctx.reply('That is not a banned user.', mention_author = False)
 
     @commands.command(aliases = ['nuke'])
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -280,6 +286,123 @@ class Moderation(commands.Cog):
         else:
             await ctx.reply('No members to be pruned.', mention_author = False)
 
+    @commands.command()
+    @commands.cooldown(1, 2, commands.BucketType.user)
+    @commands.has_permissions(ban_members = True)
+    @commands.bot_has_permissions(ban_members = True)
+    async def massunban(self, ctx, *args: typing.Union[int, str]):
+        if args or ctx.message.attachments:
+            unban_check = 0
+            embed_body = ''
+            users = []
+            string = []
+            is_banned = []
+            not_banned = []
+            banlist = []
+            valid_accounts = []
+            invalid_accounts = []
+            wait = False
+            ids = list(args)
+
+            if ctx.message.attachments:
+                for attachment in ctx.message.attachments:
+                    if attachment.content_type.startswith('text/plain') and attachment.size < (1024**2):
+                        file = await attachment.to_file()
+                        new = file.fp.read().decode('utf8')
+                        for entry in multi_split(new, [' ', '\t', '\n', '\r']):
+                            try:
+                                ids.append(int(entry))
+                            except ValueError:
+                                return
+                for user in ids:
+                    if isinstance(user, int):
+                        users.append(user)
+                    elif isinstance(user, str):
+                        string.append(user)
+            else:
+                for arg in args:
+                    if isinstance(arg, int):
+                        users.append(arg)
+                    elif isinstance(arg, str):
+                        string.append(arg)
+
+            for arg in args:
+                if isinstance(arg, int):
+                    users.append(arg)
+                elif isinstance(arg, str):
+                    string.append(arg)
+            
+            if users:
+                comment = ''
+                await ctx.message.add_reaction("🔄")
+                if string and len(string) <= 450:
+                    string_reason = "".join(f"{reason} " for reason in string)
+                    reason = string_reason
+                    reason += f' | Massunbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                elif string and len(string) > 450:
+                    reason = f'Massunbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                    comment = 'Reason too long.'
+                else:
+                    reason = f'Massunbanned by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+
+                if len(users) > 10:
+                    msg = await ctx.reply('This might take a while, please wait...', mention_author = False)
+                    wait = True
+
+                for user in users:
+                    try:
+                        valid_accounts.append(await self.client.fetch_user(user))
+                    except:
+                        invalid_accounts.append(user)
+
+                if len(valid_accounts) > 15:
+                    for valid in valid_accounts:
+                        try:
+                            is_banned.append(await ctx.guild.fetch_ban(valid)) 
+                        except:
+                            not_banned.append(valid)
+                else:
+                    banlist = await ctx.guild.bans()
+                    for valid in valid_accounts:
+                        if valid in banlist:
+                            is_banned.append(valid)
+                        else:
+                            not_banned.append(valid)
+
+                for unbanned in is_banned:
+                    await ctx.guild.unban(unbanned, reason = reason)
+                    unban_check += 1
+            
+                if unban_check != 0:
+                    embed_body += f'**Unbanned {unban_check}/{len(users)} users.**\n'
+                    embed_body += '\n'
+                    embed_body += f'**For reason:** {reason}\n'
+                    embed_body += '\n'
+
+                    if not_banned:
+                        not_banned_output = "".join(f"{noban}\n" for noban in not_banned)
+                        embed_body += f"Skipped [{len(not_banned)}] because of not a banned user: ```\n{not_banned_output}```\n"
+
+                    if invalid_accounts:
+                        invalid_output = "".join(f"{invalid}\n" for invalid in invalid_accounts)
+                        embed_body += f"Skipped [{len(invalid_accounts)}] because of not valid user ID: ```\n{invalid_output}```\n"
+
+                    if comment:
+                        embed_body += f'\n**Note**: {comment}'
+                    em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
+                    await ctx.message.remove_reaction('🔄', self.client.user)
+                    if wait:
+                        await msg.edit(content = None, embed = em, allowed_mentions = discord.AllowedMentions.none())
+                    else:
+                        await ctx.reply(embed = em, mention_author = False)
+                else:
+                    await ctx.reply('No valid user to unban.', mention_author = False)
+            else:
+                await ctx.reply('Please provide userID(s) and reason (optional) or file to unban.')
+        else:
+            await ctx.reply('Please provide userID(s) and reason (optional) or file to unban.')
+
+            
     # Error-handling section
 
     @ban.error
@@ -306,6 +429,11 @@ class Moderation(commands.Cog):
             await ctx.reply('Missing `Ban Members` permission.')
         elif isinstance(error, commands.CommandInvokeError) and 'TimeoutError' in str(error):
             await ctx.reply('You ran out of time.')
+
+    @massunban.error
+    async def massunban_error(self, ctx, error):
+        if isinstance(error, commands.BotMissingPermissions):
+            await ctx.reply('Missing `Ban Members` permission.')
 
     @prune.error
     async def prune_error(self, ctx, error):
