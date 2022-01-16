@@ -14,7 +14,7 @@ class Help(commands.Cog):
         em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `whois`, `banner`', inline = False)
         em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`, `nodiscussion`', inline = False)
         em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `ping`', inline = False)
-        em.add_field(name = 'Moderation', value = '`ban`, `unban`, `massban`, `minage`, `filtering`, `prune`', inline = False)
+        em.add_field(name = 'Moderation', value = '`ban`, `unban`, `massban`, `massunban`, `minage`, `filtering`, `prune`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
