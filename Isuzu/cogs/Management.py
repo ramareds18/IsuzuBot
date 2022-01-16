@@ -573,7 +573,7 @@ class Management(commands.Cog):
             dupe_output = "".join(f"{channel.mention} " for channel in dupes)
             embed_body += f'**Channels added:** {channels}\n'
             embed_body += f'**Duplicates:** {dupe_output}'
-            em = discord.Embed(description= f'{embed_body}', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+            em = discord.Embed(description= f'{embed_body}', colour=0x00ff10, timestamp = pen.now('Asia/Jakarta'))
             em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
             await ctx.reply(embed = em, mention_author = False)
         else:
@@ -598,7 +598,7 @@ class Management(commands.Cog):
             dupe_output = "".join(f"{channel.mention} " for channel in dupes)
             embed_body += f'**Channels removed:** {dupe_output}\n'
             embed_body += f'**Not found:** {not_found}'
-            em = discord.Embed(description= f'{embed_body}', colour=0x00ff10, timestamp = pen.now('Asia/Jakarta'))
+            em = discord.Embed(description= f'{embed_body}', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
             em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
             await ctx.reply(embed = em, mention_author = False)
         else:
