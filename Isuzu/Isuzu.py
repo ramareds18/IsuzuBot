@@ -308,7 +308,9 @@ def main():
         async for message in message.channel.history(limit = 2):
             msgs.append(message)
         if msgs[0].author != msgs[1].author:
-            await msgs[0].delete()
+            if message.guild.me.guild_permissions.manage_messages:
+                await msgs[0].delete()
+            else: return
         
     @client.event
     async def on_bulk_message_delete(messages):
