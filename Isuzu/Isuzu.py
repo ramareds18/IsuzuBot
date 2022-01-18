@@ -253,6 +253,13 @@ def main():
         collection.delete_one({"_id":guild.id})
 
     @client.event
+    async def on_thread_join(thread):
+        try:
+            await thread.join()
+        except:
+            pass        
+        
+    @client.event
     async def on_message(message):
         if not message.guild: return
 
