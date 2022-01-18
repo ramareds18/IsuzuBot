@@ -265,7 +265,10 @@ class Management(commands.Cog):
         if days == None:
             guild_settings = collection.find_one({"_id": ctx.guild.id})
             min_age = guild_settings['minage']['days']
-            await ctx.reply(f"Current minimum age setting is set to `{min_age}` day(s).\nSet to `0` to disable minage.")
+            output = f"Current minimum age setting is set to `{min_age}` day(s)."
+            if min_age > 0:
+                output += '\nSet to `0` to disable minage.'
+            await ctx.reply(output)
         else:
             collection.update_one({"_id": ctx.guild.id}, {"$set":{"minage.days":days}})
             await ctx.reply(f"Minimum age setting has been set to `{days}` day(s).\nSee more information in `help minage`.")
