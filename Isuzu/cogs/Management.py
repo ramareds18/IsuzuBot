@@ -262,7 +262,7 @@ class Management(commands.Cog):
     @commands.bot_has_permissions(kick_members = True)
     async def minage(self, ctx, days: int = None):
         collection = m.loadsettings()
-        if not days:
+        if days == None:
             guild_settings = collection.find_one({"_id": ctx.guild.id})
             min_age = guild_settings['minage']['days']
             await ctx.reply(f"Current minimum age setting is set to `{min_age}` day(s).\nSet to `0` to disable minage.")
