@@ -208,7 +208,8 @@ def main():
 
     TOKEN = os.getenv('DISCORD_TOKEN')
 
-    intents = discord.Intents().all()
+    intents = discord.Intents.all()
+    intents.typing = False
     client = commands.Bot(command_prefix = get_prefix, intents = intents, help_command = None)
 
     WIB = 'Asia/Jakarta'
