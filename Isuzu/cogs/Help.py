@@ -241,7 +241,7 @@ class Help(commands.Cog):
 
     @help.command(aliases=['to'])
     async def timeout(self, ctx):
-        em = discord.Embed(title = '**timeout**', description = "Timeout a user for a set duration in the server. Reason is optional.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**timeout**', description = "Timeout a user for a set duration in the server. Reason is optional. **NOTE:** This will DM the user.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Aliases', value = '`to`', inline = False)
         em.add_field(name = 'Duration options', value='• w - Week\n• d - Day\n• h - Hour\n• m - Minute\n• s - Second', inline = False)
         em.add_field(name = 'Usage and Examples', value = '`timeout <userID> <duration> <reason>`\n```\ntimeout 302064098739355652 10d14h34m2s stinky```', inline = False)
@@ -251,7 +251,7 @@ class Help(commands.Cog):
 
     @help.command(aliases=['uto'])
     async def untimeout(self, ctx):
-        em = discord.Embed(title = '**timeout**', description = "Remove timeout from a user in the server. Reason is optional.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**timeout**', description = "Remove timeout from a user in the server. Reason is optional. **NOTE:** This will DM the user.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Aliases', value = '`uto`', inline = False)
         em.add_field(name = 'Usage and Examples', value = '`untimeout <userID> <reason>`\n```\nuntimeout 302064098739355652 not stinky anymore```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
