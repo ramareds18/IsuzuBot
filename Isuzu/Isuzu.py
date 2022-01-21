@@ -530,7 +530,7 @@ def main():
                 if channel:
                     embed_body = f'**Kicked** {member.mention} ({member.id})\n'
                     embed_body += '\n'
-                    embed_body += f"**For reason:** {reason}"
+                    embed_body += f"**Reason:** {reason}"
 
                     if not sent:
                         embed_body += '\n*Failed to message the user due to their privacy settings.*'
