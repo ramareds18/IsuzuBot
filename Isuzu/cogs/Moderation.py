@@ -83,13 +83,13 @@ class Moderation(commands.Cog):
             comment = ''
             if reason and len(reason) <= 450:
                 reason_to_send = reason
-                reason += f' | Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                reason += f' | Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
             elif reason and len(reason) > 450:
-                reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                reason = f'Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
                 reason_to_send = "No reason given."
                 comment = 'Reason too long.'
             else:
-                reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                reason = f'Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
                 reason_to_send = "No reason given."
             try:
                 await member.edit(timeout=None, reason=reason)
