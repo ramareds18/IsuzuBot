@@ -315,10 +315,9 @@ def main():
         if message.author.bot or not message.guild or message.attachments or x or not nodiscussion_toggle(message) or message.author.guild_permissions.administrator: return
         
         collection = loadsettings()
-
         immune = False
+        ignored_roles = check_ignored_role_nd(message, collection)
         for role in message.author.roles: 
-            ignored_roles = check_ignored_role_nd(message, collection)
             if ignored_roles and role.id in ignored_roles:
                 immune = True
                 break
@@ -488,7 +487,7 @@ def main():
             else:
                 em.set_author(name = f'{before.author.name}#{before.author.discriminator}', icon_url = before.author.display_avatar)
             em.set_thumbnail(url = before.author.display_avatar)
-            em.set_footer(text = f"{after.author.display_name} ({after.author.id})", icon_url = after.author.display_avatar)
+            em.set_footer(text = f"User ID: {after.author.id}", icon_url = after.guild.icon)
 
             if before.attachments and not before.stickers:
                 for image in before.attachments:
@@ -600,7 +599,10 @@ def main():
             message = f"This command is on cooldown. Please try again after {round(error.retry_after, 1)} seconds."
             await ctx.reply(message, delete_after=round(error.retry_after), mention_author = False)
         elif isinstance(error, commands.MissingPermissions):
-            await ctx.reply(f"{error}`")
+            error = str(error)
+            if "Moderate" in error:
+                error = error.replace("Moderate", "Timeout")
+            await ctx.reply(f"{error}")
         elif isinstance(error, commands.CheckAnyFailure):
             await ctx.reply("You don't have permission to run this command.")
         elif isinstance(error, commands.NotOwner):
