@@ -1,9 +1,10 @@
-import os
 import typing
 import nextcord as discord
 import pendulum as pen
+from durations import Duration
 from nextcord.ext import commands
 from nextcord.errors import Forbidden
+from pendulum import datetime as dt
 
 # 2 functions below are courtesy of shaak
 
@@ -22,6 +23,227 @@ class Moderation(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+
+    @commands.command(aliases = ['to'])
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.has_permissions(moderate_members = True)
+    @commands.bot_has_permissions(moderate_members = True)
+    async def timeout(self, ctx, member: typing.Union[discord.Member, discord.User], time: str = None, *, reason = None):
+        if isinstance(member, discord.User):
+            ctx.reply("User is not a member of the server.")
+        elif member.top_role >= ctx.author.top_role:
+            await ctx.reply("You can't timeout that user.")
+        else:
+            if time:
+                seconds = Duration(time).to_seconds()
+                if seconds > 2419200:
+                    await ctx.reply("Duration must not exceed 28 days.")
+                elif int(seconds) == 0:
+                    await ctx.reply("Duration could not be recognized.")
+                else:
+                    comment = ''
+                    if reason and len(reason) <= 450:
+                        reason += f' | Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                    elif reason and len(reason) > 450:
+                        reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                        comment = 'Reason too long.'
+                    else:
+                        reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'                      
+                    try:                      
+                        timeout_end = pen.now('UTC').add(seconds = seconds)
+                        await member.edit(timeout=timeout_end, reason=reason)
+                        epoch = round((timeout_end - dt(1970,1,1)).total_seconds())
+                        try:
+                            await member.send(f"You have been timed out until <t:{epoch}:F> in `{ctx.guild.name}` for `{reason}`")
+                            sent = True
+                        except:
+                            sent = False
+                        output = f"{member.mention} has been timed out for {time}. Their timeout will be over on <t:{epoch}:F>."
+                        if not sent:
+                            output += "\nFailed to DM the user due to their privacy settings."
+                        if comment:
+                            output += f"\n{comment}"
+                        await ctx.reply(output, mention_author = False)
+                    except Forbidden:
+                        await ctx.reply("I can't timeout that user.")
+            else:
+                await ctx.reply("Please input duration, minimum 1 second and maximum 28 days. Example\n```\ntimeout <userID> 2d3h2m3s <optional reason>```")
+
+    @commands.command(aliases = ['uto'])
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.has_permissions(moderate_members = True)
+    @commands.bot_has_permissions(moderate_members = True)
+    async def untimeout(self, ctx, member: typing.Union[discord.Member, discord.User], *, reason = None):
+        if isinstance(member, discord.User):
+            ctx.reply("User is not a member of the server.")
+        else:
+            comment = ''
+            if reason and len(reason) <= 450:
+                reason += f' | Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+            elif reason and len(reason) > 450:
+                reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                comment = 'Reason too long.'
+            else:
+                reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+            try:
+                await member.edit(timeout=None, reason=reason)
+                try:
+                    await member.send(f"Your timeout in `{ctx.guild.name}` has been removed for `{reason}`")
+                    sent = True
+                except:
+                    sent = False
+                output = f"{member.mention}'s timed out has been removed."
+                if not sent:
+                    output += "\nFailed to DM the user due to their privacy settings."
+                if comment:
+                    output += f"\n{comment}"
+                await ctx.reply(output, mention_author = False)
+            except Forbidden:
+                await ctx.reply("I can't timeout that user.")
+
+    @commands.command()
+    @commands.cooldown(1, 2, commands.BucketType.user)
+    @commands.has_permissions(kick_members = True)
+    @commands.bot_has_permissions(kick_members = True)
+    async def kick(self, ctx, member: typing.Union[discord.Member, discord.User], *, reason = None):
+        if isinstance(member, discord.User):
+            await ctx.reply("User is not a member of the server.")
+        else:
+            try:
+                msg = await ctx.reply('Kicking...', mention_author = False)
+                if member.top_role >= ctx.author.top_role:
+                    await msg.edit('You are not allowed to kick this user.')
+                else:
+                    comment = ''
+                    if reason and len(reason) <= 450:
+                        reason += f' | Kicked by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                    elif reason and len(reason) > 450:
+                        reason = f'Kicked by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                        comment = 'Reason too long.'
+                    else:
+                        reason = f'Kicked by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                    await ctx.guild.kick(member, reason = reason)
+                    
+                    embed_body = f'**Kicked** {member.mention} ({member.id})\n'
+                    embed_body += '\n'
+                    embed_body += f'**Reason:** {reason}\n'
+                    if comment:
+                        embed_body += f'**Note**: {comment}'
+                    em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+                    await msg.edit(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
+            except Forbidden:
+                await msg.edit("Can't kick user with equal or higher role.")
+
+    @commands.command()
+    @commands.cooldown(1, 2, commands.BucketType.user)
+    @commands.has_permissions(kick_members = True)
+    @commands.bot_has_permissions(kick_members = True)
+    async def masskick(self, ctx, *args: typing.Union[int, str]):
+        if args or ctx.message.attachments:
+            guild_members = ctx.guild.members
+            kick_check = 0
+            embed_body = ''
+            users = []
+            string = []
+            invalid_accounts = []
+            valid_accounts = []
+            not_in_guild = []
+            forbidden_accounts = []
+            wait = False
+            ids = list(args)
+
+            if ctx.message.attachments:
+                for attachment in ctx.message.attachments:
+                    if attachment.content_type.startswith('text/plain') and attachment.size < (1024**2):
+                        file = await attachment.to_file()
+                        new = file.fp.read().decode('utf8')
+                        for entry in multi_split(new, [' ', '\t', '\n', '\r']):
+                            try:
+                                ids.append(int(entry))
+                            except ValueError:
+                                return
+                for user in ids:
+                    if isinstance(user, int):
+                        users.append(user)
+                    elif isinstance(user, str):
+                        string.append(user)
+            else:
+                for arg in args:
+                    if isinstance(arg, int):
+                        users.append(arg)
+                    elif isinstance(arg, str):
+                        string.append(arg)
+
+            if users:
+                comment = ''
+                await ctx.message.add_reaction("🔄")
+                if string and len(string) <= 450:
+                    string_reason = "".join(f"{reason} " for reason in string)
+                    reason = string_reason
+                    reason += f' | Masskicked by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                elif string and len(string) > 450:
+                    reason = f'Masskicked by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+                    comment = 'Reason too long.'
+                else:
+                    reason = f'Masskicked by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
+
+                if len(users) > 10:
+                    msg = await ctx.reply('This might take a while, please wait...', mention_author = False)
+                    wait = True
+
+                for user in users:
+                    try:
+                        valid_accounts.append(await self.client.fetch_user(user))
+                    except:
+                        invalid_accounts.append(user)
+
+                for guild_member in valid_accounts:
+                    if guild_member not in guild_members:
+                        not_in_guild.append(guild_member)
+                        valid_accounts.remove(guild_member)
+
+                for hierarchy_check in valid_accounts:
+                    if isinstance(hierarchy_check, discord.Member) and hierarchy_check.top_role >= ctx.author.top_role:
+                        forbidden_accounts.append(hierarchy_check.id)
+                        valid_accounts.remove(hierarchy_check)
+
+                for kicked in valid_accounts:
+                    try:
+                        await ctx.guild.kick(kicked, reason = reason)
+                        kick_check += 1
+                    except Forbidden:
+                        forbidden_accounts.append(kicked.id)
+                if kick_check != 0:
+                    embed_body += f'**Kicked {kick_check}/{len(users)} users.**\n'
+                    embed_body += '\n'
+
+                embed_body += f'**Reason:** {reason}\n'
+                embed_body += '\n'
+
+                if invalid_accounts:
+                    invalid_output = "".join(f"{invalid}\n" for invalid in invalid_accounts)
+                    embed_body += f"Failed to kick [{len(invalid_accounts)}] because of not valid user ID: ```\n{invalid_output}```\n"
+
+                if forbidden_accounts:
+                    forbidden_output = "".join(f"{forbidden}\n" for forbidden in forbidden_accounts)
+                    embed_body += f"Failed to kick [{len(forbidden_accounts)}] because of role hierarchy (either you or the bot): ```\n{forbidden_output}```"
+
+                if not_in_guild:
+                    not_in_guild_output = "".join(f"{not_member}\n" for not_member in not_in_guild)
+                    embed_body += f"Failed to kick [{len(not_in_guild)}] because user is not a member of the server: ```\n{not_in_guild_output}```"
+
+                if comment:
+                    embed_body += f'\n**Note**: {comment}'
+                em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+                await ctx.message.remove_reaction('🔄', self.client.user)
+                if wait:
+                    await msg.edit(content = None, embed = em, allowed_mentions = discord.AllowedMentions.none())
+                else:
+                    await ctx.reply(embed = em, mention_author = False)
+            else:
+                await ctx.reply('Please provide userID(s) and reason (optional) or file to kick.')
+        else:
+            await ctx.reply('Please provide userID(s) and reason (optional) or file to kick.')
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -45,13 +267,13 @@ class Moderation(commands.Cog):
                 
                 embed_body = f'**Banned** {member.mention} ({member.id})\n'
                 embed_body += '\n'
-                embed_body += f'**For reason:** {reason}\n'
+                embed_body += f'**Reason:** {reason}\n'
                 if comment:
                     embed_body += f'**Note**: {comment}'
                 em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-                await msg.edit(content=None, embed = em)
+                await msg.edit(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
         except Forbidden:
-            await msg.edit("Can't ban user with equal or higher role.", allowed_mentions = discord.AllowedMentions.none())
+            await msg.edit("Can't ban user with equal or higher role.")
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -72,7 +294,7 @@ class Moderation(commands.Cog):
             await ctx.guild.unban(member, reason = reason)
             embed_body = f'**Unbanned** {member.mention} ({member.id})\n'
             embed_body += '\n'
-            embed_body += f'**For reason:** {reason}\n'
+            embed_body += f'**Reason:** {reason}\n'
             if comment:
                 embed_body += f'**Note**: {comment}'
             em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
@@ -190,7 +412,7 @@ class Moderation(commands.Cog):
                     embed_body += f'**Banned {ban_check}/{len(users)} users.**\n'
                     embed_body += '\n'
 
-                embed_body += f'**For reason:** {reason}\n'
+                embed_body += f'**Reason:** {reason}\n'
                 embed_body += '\n'
 
                 if invalid_accounts:
@@ -216,75 +438,6 @@ class Moderation(commands.Cog):
                 await ctx.reply('Please provide userID(s) and reason (optional) or file to ban.')
         else:
             await ctx.reply('Please provide userID(s) and reason (optional) or file to ban.')
-
-    @commands.command()
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    @commands.has_permissions(kick_members = True)
-    @commands.bot_has_permissions(kick_members = True)
-    async def prune(self, ctx, arg = None):
-        members = ctx.guild.members
-        to_be_kicked = []
-        for member in members:
-            if not arg:
-                if not member.avatar and len(member.roles) == 1:
-                    to_be_kicked.append(member)
-                    reason = 'Kicked due to using default avatar and has no roles.'
-            elif arg.lower() == "noavatar":
-                if not member.avatar:
-                    to_be_kicked.append(member)
-                    reason = 'Kicked due to using default avatar.'
-            elif arg.lower() == "norole":
-                if len(member.roles) == 1:
-                    to_be_kicked.append(member)
-                    reason = 'Kicked due to having no roles.'
-        if len(to_be_kicked) != 0:
-            if not arg:
-                msg_body = f'Users with no role and default avatar to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
-            elif arg.lower() == 'norole':
-                msg_body = f'Users with no role to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
-            elif arg.lower() == 'noavatar':
-                msg_body = f'Users with default avatar to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
-            msg = await ctx.reply(msg_body)
-            await msg.add_reaction("✅")
-            await msg.add_reaction("❌")
-            await msg.add_reaction("🛑")
-            valid_reactions = ['✅', '❌', '🛑']
-            yas = '✅'
-            nay = '❌'
-            cancel = '🛑'
-            def check(reaction, user):
-                return user == ctx.author and str(reaction.emoji) in valid_reactions
-            reaction, user = await self.client.wait_for('reaction_add', timeout=120.0, check=check)
-            if str(reaction.emoji) == yas:
-                await msg.clear_reactions()
-                output = ''
-                for kick in to_be_kicked:
-                    output += f'{kick.mention} - {str(kick.id)}\n'
-                em = discord.Embed(title='Users to be pruned:',description=output, colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
-                em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-                await ctx.send(embed = em)
-                msg1 = await ctx.reply('Proceed to prune? You have 3 minutes.')
-                await msg1.add_reaction("✅")
-                await msg1.add_reaction("❌")
-                reaction1, user1 = await self.client.wait_for('reaction_add', timeout=180.0, check=check)
-                if str(reaction1.emoji) == yas:
-                    processing_message = await ctx.reply('Pruning...', mention_author = False)
-                    for kick in to_be_kicked:
-                        await ctx.guild.kick(kick, reason = reason)
-                    await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
-                else:
-                    await ctx.send('Prune cancelled.')
-                await msg1.clear_reactions()
-            elif str(reaction.emoji) == nay:
-                processing_message = await ctx.reply('Pruning...', mention_author = False)
-                for kick in to_be_kicked:
-                    await ctx.guild.kick(kick, reason = reason)
-                await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
-            else:
-                await ctx.send('Prune cancelled.')
-            await msg.clear_reactions()
-        else:
-            await ctx.reply('No members to be pruned.', mention_author = False)
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -376,7 +529,7 @@ class Moderation(commands.Cog):
                 if unban_check != 0:
                     embed_body += f'**Unbanned {unban_check}/{len(users)} users.**\n'
                     embed_body += '\n'
-                    embed_body += f'**For reason:** {reason}\n'
+                    embed_body += f'**Reason:** {reason}\n'
                     embed_body += '\n'
 
                     if not_banned:
@@ -402,15 +555,117 @@ class Moderation(commands.Cog):
         else:
             await ctx.reply('Please provide userID(s) and reason (optional) or file to unban.')
 
-            
+    @commands.command()
+    @commands.cooldown(1, 2, commands.BucketType.user)
+    @commands.has_permissions(kick_members = True)
+    @commands.bot_has_permissions(kick_members = True)
+    async def prune(self, ctx, arg = None):
+        members = ctx.guild.members
+        to_be_kicked = []
+        for member in members:
+            if not arg:
+                if not member.avatar and len(member.roles) == 1:
+                    to_be_kicked.append(member)
+                    reason = 'Kicked due to using default avatar and has no roles.'
+            elif arg.lower() == "noavatar":
+                if not member.avatar:
+                    to_be_kicked.append(member)
+                    reason = 'Kicked due to using default avatar.'
+            elif arg.lower() == "norole":
+                if len(member.roles) == 1:
+                    to_be_kicked.append(member)
+                    reason = 'Kicked due to having no roles.'
+        if len(to_be_kicked) != 0:
+            if not arg:
+                msg_body = f'Users with no role and default avatar to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
+            elif arg.lower() == 'norole':
+                msg_body = f'Users with no role to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
+            elif arg.lower() == 'noavatar':
+                msg_body = f'Users with default avatar to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
+            msg = await ctx.reply(msg_body)
+            await msg.add_reaction("✅")
+            await msg.add_reaction("❌")
+            await msg.add_reaction("🛑")
+            valid_reactions = ['✅', '❌', '🛑']
+            yas = '✅'
+            nay = '❌'
+            cancel = '🛑'
+            def check(reaction, user):
+                return user == ctx.author and str(reaction.emoji) in valid_reactions
+            reaction, user = await self.client.wait_for('reaction_add', timeout=120.0, check=check)
+            if str(reaction.emoji) == yas:
+                await msg.clear_reactions()
+                output = ''
+                for kick in to_be_kicked:
+                    output += f'{kick.mention} - {str(kick.id)}\n'
+                em = discord.Embed(title='Users to be pruned:',description=output, colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
+                em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+                await ctx.send(embed = em)
+                msg1 = await ctx.reply('Proceed to prune? You have 3 minutes.')
+                await msg1.add_reaction("✅")
+                await msg1.add_reaction("❌")
+                reaction1, user1 = await self.client.wait_for('reaction_add', timeout=180.0, check=check)
+                if str(reaction1.emoji) == yas:
+                    processing_message = await ctx.reply('Pruning...', mention_author = False)
+                    for kick in to_be_kicked:
+                        await ctx.guild.kick(kick, reason = reason)
+                    await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
+                else:
+                    await ctx.send('Prune cancelled.')
+                await msg1.clear_reactions()
+            elif str(reaction.emoji) == nay:
+                processing_message = await ctx.reply('Pruning...', mention_author = False)
+                for kick in to_be_kicked:
+                    await ctx.guild.kick(kick, reason = reason)
+                await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
+            else:
+                await ctx.send('Prune cancelled.')
+            await msg.clear_reactions()
+        else:
+            await ctx.reply('No members to be pruned.', mention_author = False)
+
     # Error-handling section
+
+    @timeout.error
+    async def timeout_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply('Please provide userID and reason to timeout (optional).')
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.reply("I don't have `Timeout Members` permission.")
+        elif isinstance(error, commands.BadUnionArgument):
+            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
+
+    @untimeout.error
+    async def untimeout_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply('Please provide userID and reason to timeout (optional).')
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.reply("I don't have `Timeout Members` permission.")
+        elif isinstance(error, commands.BadUnionArgument):
+            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
+
+    @kick.error
+    async def kick_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply('Please provide userID and reason to kick (optional).')
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.reply("I don't have `Kick Members` permission.")
+        elif isinstance(error, commands.BadUnionArgument):
+            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
+
+    @masskick.error
+    async def masskick_error(self, ctx, error):
+        if isinstance(error, commands.BotMissingPermissions):
+            await ctx.reply("I don't have `Kick Members` permission.")
+        elif isinstance(error, commands.CommandInvokeError) and 'TimeoutError' in str(error):
+            await ctx.reply('You ran out of time.')
 
     @ban.error
     async def ban_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply('Please provide userID and reason to ban (optional).')
         elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply('Missing `Ban Members` permission.')
+            await ctx.reply("I don't have `Ban Members` permission.")
         elif isinstance(error, commands.BadUnionArgument):
             await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
 
@@ -419,26 +674,26 @@ class Moderation(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply('Please provide userID and reason to unban.')
         elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply('Missing `Ban Members` permission.')
+            await ctx.reply("I don't have `Ban Members` permission.")
         elif isinstance(error, commands.BadUnionArgument):
             await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
 
     @massban.error
     async def massban_error(self, ctx, error):
         if isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply('Missing `Ban Members` permission.')
+            await ctx.reply("I don't have `Ban Members` permission.")
         elif isinstance(error, commands.CommandInvokeError) and 'TimeoutError' in str(error):
             await ctx.reply('You ran out of time.')
 
     @massunban.error
     async def massunban_error(self, ctx, error):
         if isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply('Missing `Ban Members` permission.')
+            await ctx.reply("I don't have `Ban Members` permission.")
 
     @prune.error
     async def prune_error(self, ctx, error):
         if isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply('Missing `Kick Members` permission.')
+            await ctx.reply("Missing `Kick Members` permission.")
         elif isinstance(error, commands.CommandInvokeError) and 'TimeoutError' in str(error):
             await ctx.reply('You ran out of time.')
 
