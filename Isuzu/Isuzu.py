@@ -245,13 +245,11 @@ def main():
     @client.event
     async def on_guild_join(guild):
         collection = loadsettings()
-        default_assigned = {"_id":guild.id, "prefix": default_prefix, "minage": {"days":0}, "filtering": False}
-        collection.insert_one(default_assigned)
-
-    @client.event
-    async def on_guild_remove(guild):
-        collection = loadsettings()
-        collection.delete_one({"_id":guild.id})
+        data = collection.find_one({"_id": guild.id})
+        if not data:
+            default_assigned = {"_id":guild.id, "prefix": default_prefix, "minage": {"days":0}, "filtering": False}
+            collection.insert_one(default_assigned)
+        else: return
 
     @client.event
     async def on_thread_join(thread):
@@ -410,7 +408,11 @@ def main():
                 em.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)
                 em1.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)
             if message.content or not str(file_contained.content_type).startswith("image"):
-                em.set_thumbnail(url = message.author.display_avatar)
+                if message.author.avatar:
+                    url = message.author.avatar
+                else:
+                    url = message.author.display_avatar
+                em.set_thumbnail(url = url)
             em.set_footer(text = f"Author ID: {message.author.id} | Message ID {message.id}")
             em1.set_footer(text = f"Author ID: {message.author.id} | Message ID {message.id}")
 
@@ -487,7 +489,11 @@ def main():
                 em.set_author(name = f'{before.author.name}#{before.author.discriminator}  ({before.author.nick})', icon_url = before.author.display_avatar)
             else:
                 em.set_author(name = f'{before.author.name}#{before.author.discriminator}', icon_url = before.author.display_avatar)
-            em.set_thumbnail(url = before.author.display_avatar)
+            if before.author.avatar:
+                 url = before.author.avatar
+            else:
+                url = before.author.display_avatar
+            em.set_thumbnail(url = url)
             em.set_footer(text = f"User ID: {after.author.id}", icon_url = after.guild.icon)
 
             if before.attachments and not before.stickers:
