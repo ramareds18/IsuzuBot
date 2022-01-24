@@ -118,12 +118,16 @@ class Help(commands.Cog):
         command_addition += "`minage channel` to set a channel where bot will log when do any minage actions.\n"
         command_addition += "`minage settings` to see the current settings of minage module of the server."
         em.add_field(name = 'Description', value = command_addition, inline = False)
+        dm_options = "`{minage}` server minimum Account Age - `Ex: 30 Days`\n"
+        dm_options += "`{rejoindate}` built-in discord display for date the user can try to rejoin - `Ex:` <t:1645586955:F>\n"
+        dm_options += "`{rejoincount}` built-in discord display for time left until the user can try to rejoin - `Ex:` <t:1645586955:R>"
+        em.add_field(name = 'Variables you can use in minage message', value = dm_options, inline = False)
         command_usage = "minage <days>\n"
-        command_usage += "minage message <your message> (you can also put '{minage}')\n"
+        command_usage += "minage message <your message>\n"
         command_usage += "minage channel <logchannel>\n"
         command_usage += "minage settings"
         example = "minage 30\n"
-        example += "minage message Thank you for joining but your account is less than {minage}\n"
+        example += "minage message Thank you for joining but your account is less than {minage}. You can try joining the server again on {rejoindate} or {rejoincount}\n"
         example += "minage channel 918340003086614578\n"
         em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
