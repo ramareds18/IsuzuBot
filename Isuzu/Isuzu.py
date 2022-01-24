@@ -7,6 +7,7 @@ import pendulum as pen
 from pymongo import MongoClient
 from nextcord.ext import commands
 from dotenv import load_dotenv
+from pendulum import datetime as dt
 
 load_dotenv()
 
@@ -134,7 +135,10 @@ def check_ignored_role_nd(context, collection):
 # Minage functions
 
 def check_minage_msg(context, collection, min_age):
-    default_message = f"You have been kicked from {context.guild.name} due to your account age being less than {min_age} day(s). Please feel free to attempt to rejoin after your account has had some time to mature."
+    seconds = min_age*86400
+    minage_end = pen.now('UTC').add(seconds = seconds)
+    epoch = round((minage_end - dt(1970,1,1)).total_seconds())
+    default_message = f"You have been kicked from **{context.guild.name}** due to your account age being less than **{min_age}** day(s). Please feel free to attempt to rejoin on <t:{epoch}:F> or <t:{epoch}:R>."
     minage_msg = collection.find({"minage.message": {"$exists": True, "$ne": None}})
     found = False
     if collection.count_documents({}) == collection.count_documents({"minage.message": {"$exists": False}}):
@@ -146,8 +150,25 @@ def check_minage_msg(context, collection, min_age):
                 break
         if found:
             msg_var = msg["minage"]["message"]
-            if '{minage}' in msg["minage"]["message"]:
-                converted_minage_message = msg_var.replace('{minage}', str(min_age))
+            if '{minage}' in msg_var:
+                converted1 = msg_var.replace('{minage}', f'**{str(min_age)}**')
+                converted_minage_message = converted1
+                if '{rejoincount}' in converted1:
+                    converted2 = converted1.replace('{rejoincount}', f'<t:{epoch}:R>')
+                    converted_minage_message = converted2
+                    if '{rejoindate}' in converted2:
+                        converted_minage_message = converted2.replace('{rejoindate}', f'<t:{epoch}:F>')
+                elif '{rejoindate}' in msg_var:
+                    converted_minage_message = converted1.replace('{rejoindate}', f'<t:{epoch}:F>')
+                return converted_minage_message
+            elif '{rejoincount}' in msg_var:
+                converted1 = msg_var.replace('{rejoincount}', f'<t:{epoch}:R>')
+                converted_minage_message = converted1
+                if '{rejoindate}' in converted1:
+                    converted_minage_message = converted1.replace('{rejoindate}', f'<t:{epoch}:F>')
+                return converted_minage_message
+            elif '{rejoindate}' in msg_var:
+                converted_minage_message = msg_var.replace('{rejoindate}', f'<t:{epoch}:F>')
                 return converted_minage_message
             else:
                 return msg_var
@@ -523,8 +544,59 @@ def main():
         channel = check_minage_channel(member, collection)
         if channel:
             log_channel = client.get_channel(channel)
-        
-        reason = f"Account's age ({round(age//86400)} days) is less than the set requirement (>{min_age} days)."
+
+
+        days = 0
+        hours = 0
+        minutes = 0
+        seconds = 0
+        if age > 86400:
+            days = round(age//86400)
+            days_mod = round(age%86400)
+            if days_mod > 0:
+                hours = round(days_mod//3600)
+                hours_mod = round(days_mod%3600)
+                if hours_mod > 0:
+                    minutes = round(hours_mod//60)
+                    seconds = round(hours_mod%60)
+
+        elif age > 3600:
+            hours = round(age//3600)
+            hours_mod = round(age%3600)
+            if hours_mod > 0:
+                minutes = round(hours_mod//60)
+                seconds = round(hours_mod%60)
+                
+        elif age > 60:
+            minutes = round(age//60)
+            seconds = round(age%60)
+
+        else:
+            seconds = round(age, 2)
+
+        d = False
+        h = False
+        m = False
+        kicked_age = ''
+        if days > 0:
+            kicked_age += f'{days} day(s)'
+            d = True
+        if hours > 0:
+            if d:
+                kicked_age += ' '
+            kicked_age += f'{hours} hour(s)'
+            h = True
+        if minutes > 0:
+            if d or h:
+                kicked_age += ' '
+            kicked_age += f'{minutes} minute(s)'
+            m = True
+        if seconds > 0:
+            if d or h or m:
+                kicked_age += ' '
+            kicked_age += f'{seconds} second(s)'
+
+        reason = f"Account's age ({kicked_age}) is less than the set requirement (>{min_age} day(s))."
         if member.guild.me.guild_permissions.kick_members:
             if age < minage_seconds:
                 sent = False
