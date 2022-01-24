@@ -4,6 +4,7 @@ import re
 import asyncio
 import cogs.Management as mg
 import pendulum as pen
+from math import ceil
 from pymongo import MongoClient
 from nextcord.ext import commands
 from dotenv import load_dotenv
@@ -136,8 +137,9 @@ def check_ignored_role_nd(context, collection):
 
 def check_minage_msg(context, collection, min_age):
     seconds = min_age*86400
-    minage_end = pen.now('UTC').add(seconds = seconds)
-    epoch = round((minage_end - dt(1970,1,1)).total_seconds())
+    age = (pen.now() - context.created_at).total_seconds()
+    minage_end = ceil(seconds - age)
+    epoch = ceil((pen.now().add(seconds=minage_end) - dt(1970, 1, 1)).total_seconds())
     default_message = f"You have been kicked from **{context.guild.name}** due to your account age being less than **{min_age}** day(s). Please feel free to attempt to rejoin on <t:{epoch}:F> or <t:{epoch}:R>."
     minage_msg = collection.find({"minage.message": {"$exists": True, "$ne": None}})
     found = False
