@@ -603,7 +603,7 @@ def main():
                 kicked_age += ' '
             kicked_age += f'{seconds} second(s)'
 
-        reason = f"Account's age ({kicked_age}) is less than the set requirement (>{min_age} day(s))."
+        reason = f"Account's age ({`kicked_age`}) is less than the set requirement (>{min_age} day(s))."
         if member.guild.me.guild_permissions.kick_members:
             if age < minage_seconds:
                 sent = False
