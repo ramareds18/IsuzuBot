@@ -156,6 +156,23 @@ def streamlink_func(ctx, arg, streamlink_role, collection):
     else:
         return "Invalid argument. Please run `help streamlink` to see full information."
 
+def management_check_minage_msg(context, collection, min_age):
+    default_message = f"You have been kicked from **{context.guild.name}** due to your account age being less than **{min_age}** day(s). Please feel free to attempt to rejoin on <t:unixtimetamp:F> or <t:unixtimetamp:R>."
+    minage_msg = collection.find({"minage.message": {"$exists": True, "$ne": None}})
+    found = False
+    if collection.count_documents({}) == collection.count_documents({"minage.message": {"$exists": False}}):
+        return default_message
+    else:
+        for msg in minage_msg:
+            if msg["_id"] == context.guild.id:
+                found = True
+                break
+        if found:
+            msg_var = msg["minage"]["message"]
+            return msg_var
+        else:
+            return default_message    
+    
 class Management(commands.Cog):
 
     def __init__(self, client):
@@ -309,7 +326,7 @@ class Management(commands.Cog):
         collection = m.loadsettings()
         guild_settings = collection.find_one({"_id": ctx.guild.id})
         min_age = guild_settings['minage']['days']
-        chk_minage_msg = m.check_minage_msg(ctx, collection, min_age)
+        chk_minage_msg = management_check_minage_msg(ctx, collection, min_age)
         chk_minage_ch = m.check_minage_channel(ctx, collection)
         embed_body = f"Minage: `{min_age} day(s)`\n"
         if chk_minage_ch:
