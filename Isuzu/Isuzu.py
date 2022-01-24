@@ -334,7 +334,7 @@ def main():
                     await user.send(f'{message.author.name}#{message.author.discriminator} posted a blacklisted clipper video in {message.guild.name}.\n{response.jump_url}')
                 except Exception as e:
                     print(e)
-
+            else: return         
 
     @client.listen()
     async def on_message(message):
