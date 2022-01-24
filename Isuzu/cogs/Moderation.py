@@ -47,22 +47,19 @@ class Moderation(commands.Cog):
                         reason += f' | Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
                     elif reason and len(reason) > 450:
                         reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                        reason_to_send = "No reason given."
+                        reason_to_send = "No reason given"
                         comment = 'Reason too long.'
                     else:
                         reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                        reason_to_send = "No reason given."                
+                        reason_to_send = "No reason given"                
                     try:                      
                         timeout_end = pen.now('UTC').add(seconds = seconds)
                         await member.edit(timeout=timeout_end, reason=reason)
                         epoch = round((timeout_end - dt(1970,1,1)).total_seconds())
-                        try:
-                            await member.send(f"You have been timed out until <t:{epoch}:F> in `{ctx.guild.name}` for `{reason_to_send}`")
-                            sent = True
-                        except:
-                            sent = False
                         output = f"{member.mention} has been timed out for {time}. Their timeout will be over on <t:{epoch}:F>."
-                        if not sent:
+                        try:
+                            await member.send(f"You have been timed out until <t:{epoch}:F> in `{ctx.guild.name}` for `{reason_to_send}`.")
+                        except:
                             output += "\nFailed to DM the user due to their privacy settings."
                         if comment:
                             output += f"\n{comment}"
@@ -86,20 +83,17 @@ class Moderation(commands.Cog):
                 reason += f' | Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
             elif reason and len(reason) > 450:
                 reason = f'Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                reason_to_send = "No reason given."
+                reason_to_send = "No reason given"
                 comment = 'Reason too long.'
             else:
                 reason = f'Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                reason_to_send = "No reason given."
+                reason_to_send = "No reason given"
             try:
                 await member.edit(timeout=None, reason=reason)
-                try:
-                    await member.send(f"Your timeout in `{ctx.guild.name}` has been removed for `{reason_to_send}`")
-                    sent = True
-                except:
-                    sent = False
                 output = f"{member.mention}'s timed out has been removed."
-                if not sent:
+                try:
+                    await member.send(f"Your timeout in `{ctx.guild.name}` has been removed for `{reason_to_send}`.")
+                except:
                     output += "\nFailed to DM the user due to their privacy settings."
                 if comment:
                     output += f"\n{comment}"
