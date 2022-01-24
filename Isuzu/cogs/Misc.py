@@ -1,5 +1,6 @@
 import os
 import typing
+import pendulum as pen
 import nextcord as discord
 from nextcord.ext import commands
 from nextcord.errors import Forbidden
@@ -235,7 +236,16 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        await ctx.reply(f'Pong! `{round(self.client.latency * 1000)}ms`', mention_author = False)
+        await ctx.reply(f'🏓 Pong! `{round(self.client.latency * 1000)}ms`', mention_author = False)
+
+    @commands.command()
+    @commands.is_owner()
+    async def dm(self, ctx, user: typing.Union[discord.Member, discord.User], *, msg):
+        try:
+            await user.send(msg)
+            await ctx.reply(f"Successfully DMed {user.name}.", mention_author = False)
+        except:
+            await ctx.reply("Failed sending message to user. Either said user turned off DM or the bot and user don't share any mutual server.", mention_author = False)
 
     @commands.command(aliases = ['stealsticker', 'ss'])
     @commands.has_permissions(manage_messages = True)
@@ -243,9 +253,9 @@ class Misc(commands.Cog):
         if ctx.message.stickers:
             for sticker in ctx.message.stickers:
                 s = sticker
-            embed_body = f"Sticker name: {s.name}\n"
-            embed_body += f"Sticker ID: {s.id}\n"
-            em = discord.Embed(title = 'Sticker Information', description = embed_body, color = 0xcaa686)
+            embed_body = f"**Sticker name:** {s.name}\n"
+            embed_body += f"**Sticker ID:** {s.id}\n"
+            em = discord.Embed(title = 'Sticker Information', description = embed_body, color = 0xcaa686, timestamp = pen.now('Asia/Jakarta'))
             em.set_image(url = s.url)
             await ctx.reply(embed = em, mention_author = False)
         else:
