@@ -5,12 +5,6 @@ from nextcord.ext import commands
 from nextcord.errors import Forbidden
 from pendulum import datetime as dt
 
-def invalidtz():
-    return 'Timezone not supported yet. Below are the supported timezones:\n```\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
-
-def invalidargstz():
-    return 'Missing argument(s). Please provide `timezone` and `date` in that order. Below are the supported timezones:\n```\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
-
 def invalidargssch():
     return 'Missing argument(s). Below are the supported formats and timezones:\n```[timezone] [talent] day/month/year hour:minute\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
 
@@ -49,40 +43,6 @@ class Utility(commands.Cog):
     async def on_ready(self):
         print('Connected to bot: {}'.format(self.client.user.name))
         print('Bot ID: {}'.format(self.client.user.id))
-
-    @commands.command(aliases=['u','gu'])
-    @commands.bot_has_permissions(send_messages = True)
-    @commands.has_permissions(manage_messages = True)
-    @commands.cooldown(1, 3, commands.BucketType.user)
-    async def when(self, ctx, timezone, *, time):
-        UTC = "UTC"
-        msg = ""
-        timezone, tzcheck = timezonecheck(timezone)
-        
-        try:
-            if tzcheck:
-                now = pen.now(UTC)
-                target = pen.parse(time, strict = False, tz = timezone, dayfirst = True).in_tz(UTC)
-                epoch = round((target - dt(1970,1,1)).total_seconds())
-                c = (target - now)
-                hour = c.total_seconds() // 3600
-                minutes = (c.total_seconds() % 3600) / 60
-                if(c.total_seconds() >= 0):
-                    msg += "Time left: "
-                    if(hour <= 0):
-                        msg += f"{str(round(minutes))}m"
-                    else:
-                        msg += f"{str(round(hour))}h{str(round(minutes))}m"
-                msg += "\nUnix Timestamp:"
-                msg += f'\n`<t:{epoch}:F>` <t:{epoch}:F>'
-                msg += f'\n`<t:{epoch}:R>` <t:{epoch}:R>'
-                await ctx.reply(msg, mention_author = False)
-            elif len(timezone) <= 4:
-                await ctx.reply(invalidtz(), mention_author = False)
-            else:
-                await ctx.reply('Invalid data input. Run `help when` for more information.', mention_author = False)
-        except:
-            await ctx.send('Invalid data input. Run `help when` for more information.')
 
     @commands.command(aliases=['cv'])
     @commands.bot_has_permissions(send_messages = True)
@@ -230,11 +190,6 @@ class Utility(commands.Cog):
     async def cv_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply('Please provide vera logs channel.', mention_author = False)
-
-    @when.error
-    async def when_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply(invalidargstz(), mention_author = False)
 
     @schedule.error
     async def schedule_error(self, ctx, error):
