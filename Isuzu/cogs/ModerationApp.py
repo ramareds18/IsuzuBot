@@ -40,42 +40,45 @@ class ModerationSlash(commands.Cog):
         )
     ):
         if interaction.user.guild_permissions.moderate_members and interaction.user.guild.me.guild_permissions.moderate_members:
-            if member.top_role >= interaction.user.top_role:
-                await interaction.response.send_message("You can't timeout that user.")
-            else:
-                seconds = Duration(time).to_seconds()
-                if seconds > 2419200:
-                    await interaction.response.send_message("Duration must not exceed 28 days.", ephemeral=True)
-                elif int(seconds) == 0:
-                    await interaction.response.send_message("Duration could not be recognized.", ephemeral=True)
+            if isinstance(member, discord.User):
+                await interaction.response.send_message("User is not a member of this server.", ephemeral=True)
+            else:            
+                if member.top_role >= interaction.user.top_role:
+                    await interaction.response.send_message("You can't timeout that user.")
                 else:
-                    try:
-                        comment = ''
-                        if reason and len(reason) <= 450:
-                            reason_to_send = reason
-                            reason += f' | Timed out by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-                        elif reason and len(reason) > 450:
-                            reason = f'Timed out by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-                            reason_to_send = "No reason given"
-                            comment = 'Reason too long.'
-                        else:
-                            reason = f'Timed out by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-                            reason_to_send = "No reason given"
-                            
-                        timeout_end = pen.now('UTC').add(seconds = seconds)
-                        await member.edit(timeout=timeout_end, reason=reason)
-                        output = f"{member.mention} has been timed out for {time}."
-                        epoch = round((timeout_end - dt(1970,1,1)).total_seconds())
-                        if dm == 'True' or not dm:
-                            try:
-                                await member.send(f"You have been timed out until <t:{epoch}:F> in `{interaction.guild.name}` for `{reason_to_send}`.\nYou can talk in the server again <t:{epoch}:R>.")
-                            except:
-                                output += " Failed to DM the user due to their privacy settings."
-                        if comment:
-                            output += f"\n{comment}"
-                        await interaction.response.send_message(output)
-                    except Forbidden:
-                        await interaction.response.send_message("I can't timeout that user.")
+                    seconds = Duration(time).to_seconds()
+                    if seconds > 2419200:
+                        await interaction.response.send_message("Duration must not exceed 28 days.", ephemeral=True)
+                    elif int(seconds) == 0:
+                        await interaction.response.send_message("Duration could not be recognized.", ephemeral=True)
+                    else:
+                        try:
+                            comment = ''
+                            if reason and len(reason) <= 450:
+                                reason_to_send = reason
+                                reason += f' | Timed out by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                            elif reason and len(reason) > 450:
+                                reason = f'Timed out by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                                reason_to_send = "No reason given"
+                                comment = 'Reason too long.'
+                            else:
+                                reason = f'Timed out by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                                reason_to_send = "No reason given"
+
+                            timeout_end = pen.now('UTC').add(seconds = seconds)
+                            await member.edit(timeout=timeout_end, reason=reason)
+                            output = f"{member.mention} has been timed out for {time}."
+                            epoch = round((timeout_end - dt(1970,1,1)).total_seconds())
+                            if dm == 'True' or not dm:
+                                try:
+                                    await member.send(f"You have been timed out until <t:{epoch}:F> in `{interaction.guild.name}` for `{reason_to_send}`.\nYou can talk in the server again <t:{epoch}:R>.")
+                                except:
+                                    output += " Failed to DM the user due to their privacy settings."
+                            if comment:
+                                output += f"\n{comment}"
+                            await interaction.response.send_message(output)
+                        except Forbidden:
+                            await interaction.response.send_message("I can't timeout that user.")
         elif not interaction.user.guild.me.guild_permissions.moderate_members:
             await interaction.response.send_message("I don't have `Timeout Members` permission.")
         else:
@@ -102,31 +105,34 @@ class ModerationSlash(commands.Cog):
         )
     ):
         if interaction.user.guild_permissions.moderate_members and interaction.user.guild.me.guild_permissions.moderate_members:
-            if member.top_role >= interaction.user.top_role:
-                await interaction.response.send_message("You can't remove timeout from that user.")
-            else:            
-                try:
-                    comment = ''
-                    if reason and len(reason) <= 450:
-                        reason_to_send = reason
-                        reason += f' | Timed out removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-                    elif reason and len(reason) > 450:
-                        reason = f'Timed out removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-                        reason_to_send = "No reason given"
-                        comment = 'Reason too long.'
-                    else:
-                        reason = f'Timed out removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-                        reason_to_send = "No reason given"
-                    await member.edit(timeout=None, reason=reason)
-                    output = f"{member.mention}'s timed out has been removed."
-                    if dm == 'True' or not dm:
-                        try:
-                            await member.send(f"Your timeout in `{interaction.guild.name}` has been removed for `{reason_to_send}`.")
-                        except:
-                            output += " Failed to DM the user due to their privacy settings."
-                    await interaction.response.send_message(output, mention_author = False)
-                except Forbidden:
-                    await interaction.response.send_message("I can't remove timeout from that user.")
+            if isinstance(member, discord.User):
+                await interaction.response.send_message("User is not a member of this server.", ephemeral=True)
+            else:        
+                if member.top_role >= interaction.user.top_role:
+                    await interaction.response.send_message("You can't remove timeout from that user.")
+                else:            
+                    try:
+                        comment = ''
+                        if reason and len(reason) <= 450:
+                            reason_to_send = reason
+                            reason += f' | Timed out removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                        elif reason and len(reason) > 450:
+                            reason = f'Timed out removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                            reason_to_send = "No reason given"
+                            comment = 'Reason too long.'
+                        else:
+                            reason = f'Timed out removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                            reason_to_send = "No reason given"
+                        await member.edit(timeout=None, reason=reason)
+                        output = f"{member.mention}'s timed out has been removed."
+                        if dm == 'True' or not dm:
+                            try:
+                                await member.send(f"Your timeout in `{interaction.guild.name}` has been removed for `{reason_to_send}`.")
+                            except:
+                                output += " Failed to DM the user due to their privacy settings."
+                        await interaction.response.send_message(output, mention_author = False)
+                    except Forbidden:
+                        await interaction.response.send_message("I can't remove timeout from that user.")
         elif not interaction.user.guild.me.guild_permissions.moderate_members:
             await interaction.response.send_message("I don't have `Timeout Members` permission.")
         else:
