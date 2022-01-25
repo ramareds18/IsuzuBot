@@ -328,11 +328,11 @@ class Management(commands.Cog):
         min_age = guild_settings['minage']['days']
         chk_minage_msg = management_check_minage_msg(ctx, collection, min_age)
         chk_minage_ch = m.check_minage_channel(ctx, collection)
-        embed_body = f"Minage: `{min_age} day(s)`\n"
+        embed_body = f"**Minage:** `{min_age} day(s)`\n"
         if chk_minage_ch:
             log_channel = self.client.get_channel(chk_minage_ch)
-            embed_body += f'Minage logging channel: {log_channel.mention}\n'
-        embed_body += f"Minage message:\n```\n{chk_minage_msg}```"
+            embed_body += f'**Minage logging channel:** {log_channel.mention}\n'
+        embed_body += f"**Minage message:**\n```\n{chk_minage_msg}```"
         em = discord.Embed(title = 'Current minage settings for this server', description = embed_body, colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         await ctx.reply(embed = em, mention_author = False)
