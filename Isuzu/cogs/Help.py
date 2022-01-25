@@ -58,7 +58,7 @@ class Help(commands.Cog):
     async def when(self, ctx):
         em = discord.Embed(title = '**when**', description = "Gets unix timestamp and calculates how much time until the given date.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Supported Timezones', value = '• UTC or GMT\n• WIB\n• JST\n• MSK\n• EDT or EST or ET\n• PDT or PST or PT', inline = False)
-        em.add_field(name = 'Usage and Examples', value = 'Now a slash command, type /when.\n**Time input examples:**\n2022/1/20 13:34\n2022/03/13 3am', inline = False)
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /when.\n**Time input examples:**\n2022/1/20 13:34\n2022/03/13 3am', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
