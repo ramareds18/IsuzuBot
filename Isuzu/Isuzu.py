@@ -153,7 +153,7 @@ def check_minage_msg(context, collection, min_age):
         if found:
             msg_var = msg["minage"]["message"]
             if '{minage}' in msg_var:
-                converted1 = msg_var.replace('{minage}', f'**{str(min_age)}**')
+                converted1 = msg_var.replace('{minage}', f'{str(min_age)}')
                 converted_minage_message = converted1
                 if '{rejoincount}' in converted1:
                     converted2 = converted1.replace('{rejoincount}', f'<t:{epoch}:R>')
