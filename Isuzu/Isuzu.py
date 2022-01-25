@@ -301,41 +301,44 @@ def main():
         found = False
         images = collection.find({"imageURL": {"$exists": True, "$ne": None}})
         embed = message.embeds[0] if message.embeds else None
-        if embed:
-            text = embed.to_dict()
-            for blacklisted in blacklistedID:
-                if blacklisted["_id"] in text["author"]["url"]:
-                    document = blacklisted
-                    em = discord.Embed(title = '**Content Filtering**', description = '**Video from blacklisted YT channel removed**', colour=0xff0000, timestamp = pen.now(WIB))
-                    em.add_field(name = 'Name', value = f"{text['author']['name']}")
-                    em.add_field(name = 'Reason for blacklist', value = blacklisted["reason"])
-                    em.add_field(name = 'Sources', value = blacklisted["sources"])
-                    if images:
-                        for image in images:
-                            if image["_id"] == document["_id"]:
-                                em.set_image(url = image["imageURL"])
-                                break
-                    if blacklisted["_id"] == "UCizN2tVLNcwP67bAHlVRg1Q":
-                        em.add_field(name = "Proof addition", value = "Picture below shows one of Iroha's clip description saying it's only their imagination.")
+        try:
+            if embed:
+                text = embed.to_dict()
+                for blacklisted in blacklistedID:
+                    if blacklisted["_id"] in text["author"]["url"]:
+                        document = blacklisted
+                        em = discord.Embed(title = '**Content Filtering**', description = '**Video from blacklisted YT channel removed**', colour=0xff0000, timestamp = pen.now(WIB))
+                        em.add_field(name = 'Name', value = f"{text['author']['name']}")
+                        em.add_field(name = 'Reason for blacklist', value = blacklisted["reason"])
+                        em.add_field(name = 'Sources', value = blacklisted["sources"])
+                        if images:
+                            for image in images:
+                                if image["_id"] == document["_id"]:
+                                    em.set_image(url = image["imageURL"])
+                                    break
+                        if blacklisted["_id"] == "UCizN2tVLNcwP67bAHlVRg1Q":
+                            em.add_field(name = "Proof addition", value = "Picture below shows one of Iroha's clip description saying it's only their imagination.")
 
-                    em.set_footer(text = f"{message.author.display_name} ({message.author.id})", icon_url = message.author.display_avatar)
-                    if message.channel.permissions_for(message.guild.me).send_messages:
-                        response = await message.reply(embed = em)
-                    else: return
-                    if message.guild.me.guild_permissions.manage_messages:
-                        await message.delete()
-                    else: return
-                    found = True
-                    break
+                        em.set_footer(text = f"{message.author.display_name} ({message.author.id})", icon_url = message.author.display_avatar)
+                        if message.channel.permissions_for(message.guild.me).send_messages:
+                            response = await message.reply(embed = em)
+                        else: return
+                        if message.guild.me.guild_permissions.manage_messages:
+                            await message.delete()
+                        else: return
+                        found = True
+                        break
 
-            if found and message.guild.id in ServersImod:
-                user = await client.fetch_user(myid)
-                try:
-                    await user.send(f'{message.author.name}#{message.author.discriminator} posted a blacklisted clipper video in {message.guild.name}.\n{response.jump_url}')
-                except Exception as e:
-                    print(e)
-            else: return         
-
+                if found and message.guild.id in ServersImod:
+                    user = await client.fetch_user(myid)
+                    try:
+                        await user.send(f'{message.author.name}#{message.author.discriminator} posted a blacklisted clipper video in {message.guild.name}.\n{response.jump_url}')
+                    except Exception as e:
+                        print(e)
+                else: return         
+            except:
+                return
+                
     @client.listen()
     async def on_message(message):
         x = re.search("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})", message.content)
