@@ -24,83 +24,6 @@ class Moderation(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(aliases = ['to'])
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.has_permissions(moderate_members = True)
-    @commands.bot_has_permissions(moderate_members = True)
-    async def timeout(self, ctx, member: typing.Union[discord.Member, discord.User], time: str = None, *, reason = None):
-        if isinstance(member, discord.User):
-            ctx.reply("User is not a member of the server.")
-        elif member.top_role >= ctx.author.top_role:
-            await ctx.reply("You can't timeout that user.")
-        else:
-            if time:
-                seconds = Duration(time).to_seconds()
-                if seconds > 2419200:
-                    await ctx.reply("Duration must not exceed 28 days.")
-                elif int(seconds) == 0:
-                    await ctx.reply("Duration could not be recognized.")
-                else:
-                    comment = ''
-                    if reason and len(reason) <= 450:
-                        reason_to_send = reason
-                        reason += f' | Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                    elif reason and len(reason) > 450:
-                        reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                        reason_to_send = "No reason given"
-                        comment = 'Reason too long.'
-                    else:
-                        reason = f'Timed out by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                        reason_to_send = "No reason given"                
-                    try:                      
-                        timeout_end = pen.now('UTC').add(seconds = seconds)
-                        await member.edit(timeout=timeout_end, reason=reason)
-                        epoch = round((timeout_end - dt(1970,1,1)).total_seconds())
-                        output = f"{member.mention} has been timed out for {time}. Their timeout will be over on <t:{epoch}:F>."
-                        try:
-                            await member.send(f"You have been timed out until <t:{epoch}:F> in `{ctx.guild.name}` for `{reason_to_send}`.")
-                        except:
-                            output += "\nFailed to DM the user due to their privacy settings."
-                        if comment:
-                            output += f"\n{comment}"
-                        await ctx.reply(output, mention_author = False)
-                    except Forbidden:
-                        await ctx.reply("I can't timeout that user.")
-            else:
-                await ctx.reply("Please input duration, minimum 1 second and maximum 28 days. Example\n```\ntimeout <userID> 2d3h2m3s <optional reason>```")
-
-    @commands.command(aliases = ['uto'])
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.has_permissions(moderate_members = True)
-    @commands.bot_has_permissions(moderate_members = True)
-    async def untimeout(self, ctx, member: typing.Union[discord.Member, discord.User], *, reason = None):
-        if isinstance(member, discord.User):
-            ctx.reply("User is not a member of the server.")
-        else:
-            comment = ''
-            if reason and len(reason) <= 450:
-                reason_to_send = reason
-                reason += f' | Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-            elif reason and len(reason) > 450:
-                reason = f'Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                reason_to_send = "No reason given"
-                comment = 'Reason too long.'
-            else:
-                reason = f'Timed out removed by {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})'
-                reason_to_send = "No reason given"
-            try:
-                await member.edit(timeout=None, reason=reason)
-                output = f"{member.mention}'s timed out has been removed."
-                try:
-                    await member.send(f"Your timeout in `{ctx.guild.name}` has been removed for `{reason_to_send}`.")
-                except:
-                    output += "\nFailed to DM the user due to their privacy settings."
-                if comment:
-                    output += f"\n{comment}"
-                await ctx.reply(output, mention_author = False)
-            except Forbidden:
-                await ctx.reply("I can't timeout that user.")
-
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.user)
     @commands.has_permissions(kick_members = True)
@@ -625,24 +548,6 @@ class Moderation(commands.Cog):
             await ctx.reply('No members to be pruned.', mention_author = False)
 
     # Error-handling section
-
-    @timeout.error
-    async def timeout_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply('Please provide userID and reason to timeout (optional).')
-        elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply("I don't have `Timeout Members` permission.")
-        elif isinstance(error, commands.BadUnionArgument):
-            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
-
-    @untimeout.error
-    async def untimeout_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply('Please provide userID and reason to timeout (optional).')
-        elif isinstance(error, commands.BotMissingPermissions):
-            await ctx.reply("I don't have `Timeout Members` permission.")
-        elif isinstance(error, commands.BadUnionArgument):
-            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.")
 
     @kick.error
     async def kick_error(self, ctx, error):
