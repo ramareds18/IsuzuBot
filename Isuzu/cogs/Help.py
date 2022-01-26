@@ -58,7 +58,7 @@ class Help(commands.Cog):
     async def when(self, ctx):
         em = discord.Embed(title = '**when**', description = "Gets unix timestamp and calculates how much time until the given date.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Supported Timezones', value = '• UTC or GMT\n• WIB\n• JST\n• MSK\n• EDT or EST or ET\n• PDT or PST or PT', inline = False)
-        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /when.\n**Time input examples:**\n2022/1/20 13:34\n2022/03/13 3am', inline = False)
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /when.\nTime input examples:\n```\n2022/1/20 13:34\n2022/03/13 3am```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -241,20 +241,20 @@ class Help(commands.Cog):
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
-
+        
     @help.command()
     async def timeout(self, ctx):
-        em = discord.Embed(title = '**timeout**', description = "Timeout a user for a set duration in the server. Reason is optional.\n**NOTE:** This will DM the user.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**timeout**', description = "Timeout a user for a set duration in the server. Reason is optional.\nYou can choose whether it will DM the user or not.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Duration options', value='• w - Week\n• d - Day\n• h - Hour\n• m - Minute\n• s - Second', inline = False)
-        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /timeout.\n**Duration examples:**\n```\n10d14h34m2s\n1h4s```', inline = False)
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /timeout.\nDuration examples:\n```\n10d14h34m2s\n1h4s```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
 
     @help.command()
     async def untimeout(self, ctx):
-        em = discord.Embed(title = '**timeout**', description = "Remove timeout from a user in the server. Reason is optional.\n**NOTE:** This will DM the user.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Usage and Examples', value = '`Slash command, type /untimeout.`', inline = False)
+        em = discord.Embed(title = '**timeout**', description = "Remove timeout from a user in the server. Reason is optional.\nYou can choose whether it will DM the user or not.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /untimeout.', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
