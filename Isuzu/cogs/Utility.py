@@ -89,6 +89,8 @@ class Utility(commands.Cog):
                         output = f"__**IRySchedule** :gem: for this week:__\n"
                     elif(talent.lower() == 'lui'):
                         output = f"__**Lui's** :wilted_rose: schedule for this week:__\n"
+                    elif(talent.lower() == 'gura'):
+                        output = f"__**Gura's** :trident: schedule for this week:__\n"                         
                     else:
                         output = f"__**{talent}'s** schedule for this week:__\n"
                 
