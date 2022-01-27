@@ -143,8 +143,10 @@ class Utility(commands.Cog):
                 em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
             field_body = ""
             if len(member.roles) > 1:
-                for role in [role for role in reversed(member.roles) if str(ctx.guild.id) not in str(role.mention)]:
-                    field_body += f"{role.mention} "
+                roles = [role for role in reversed(member.roles)]
+                for role in roles:
+                    if roles.index(role) == len(roles) - 1:
+                        field_body += f"{role.mention} "
                 em.add_field(name = f'ROLES [{len(member.roles) - 1}]:', value = field_body, inline = False)
         else:
             em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
