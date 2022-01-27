@@ -145,8 +145,8 @@ class Utility(commands.Cog):
             if len(member.roles) > 1:
                 roles = [role for role in reversed(member.roles)]
                 for role in roles:
-                    if roles.index(role) == len(roles) - 1:
-                        field_body += f"{role.mention} "
+                    if roles.index(role) == len(roles) - 1: break
+                    field_body += f"{role.mention} "
                 em.add_field(name = f'ROLES [{len(member.roles) - 1}]:', value = field_body, inline = False)
         else:
             em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
