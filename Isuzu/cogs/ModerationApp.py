@@ -67,16 +67,25 @@ class ModerationSlash(commands.Cog):
 
                             timeout_end = pen.now('UTC').add(seconds = seconds)
                             await member.edit(timeout=timeout_end, reason=reason)
-                            output = f"{member.mention} has been timed out for {time}."
+
                             epoch = round((timeout_end - dt(1970,1,1)).total_seconds())
+
+                            embed_body = f'**Timed out** {member.mention} ({member.id})\n'
+                            embed_body += '\n'
+                            embed_body += f'**Until** <t:{epoch}:F>\n'
+                            embed_body += '\n'
+                            embed_body += f'**Reason:** {reason}\n'
+                            if comment:
+                                embed_body += f'**Note**: {comment}'
+                            
                             if dm == 'True' or not dm:
                                 try:
                                     await member.send(f"You have been timed out until <t:{epoch}:F> in `{interaction.guild.name}` for `{reason_to_send}`.\nYou can talk in the server again <t:{epoch}:R>.")
                                 except:
-                                    output += " Failed to DM the user due to their privacy settings."
-                            if comment:
-                                output += f"\n{comment}"
-                            await interaction.response.send_message(output)
+                                    embed_body += "\n*Failed to DM the user due to their privacy settings.*"
+
+                            em = discord.Embed(title = '', description = embed_body, colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+                            await interaction.response.send_message(embed=em)
                         except Forbidden:
                             await interaction.response.send_message("I can't timeout that user.")
         elif not interaction.user.guild.me.guild_permissions.moderate_members:
@@ -124,13 +133,21 @@ class ModerationSlash(commands.Cog):
                             reason = f'Timed out removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
                             reason_to_send = "No reason given"
                         await member.edit(timeout=None, reason=reason)
-                        output = f"{member.mention}'s timed out has been removed."
+
+                        embed_body = f'**Removed timeout from** {member.mention} ({member.id})\n'
+                        embed_body += '\n'
+                        embed_body += f'**Reason:** {reason}\n'
+                        if comment:
+                            embed_body += f'**Note**: {comment}'
+
                         if dm == 'True' or not dm:
                             try:
                                 await member.send(f"Your timeout in `{interaction.guild.name}` has been removed for `{reason_to_send}`.")
                             except:
-                                output += " Failed to DM the user due to their privacy settings."
-                        await interaction.response.send_message(output, mention_author = False)
+                                embed_body += "\n*Failed to DM the user due to their privacy settings.*"
+
+                        em = discord.Embed(title = '', description = embed_body, colour=0x00ff10, timestamp = pen.now('Asia/Jakarta'))
+                        await interaction.response.send_message(embed=em)
                     except Forbidden:
                         await interaction.response.send_message("I can't remove timeout from that user.")
         elif not interaction.user.guild.me.guild_permissions.moderate_members:
