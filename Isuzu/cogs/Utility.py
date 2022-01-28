@@ -118,16 +118,11 @@ class Utility(commands.Cog):
         user = await self.client.fetch_user(member.id)
         ca = round((member.created_at - dt(1970,1,1)).total_seconds())
         if isinstance(member, discord.Member):
-            if str(member.status).upper() == "ONLINE": status = "<:online:909423512777814067> Online"
-            elif str(member.status).upper() == "IDLE": status = "<:idle:914882810119081995> Idle"
-            elif str(member.status).upper() == "DND": status = "<:dnd:909421553450639370> Do Not Disturb"
-            elif str(member.status).upper() == "OFFLINE": status = "<:offline:909423475792416798> Offline"
-            else: status = ""
             embed_body = f'{member.mention} - {member.id}\n'
-            if member.bot: embed_body += f'Bot | {status}\n'
+            if member.bot: embed_body += f'Bot\n'
             else:
-                if member.top_role.id == ctx.guild.id: embed_body += f'{status}\n'
-                else: embed_body += f'{member.top_role} | {status}\n'
+                if member.top_role.id != ctx.guild.id:
+                    embed_body += f'{member.top_role}\n'
             embed_body += f'**\nCreated:** <t:{ca}:F> (<t:{ca}:R>)\n'
             ja = round((member.joined_at - dt(1970,1,1)).total_seconds())
             embed_body += f'**Joined:** <t:{ja}:F> (<t:{ja}:R>)'
