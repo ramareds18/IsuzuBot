@@ -233,6 +233,7 @@ def main():
 
     intents = discord.Intents.all()
     intents.typing = False
+    intents.presences = False    
     client = commands.Bot(command_prefix = get_prefix, intents = intents, help_command = None)
 
     WIB = 'Asia/Jakarta'
@@ -651,16 +652,14 @@ def main():
         collection = loadsettings()
         role = check_voicelink_role(member, collection)
         if member.guild.me.guild_permissions.manage_roles:
+            if role:
+                role = member.guild.get_role(role)
+            else: return
+
             if after.channel != None:
-                if role:
-                    role = member.guild.get_role(role)
-                    await member.add_roles(role)
-                else: return
+                await member.add_roles(role)
             else:
-                if role:
-                    role = member.guild.get_role(role)
-                    await member.remove_roles(role)
-                else: return
+                await member.remove_roles(role)
 
     @client.listen()
     async def on_voice_state_update(member, before, after):
@@ -669,16 +668,14 @@ def main():
         collection = loadsettings()
         role = check_streamlink_role(member, collection)
         if member.guild.me.guild_permissions.manage_roles:
+            if role:
+                role = member.guild.get_role(role)
+            else: return
+            
             if after.self_stream:
-                if role:
-                    role = member.guild.get_role(role)
-                    await member.add_roles(role)
-                else: return
+                await member.add_roles(role)
             else:
-                if role:
-                    role = member.guild.get_role(role)
-                    await member.remove_roles(role)
-                else: return
+                await member.remove_roles(role)
                 
     # Error handler
 
