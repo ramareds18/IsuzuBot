@@ -13,8 +13,8 @@ class Help(commands.Cog):
 
         em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `whois`, `banner`', inline = False)
         em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`, `nodiscussion`', inline = False)
-        em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `ping`', inline = False)
-        em.add_field(name = 'Moderation', value = '`timeout`, `untimeout`, `kick`, `masskick`, `ban`, `unban`, `massban`, `massunban`, `minage`, `filtering`, `prune`', inline = False)
+        em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `stickerinfo`, `ping`, `invitelink`', inline = False)
+        em.add_field(name = 'Moderation', value = '`slowmode`, `prune`, `timeout`, `untimeout`, `kick`, `masskick`, `ban`, `unban`, `massban`, `massunban`, `minage`, `filtering`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -241,10 +241,19 @@ class Help(commands.Cog):
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
-        
+
+    @help.command()
+    async def slowmode(self, ctx):
+        em = discord.Embed(title = '**slowmode**', description = "Slowmode a channel or thread for a given time. Maxed at 6 hours", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Duration options', value='• h - Hour\n• m - Minute\n• s - Second', inline = False)
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /slowmode.\nDuration examples:\n```\n1h2m3s\n1h4s```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
     @help.command()
     async def timeout(self, ctx):
-        em = discord.Embed(title = '**timeout**', description = "Timeout a user for a set duration in the server. Reason is optional.\nYou can choose whether it will DM the user or not.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**timeout**', description = "Timeout a user for a set duration in the server. Reason is optional. (Currently only available in whitelisted guilds)\nYou can choose whether it will DM the user or not.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Duration options', value='• w - Week\n• d - Day\n• h - Hour\n• m - Minute\n• s - Second', inline = False)
         em.add_field(name = 'Usage and Examples', value = 'Slash command, type /timeout.\nDuration examples:\n```\n10d14h34m2s\n1h4s```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
@@ -253,8 +262,26 @@ class Help(commands.Cog):
 
     @help.command()
     async def untimeout(self, ctx):
-        em = discord.Embed(title = '**timeout**', description = "Remove timeout from a user in the server. Reason is optional.\nYou can choose whether it will DM the user or not.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**untimeout**', description = "Remove timeout from a user in the server. Reason is optional. (Currently only available in whitelisted guilds)\nYou can choose whether it will DM the user or not.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Usage and Examples', value = 'Slash command, type /untimeout.', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command()
+    async def stickerinfo(self, ctx):
+        em = discord.Embed(title = '**stickerinfo**', description = "Get information from a given sticker.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Aliases', value = '`ss`, `steal sticker`')
+        em.add_field(name = 'Usage and Examples', value = '`stickerinfo <send your message with a sticker>`', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command()
+    async def invitelink(self, ctx):
+        em = discord.Embed(title = '**invitelink**', description = "Get invite link of the bot.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Aliases', value = '`inv`')
+        em.add_field(name = 'Usage and Examples', value = '`invitelink`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
