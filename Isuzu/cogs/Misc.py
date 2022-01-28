@@ -248,7 +248,6 @@ class Misc(commands.Cog):
             await ctx.reply("Failed sending message to user. Either said user turned off DM or the bot and user don't share any mutual server.", mention_author = False)
 
     @commands.command(aliases = ['stealsticker', 'ss'])
-    @commands.has_permissions(manage_messages = True)
     async def stickerinfo(self, ctx, *, msg = None):
         if ctx.message.stickers:
             for sticker in ctx.message.stickers:
@@ -261,6 +260,12 @@ class Misc(commands.Cog):
         else:
             await ctx.reply('Please input your sticker.')
 
+    @commands.command(aliases=['inv'])
+    async def invitelink(self, ctx):
+        output = 'Here is the invite link for the bot\n'
+        output += "https://discord.com/api/oauth2/authorize?client_id=873300341150613554&permissions=1376805842134&scope=applications.commands%20bot"
+        await ctx.reply(output)            
+            
     # Error-handling section
 
     @echo.error
