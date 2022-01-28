@@ -11,11 +11,58 @@ class ModerationSlash(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        
-    M = 735868176595812422
-    L = 913649915467542529
 
-    @discord.slash_command(name="timeout", description="Timeout a user in the server", guild_ids=[M, L])
+    # ALL THE SLASH COMMANDS HERE ARE ONLY IN WHITELISTED GUILDS SO THERE IS ACTUALLY `guild_ids=` VARIABLE IN THE SLASH COMMAND FUNCTION
+        
+    @discord.slash_command(name="slowmode", description="Put slowmode to a channel")
+    async def slowmode_slash(
+        self, 
+        interaction: Interaction,
+        channel: GuildChannel = SlashOption(
+            name = "channel",
+            description = "The channel or thread to put on slowmode",
+            channel_types = [ChannelType.text, ChannelType.public_thread],
+        ),
+        time = SlashOption(
+            name = "duration",
+            description = "Duration in the format of 1h2m3s. Must not exceed 6 hours, input 0s to remove slowmode",
+        ),
+        reason = SlashOption(
+            name = "reason",
+            description = "Reason to slowmode",
+            required = False,
+        ), 
+    ):
+        if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_channels:
+            seconds = Duration(time).to_seconds()
+            if seconds > 2419200:
+                await interaction.response.send_message("Duration must not exceed 6 hours.", ephemeral=True)
+            else:
+
+                try:
+                    if isinstance(channel, discord.TextChannel):
+                        if reason and len(reason) <= 450:
+                            reason += f' | Slowmode for {time} by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                        elif reason and len(reason) > 450:
+                            reason = f'Slowmode for {time} by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                        else:
+                            reason = f'Slowmode for {time} by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                        await channel.edit(slowmode_delay=seconds, reason=reason)
+                    else:
+                        await channel.edit(slowmode_delay=seconds)
+                    if seconds != 0:
+                        await interaction.response.send_message(f"Slowmode is now enabled in {channel.mention}, members can only send one message every {time}.")
+                    else:
+                        await interaction.response.send_message(f"Slowmode in {channel.mention} has been disabled.")
+                except:
+                    await interaction.response.send_message("Something went wrong.", ephemeral=True)
+
+        elif not interaction.user.guild_permissions.manage_channels:
+            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+        else:
+            await interaction.response.send_message("I don't have `Manage Channels` permission.")    
+    
+    @discord.slash_command(name="timeout", description="Timeout a user in the server")
     async def timeout_slash(
         self, 
         interaction: Interaction, 
@@ -36,6 +83,7 @@ class ModerationSlash(commands.Cog):
             name='dm',
             description='Send a DM to the user about the timeout - default true',
             choices={"yes": 'True', "no": 'False'},
+            default = 'True',
             required=False,
         )
     ):
@@ -78,7 +126,7 @@ class ModerationSlash(commands.Cog):
                             if comment:
                                 embed_body += f'**Note**: {comment}'
                             
-                            if dm == 'True' or not dm:
+                            if dm == 'True':
                                 try:
                                     await member.send(f"You have been timed out until <t:{epoch}:F> in `{interaction.guild.name}` for `{reason_to_send}`.\nYou can talk in the server again <t:{epoch}:R>.")
                                 except:
@@ -88,12 +136,12 @@ class ModerationSlash(commands.Cog):
                             await interaction.response.send_message(embed=em)
                         except Forbidden:
                             await interaction.response.send_message("I can't timeout that user.")
-        elif not interaction.user.guild.me.guild_permissions.moderate_members:
-            await interaction.response.send_message("I don't have `Timeout Members` permission.")
-        else:
+        elif not interaction.user.guild_permissions.moderate_members:
             await interaction.response.send_message("You don't have `Timeout Members` permission.", ephemeral=True)
+        else:
+            await interaction.response.send_message("I don't have `Timeout Members` permission.")
 
-    @discord.slash_command(name="untimeout", description="Remove timeout from a user in the server", guild_ids=[M, L])
+    @discord.slash_command(name="untimeout", description="Remove timeout from a user in the server")
     async def untimeout_slash(
         self,
         interaction: Interaction, 
@@ -110,6 +158,7 @@ class ModerationSlash(commands.Cog):
             name='dm',
             description='Send a DM to the user about the timeout - default true',
             choices={"yes": 'True', "no": 'False'},
+            default = 'True',            
             required=False,
         )
     ):
@@ -140,7 +189,7 @@ class ModerationSlash(commands.Cog):
                         if comment:
                             embed_body += f'**Note**: {comment}'
 
-                        if dm == 'True' or not dm:
+                        if dm == 'True':
                             try:
                                 await member.send(f"Your timeout in `{interaction.guild.name}` has been removed for `{reason_to_send}`.")
                             except:
@@ -150,10 +199,10 @@ class ModerationSlash(commands.Cog):
                         await interaction.response.send_message(embed=em)
                     except Forbidden:
                         await interaction.response.send_message("I can't remove timeout from that user.")
-        elif not interaction.user.guild.me.guild_permissions.moderate_members:
-            await interaction.response.send_message("I don't have `Timeout Members` permission.")
-        else:
+        elif not interaction.user.guild_permissions.moderate_members:
             await interaction.response.send_message("You don't have `Timeout Members` permission.", ephemeral=True)
+        else:
+            await interaction.response.send_message("I don't have `Timeout Members` permission.")
 
 def setup(client):
     client.add_cog(ModerationSlash(client))
