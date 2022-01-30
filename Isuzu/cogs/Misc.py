@@ -193,6 +193,10 @@ class Misc(commands.Cog):
 
     # ==== END OF QUEUE RELATED COMMANDS ==
 
+    @commands.command(aliases=['waki'])
+    async def wakipai(self, ctx):
+        await ctx.reply('Stop it. Get some help.')
+
     @commands.command()
     @commands.has_permissions(manage_messages = True)
     async def echo(self, ctx, channel : typing.Union[discord.TextChannel, discord.Thread], *, msg = None):
@@ -215,12 +219,12 @@ class Misc(commands.Cog):
             await ctx.reply(f"Message sent to {channel.mention}.", mention_author = False)
         except Forbidden as f:
             if '50081' in str(f):
-                await ctx.reply("Bot doesn't have access to that sticker.")
+                await ctx.reply("Bot doesn't have access to that sticker.", mention_author = False)
             elif '50001' in str(f):
-                await ctx.reply("Bot doesn't have access or can't send messages to that channel/thread.")
+                await ctx.reply("Bot doesn't have access or can't send messages to that channel/thread.", mention_author = False)
         except Exception as e:
             if '50006' in str(e):
-                await ctx.reply("Cannot send empty message. Please provide the message/file/sticker that you want to send.")
+                await ctx.reply("Cannot send empty message. Please provide the message/file/sticker that you want to send.", mention_author = False)
 
     @commands.command()
     @commands.has_permissions(manage_messages = True)
@@ -231,8 +235,6 @@ class Misc(commands.Cog):
             await ctx.reply(f"Message in {ch.mention} has been edited. Click the link below to jump to the message.\n{current_message.jump_url}", mention_author = False)
         except Forbidden:
             await ctx.reply("Bot doesn't have access or can't send messages to that channel/thread.", mention_author = False)
-        except Exception as e:
-            await ctx.reply(e)
 
     @commands.command()
     async def ping(self, ctx):
@@ -264,8 +266,8 @@ class Misc(commands.Cog):
     async def invitelink(self, ctx):
         output = 'Here is the invite link for the bot\n'
         output += "https://discord.com/api/oauth2/authorize?client_id=873300341150613554&permissions=1376805842134&scope=applications.commands%20bot"
-        await ctx.reply(output, mention_author = False)            
-            
+        await ctx.reply(output, mention_author = False)
+
     # Error-handling section
 
     @echo.error
