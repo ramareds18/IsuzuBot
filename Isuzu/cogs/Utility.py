@@ -6,7 +6,7 @@ from nextcord.errors import Forbidden
 from pendulum import datetime as dt
 
 def invalidargssch():
-    return 'Missing argument(s). Below are the supported formats and timezones:\n```[timezone] [talent] day/month/year hour:minute\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
+    return 'Missing argument(s). Below are the supported formats and timezones:\n```\n[timezone] [talent]\nyear/month/day hour:minute\nmonth/day/year hour:minute am/pm```\n```\nSupported Timezones:\nUTC or GMT\nWIB\nJST\nMSK\nEDT or EST or ET\nPDT or PST or PT```'
 
 def validtimezone(arg):
     valid = ['wib', 'jst', 'msk', 'utc', 'gmt', 'edt', 'est', 'et', 'pdt', 'pst', 'pt']
@@ -90,7 +90,7 @@ class Utility(commands.Cog):
                     elif(talent.lower() == 'lui'):
                         output = f"__**Lui's** :wilted_rose: schedule for this week:__\n"
                     elif(talent.lower() == 'gura'):
-                        output = f"__**Gura's** :trident: schedule for this week:__\n"                         
+                        output = f"__**Gura's** :trident: schedule for this week:__\n"                    
                     else:
                         output = f"__**{talent}'s** schedule for this week:__\n"
                 
