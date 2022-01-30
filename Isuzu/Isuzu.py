@@ -233,7 +233,7 @@ def main():
 
     intents = discord.Intents.all()
     intents.typing = False
-    intents.presences = False    
+    intents.presences = False
     client = commands.Bot(command_prefix = get_prefix, intents = intents, help_command = None)
 
     WIB = 'Asia/Jakarta'
@@ -275,13 +275,18 @@ def main():
             collection.insert_one(default_assigned)
         else: return
 
+    # @client.event
+    # async def on_guild_remove(guild):
+    #     collection = loadsettings()
+    #     collection.delete_one({"_id":guild.id})
+
     @client.event
     async def on_thread_join(thread):
         try:
             await thread.join()
         except:
-            pass        
-        
+            pass
+
     @client.event
     async def on_message(message):
         if not message.guild: return
@@ -336,10 +341,10 @@ def main():
                         await user.send(f'{message.author.name}#{message.author.discriminator} posted a blacklisted clipper video in {message.guild.name}.\n{response.jump_url}')
                     except Exception as e:
                         print(e)
-                else: return         
-            except:
-                return
-                
+                else: return
+        except:
+            return
+
     @client.listen()
     async def on_message(message):
         x = re.search("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})", message.content)
@@ -556,7 +561,6 @@ def main():
         if channel:
             log_channel = client.get_channel(channel)
 
-
         days = 0
         hours = 0
         minutes = 0
@@ -607,7 +611,7 @@ def main():
                 kicked_age += ' '
             kicked_age += f'{seconds} second(s)'
 
-        reason = f"Account's age ({`kicked_age`}) is less than the set requirement (>{min_age} day(s))."
+        reason = f"Account's age (`{kicked_age}`) is less than the set requirement (>{min_age} day(s))."
         if member.guild.me.guild_permissions.kick_members:
             if age < minage_seconds:
                 sent = False
