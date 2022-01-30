@@ -282,8 +282,8 @@ class Help(commands.Cog):
         em.add_field(name = 'Usage and Examples', value = 'Slash command, type /unlock.', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
-        await ctx.reply(embed = em, mention_author = False)        
-        
+        await ctx.reply(embed = em, mention_author = False)
+
     @help.command()
     async def stickerinfo(self, ctx):
         em = discord.Embed(title = '**stickerinfo**', description = "Get information from a given sticker.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
