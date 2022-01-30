@@ -178,6 +178,16 @@ class Management(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    # This is for me to contact people using my bot   
+    @commands.command(aliases=["gg"])
+    @commands.is_owner()
+    async def get_guilds(self, ctx):
+        guilds = self.client.guilds
+        output = f'{self.client.user.name} is in {len(guilds)} servers:\n'
+        guild_list = "".join(f'{guild.id} - {guild.name} ~> {guild.owner.name}#{guild.owner.discriminator} ({guild.owner.id})\n' for guild in guilds)
+        output += f'```\n{guild_list}```'
+        await ctx.reply(output, mention_author = False)        
+        
     @commands.command()
     @commands.is_owner()
     async def checkdb(self, ctx):
