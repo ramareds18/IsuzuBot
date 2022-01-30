@@ -2,6 +2,7 @@ import typing
 import nextcord as discord
 import pendulum as pen
 from durations import Duration
+from nextcord import NotFound
 from nextcord.ext import commands
 from nextcord.errors import Forbidden
 from pendulum import datetime as dt
