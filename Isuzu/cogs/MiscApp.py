@@ -7,7 +7,8 @@ class MiscApp(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-    M = 735868176595812422
+
+    Moonacord = 735868176595812422
 
     @discord.message_command(name="Sticker Info")
     async def stickerinfo_msg_command(self, interaction: Interaction, message: discord.Message):
@@ -22,7 +23,7 @@ class MiscApp(commands.Cog):
         else:
             await interaction.response.send_message("Message doesn't contain sticker.", ephemeral=True)
 
-    @discord.message_command(name="Hilih", guild_ids=[M])
+    @discord.message_command(name="Hilih", guild_ids=[Moonacord])
     async def hilih_msg_command(self, interaction: Interaction, message: discord.Message):
         if message.content:
             string = message.content
