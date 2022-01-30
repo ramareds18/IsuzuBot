@@ -24,7 +24,7 @@ class ModerationApp(commands.Cog):
         channel: GuildChannel = SlashOption(
             name = "channel",
             description = "The channel or thread to put on slowmode",
-            channel_types = [ChannelType.text, ChannelType.public_thread],
+            channel_types = [discord.ChannelType.text, discord.ChannelType.public_thread],
         ),
         time = SlashOption(
             name = "duration",
