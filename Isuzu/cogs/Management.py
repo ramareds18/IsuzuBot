@@ -171,14 +171,13 @@ def management_check_minage_msg(context, collection, min_age):
             msg_var = msg["minage"]["message"]
             return msg_var
         else:
-            return default_message    
-    
+            return default_message
+
 class Management(commands.Cog):
 
     def __init__(self, client):
         self.client = client
 
-    # This is for me to contact people using my bot   
     @commands.command(aliases=["gg"])
     @commands.is_owner()
     async def get_guilds(self, ctx):
@@ -186,8 +185,8 @@ class Management(commands.Cog):
         output = f'{self.client.user.name} is in {len(guilds)} servers:\n'
         guild_list = "".join(f'{guild.id} - {guild.name} ~> {guild.owner.name}#{guild.owner.discriminator} ({guild.owner.id})\n' for guild in guilds)
         output += f'```\n{guild_list}```'
-        await ctx.reply(output, mention_author = False)        
-        
+        await ctx.reply(output, mention_author = False)
+
     @commands.command()
     @commands.is_owner()
     async def checkdb(self, ctx):
@@ -506,7 +505,7 @@ class Management(commands.Cog):
         embed_body = ''
         ignored_channels = m.check_ignored_channel(ctx, collection)
         for channel in ignored_channels:
-            valid_channel = commands.get_channel(channel)
+            valid_channel = self.client.get_channel(channel)
             embed_body += f'{valid_channel.mention} '
         em = discord.Embed(title= 'Ignored channels:', description= f'{embed_body}', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
@@ -578,7 +577,7 @@ class Management(commands.Cog):
                 for channel in nodiscussion_channels:
                     valid_channel = self.client.get_channel(channel)
                     ch += f"{valid_channel.mention} "
-                output += f"NoDiscussion channels: {ch}\n"
+                output += f"NoDiscussion channels: {ch}"
         else:
             output = "Invalid argument. Please run `help nodiscussion` to see full information."
 
