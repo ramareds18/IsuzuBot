@@ -1,18 +1,18 @@
 import nextcord as discord
 import pendulum as pen
 from durations import Duration
-from nextcord import SlashOption, Interaction, NotFound
+from nextcord import SlashOption, Interaction, NotFound, ChannelType
 from nextcord.ext import commands
+from nextcord.abc import GuildChannel
 from nextcord.errors import Forbidden
 from pendulum import datetime as dt
-
 
 class ModerationApp(commands.Cog):
 
     def __init__(self, client):
         self.client = client
 
-    # ALL THE SLASH COMMANDS HERE ARE ONLY IN WHITELISTED GUILDS SO THERE IS ACTUALLY `guild_ids=` VARIABLE IN THE SLASH COMMAND FUNCTION
+    # ALL THE SLASH COMMANDS HERE ARE ONLY IN WHITELISTED GUILDS SO THERE IS ACTUALLY `guild_ids=` VARIABLE IN THE SLASH COMMAND FUNCTION        
         
     @discord.slash_command(name="slowmode", description="Put slowmode to a channel")
     async def slowmode_slash(
@@ -60,37 +60,37 @@ class ModerationApp(commands.Cog):
         elif not interaction.user.guild_permissions.manage_channels:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Channels` permission.")    
-    
+            await interaction.response.send_message("I don't have `Manage Channels` permission.")
+
     @discord.slash_command(name="timeout", description="Timeout a user in the server")
     async def timeout_slash(
         self, 
         interaction: Interaction, 
         member: discord.Member = SlashOption(
-            name="user",
-            description="User to timeout",
+            name = "user",
+            description = "User to timeout",
         ),
         time = SlashOption(
-            name="duration",
-            description="Duration in the format of 1d2h3m4s. Must not exceed 28 days",
+            name = "duration",
+            description = "Duration in the format of 1d2h3m4s. Must not exceed 28 days",
         ),
         reason = SlashOption(
-            name="reason",
-            description="Reason to timeout",
-            required=False,
-        ),
+            name = "reason",
+            description = "Reason to timeout",
+            required = False,
+        ), 
         dm = SlashOption(
-            name='dm',
-            description='Send a DM to the user about the timeout - default true',
-            choices={"yes": 'True', "no": 'False'},
+            name = 'dm',
+            description = 'Send a DM to the user about the timeout - default true',
+            choices = {"yes": 'True', "no": 'False'},
             default = 'True',
-            required=False,
+            required = False,
         )
     ):
         if interaction.user.guild_permissions.moderate_members and interaction.user.guild.me.guild_permissions.moderate_members:
             if isinstance(member, discord.User):
                 await interaction.response.send_message("User is not a member of this server.", ephemeral=True)
-            else:            
+            else:
                 if member.top_role >= interaction.user.top_role:
                     await interaction.response.send_message("You can't timeout that user.")
                 else:
@@ -112,7 +112,7 @@ class ModerationApp(commands.Cog):
                             else:
                                 reason = f'Timed out by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
                                 reason_to_send = "No reason given"
-
+                                
                             timeout_end = pen.now('UTC').add(seconds = seconds)
                             await member.edit(timeout=timeout_end, reason=reason)
 
@@ -128,7 +128,12 @@ class ModerationApp(commands.Cog):
                             
                             if dm == 'True':
                                 try:
-                                    await member.send(f"You have been timed out until <t:{epoch}:F> in `{interaction.guild.name}` for `{reason_to_send}`.\nYou can talk in the server again <t:{epoch}:R>.")
+                                    em1 = discord.Embed(title = '', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+                                    em1.add_field(name = f'Reason', value = reason_to_send, inline = False)
+                                    field_body = f'Timeout will end <t:{epoch}:R>, precisely <t:{epoch}:F>.'
+                                    em1.add_field(name = f'Duration', value = field_body, inline = False)
+                                    em1.set_author(name = f'You have been timed out in {interaction.guild.name}.', icon_url = interaction.guild.icon)
+                                    await member.send(embed=em1)
                                 except:
                                     embed_body += "\n*Failed to DM the user due to their privacy settings.*"
 
@@ -146,26 +151,26 @@ class ModerationApp(commands.Cog):
         self,
         interaction: Interaction, 
         member: discord.Member = SlashOption(
-            name="user",
-            description="User to untimeout",
+            name = "user",
+            description = "User to untimeout",
         ),
         reason = SlashOption(
-            name="reason",
-            description="Reason to untimeout",
-            required=False,
+            name ="reason",
+            description = "Reason to untimeout",
+            required = False, 
         ),
         dm = SlashOption(
-            name='dm',
-            description='Send a DM to the user about the timeout - default true',
-            choices={"yes": 'True', "no": 'False'},
-            default = 'True',            
-            required=False,
+            name ='dm',
+            description = 'Send a DM to the user about the timeout - default true',
+            choices = {"yes": 'True', "no": 'False'},
+            default = 'True',
+            required = False,
         )
     ):
         if interaction.user.guild_permissions.moderate_members and interaction.user.guild.me.guild_permissions.moderate_members:
             if isinstance(member, discord.User):
                 await interaction.response.send_message("User is not a member of this server.", ephemeral=True)
-            else:        
+            else:
                 if member.top_role >= interaction.user.top_role:
                     await interaction.response.send_message("You can't remove timeout from that user.")
                 else:            
@@ -191,7 +196,10 @@ class ModerationApp(commands.Cog):
 
                         if dm == 'True':
                             try:
-                                await member.send(f"Your timeout in `{interaction.guild.name}` has been removed for `{reason_to_send}`.")
+                                em1 = discord.Embed(title = '', colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+                                em1.add_field(name = f'Reason', value = reason_to_send, inline = False)
+                                em1.set_author(name = f'Your timeout in {interaction.guild.name} has been removed.', icon_url = interaction.guild.icon)
+                                await member.send(embed=em1)
                             except:
                                 embed_body += "\n*Failed to DM the user due to their privacy settings.*"
 
@@ -268,7 +276,7 @@ class ModerationApp(commands.Cog):
         elif not interaction.user.guild.me.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Roles` permission.")            
-            
+            await interaction.response.send_message("I don't have `Manage Roles` permission.")
+
 def setup(client):
     client.add_cog(ModerationApp(client))
