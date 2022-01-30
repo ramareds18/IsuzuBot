@@ -12,12 +12,12 @@ class ModerationApp(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    M = 735868176595812422
-    L = 913649915467542529
-    FC = 878407001519054891
-    MC = 879687330124922880 
+    Moonacord = 735868176595812422
+    Luicord = 913649915467542529
+    FF14_creators = 878407001519054891
+    MumeiCiv = 879687330124922880 
 
-    @discord.slash_command(name="slowmode", description="Put slowmode to a channel", guild_ids=[M, L, MC])
+    @discord.slash_command(name="slowmode", description="Put slowmode to a channel", guild_ids=[Moonacord, Luicord, MumeiCiv])
     async def slowmode_slash(
         self, 
         interaction: Interaction,
@@ -65,7 +65,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Manage Channels` permission.")
 
-    @discord.slash_command(name="timeout", description="Timeout a user in the server", guild_ids=[M, L, FC])
+    @discord.slash_command(name="timeout", description="Timeout a user in the server", guild_ids=[Moonacord, Luicord, FF14_creators])
     async def timeout_slash(
         self, 
         interaction: Interaction, 
@@ -149,7 +149,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Timeout Members` permission.")
 
-    @discord.slash_command(name="untimeout", description="Remove timeout from a user in the server", guild_ids=[M, L, FC])
+    @discord.slash_command(name="untimeout", description="Remove timeout from a user in the server", guild_ids=[Moonacord, Luicord, FF14_creators])
     async def untimeout_slash(
         self,
         interaction: Interaction, 
@@ -214,85 +214,6 @@ class ModerationApp(commands.Cog):
             await interaction.response.send_message("You don't have `Timeout Members` permission.", ephemeral=True)
         else:
             await interaction.response.send_message("I don't have `Timeout Members` permission.")
-
-    # @discord.slash_command(name="ban", description="Ban a user from the server", guild_ids=[Moonacord, Luicord])
-    # async def ban_slash(
-    #     self, 
-    #     interaction: Interaction, 
-    #     member: discord.User = SlashOption(
-    #         name = "user",
-    #         description = "User to ban",
-    #     ),
-    #     reason = SlashOption(
-    #         name = "reason",
-    #         description = "Reason to ban",
-    #         required = False,
-    #     )
-    # ):
-    #     if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.ban_members:
-    #         try:
-    #             await interaction.response.send_message('Banning...')
-    #             if isinstance(member, discord.Member) and member.top_role >= interaction.user.top_role:
-    #                 await interaction.edit_original_message(content='You are not allowed to ban this user.')
-    #             else:
-    #                 comment = ''
-    #                 if reason and len(reason) <= 450:
-    #                     reason += f' | Banned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-    #                 elif reason and len(reason) > 450:
-    #                     reason = f'Banned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-    #                     comment = 'Reason too long.'
-    #                 else:
-    #                     reason = f'Banned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-    #                 await interaction.guild.ban(member, reason = reason)
-                    
-    #                 embed_body = f'**Banned** {member.mention} ({member.id})\n'
-    #                 embed_body += '\n'
-    #                 embed_body += f'**Reason:** {reason}\n'
-    #                 if comment:
-    #                     embed_body += f'**Note**: {comment}'
-    #                 em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-    #                 await interaction.edit_original_message(content=None, embed = em)
-    #         except Forbidden:
-    #             await interaction.edit_original_message(content="Can't ban user with equal or higher role.")
-    #     elif interaction.user.guild_permissions.ban_members:
-    #         await interaction.response.send_message("You don't have `Ban Members` permission.", ephemeral=True)
-    #     else:
-    #         await interaction.response.send_message("I don't have `Ban Members` permission.")
-
-    # @discord.slash_command(name="unban", description="Unban a user from the server", guild_ids=[Moonacord, Luicord])
-    # async def unban_slash(
-    #     self, 
-    #     interaction: Interaction, 
-    #     member: discord.User = SlashOption(
-    #         name = "user",
-    #         description = "User to unban",
-    #     ),
-    #     reason = SlashOption(
-    #         name = "reason",
-    #         description = "Reason to unban",
-    #         required = False,
-    #     )
-    # ):
-    #     if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.ban_members:
-    #         try:
-    #             await interaction.response.send_message('Unbanning...')
-    #             is_banned = await interaction.guild.fetch_ban(member)
-    #             if reason:
-    #                 reason += f' | Unbanned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-    #             else:
-    #                 reason = f'Unbanned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
-    #             await interaction.guild.unban(member, reason = reason)
-    #             embed_body = f'**Unbanned** {member.mention} ({member.id})\n'
-    #             embed_body += '\n'
-    #             embed_body += f'**Reason:** {reason}'
-    #             em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
-    #             await interaction.edit_original_message(content=None, embed = em)
-    #         except NotFound:
-    #             await interaction.edit_original_message(content='That is not a banned user.')
-    #     elif interaction.user.guild_permissions.ban_members:
-    #         await interaction.response.send_message("You don't have `Ban Members` permission.", ephemeral=True)
-    #     else:
-    #         await interaction.response.send_message("I don't have `Ban Members` permission.")
 
     @discord.slash_command(name="lock", description="Lockdown a channel")
     async def lock_slash(
