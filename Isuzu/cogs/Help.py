@@ -244,7 +244,7 @@ class Help(commands.Cog):
 
     @help.command()
     async def slowmode(self, ctx):
-        em = discord.Embed(title = '**slowmode**', description = "Slowmode a channel or thread for a given time. Maxed at 6 hours", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**slowmode**', description = "Slowmode a channel or thread for a given time. Maxed at 6 hours. (Currently only available in whitelisted guilds)", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Duration options', value='• h - Hour\n• m - Minute\n• s - Second', inline = False)
         em.add_field(name = 'Usage and Examples', value = 'Slash command, type /slowmode.\nDuration examples:\n```\n1h2m3s\n1h4s```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
@@ -268,6 +268,22 @@ class Help(commands.Cog):
 
         await ctx.reply(embed = em, mention_author = False)
 
+    @help.command()
+    async def lock(self, ctx):
+        em = discord.Embed(title = '**lock**', description = "Lockdown a channel.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /lock.', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command()
+    async def unlock(self, ctx):
+        em = discord.Embed(title = '**unlock**', description = "Unlock a locked channel.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /unlock.', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)        
+        
     @help.command()
     async def stickerinfo(self, ctx):
         em = discord.Embed(title = '**stickerinfo**', description = "Get information from a given sticker.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
