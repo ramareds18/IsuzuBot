@@ -2,6 +2,7 @@ import typing
 import nextcord as discord
 import pendulum as pen
 from durations import Duration
+from nextcord import NotFound
 from nextcord.ext import commands
 from nextcord.errors import Forbidden
 from pendulum import datetime as dt
@@ -222,7 +223,7 @@ class Moderation(commands.Cog):
                 embed_body += f'**Note**: {comment}'
             em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
             await msg.edit(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
-        except discord.NotFound:
+        except NotFound:
             await ctx.reply('That is not a banned user.', mention_author = False)
 
     @commands.command(aliases = ['nuke'])
