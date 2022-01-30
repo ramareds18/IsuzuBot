@@ -1,7 +1,9 @@
 import nextcord as discord
 import pendulum as pen
-from nextcord import Interaction, SlashOption
+from nextcord import Interaction, SlashOption, ChannelType
 from nextcord.ext import commands
+from nextcord.abc import GuildChannel
+from nextcord.errors import Forbidden
 from pendulum import datetime as dt
 
 class UtilityApp(commands.Cog):
@@ -26,13 +28,13 @@ class UtilityApp(commands.Cog):
         self,
         interaction: Interaction,
         timezone = SlashOption(
-            name="timezone",
+            name = "timezone",
             choices = tz_options,
-            description="Choose supported timezone",
+            description = "Choose supported timezone",
         ),
         time = SlashOption(
-            name="date-and-time",
-            description="Date and time in format of yyyy/mm/dd hour:minute",
+            name = "date-and-time",
+            description = "Date and time in format of yyyy/mm/dd hour:minute",
         ),
     ):
         UTC = "UTC"
