@@ -226,7 +226,7 @@ class ModerationApp(commands.Cog):
             channel_types = [ChannelType.text],
         )
     ):
-        if interaction.user.guild_permissions.manage_roles and interaction.user.guild.me.guild_permissions.manage_messages:
+        if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
             reason = f'Locked down by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
@@ -260,7 +260,7 @@ class ModerationApp(commands.Cog):
             channel_types = [ChannelType.text],
         )
     ):
-        if interaction.user.guild_permissions.manage_roles and interaction.user.guild.me.guild_permissions.manage_messages:
+        if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
             reason = f'Lockdown removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
