@@ -243,7 +243,7 @@ class ModerationApp(commands.Cog):
                     await interaction.response.send_message(f"Locked {channel.mention}.")
                 else:
                     await interaction.response.send_message(f"That channel is already locked.")
-        elif not interaction.user.guild.me.guild_permissions.manage_messages:
+        elif not interaction.user.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
             await interaction.response.send_message("I don't have `Manage Roles` permission.")
@@ -277,7 +277,7 @@ class ModerationApp(commands.Cog):
                     await interaction.response.send_message(f"Unlocked {channel.mention}.")
                 else:
                     await interaction.response.send_message(f"That channel is not locked.")
-        elif not interaction.user.guild.me.guild_permissions.manage_messages:
+        elif not interaction.user.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
             await interaction.response.send_message("I don't have `Manage Roles` permission.")  
