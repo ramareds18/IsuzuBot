@@ -2,7 +2,7 @@
 
 IsuzuBot is free to be customized.
 
-Bot for moderation purposes and some other convenience features.
+Discord bot for moderation purposes and some other convenience features.
 
 This bot is using Linode cloud as its hosting service and mongodb as its database system.
 
