@@ -246,12 +246,12 @@ class ModerationApp(commands.Cog):
                     await interaction.response.send_message(f"Locked {channel.mention}.")
                 else:
                     await interaction.response.send_message(f"That channel is already locked.")
-        elif not interaction.user.guild.me.guild_permissions.manage_messages:
+        elif not interaction.user.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Roles` permission.", guild_ids=[Moonacord])
+            await interaction.response.send_message("I don't have `Manage Roles` permission.")
 
-    @discord.slash_command(name="unlock", description="Unlock a locked channel")
+    @discord.slash_command(name="unlock", description="Unlock a locked channel", guild_ids=[Moonacord])
     async def unlock_slash(
         self,
         interaction: Interaction, 
@@ -280,10 +280,10 @@ class ModerationApp(commands.Cog):
                     await interaction.response.send_message(f"Unlocked {channel.mention}.")
                 else:
                     await interaction.response.send_message(f"That channel is not locked.")
-        elif not interaction.user.guild.me.guild_permissions.manage_messages:
+        elif not interaction.user.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Roles` permission.")         
+            await interaction.response.send_message("I don't have `Manage Roles` permission.")       
             
 def setup(client):
     client.add_cog(ModerationApp(client))
