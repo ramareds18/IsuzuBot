@@ -215,7 +215,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Timeout Members` permission.")
 
-    @discord.slash_command(name="lock", description="Lockdown a channel")
+    @discord.slash_command(name="lock", description="Lockdown a channel", guild_ids=[Moonacord])
     async def lock_slash(
         self,
         interaction: Interaction, 
@@ -249,7 +249,7 @@ class ModerationApp(commands.Cog):
         elif not interaction.user.guild.me.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Roles` permission.")
+            await interaction.response.send_message("I don't have `Manage Roles` permission.", guild_ids=[Moonacord])
 
     @discord.slash_command(name="unlock", description="Unlock a locked channel")
     async def unlock_slash(
