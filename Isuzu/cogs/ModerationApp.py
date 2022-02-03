@@ -230,7 +230,7 @@ class ModerationApp(commands.Cog):
             reason = f'Locked down by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
-                if overwrites.read_messages != False:
+                if overwrites.send_messages != False:
                     await interaction.channel.set_permissions(interaction.guild.me, send_messages = True, reason = reason)
                     await interaction.channel.set_permissions(interaction.guild.default_role, send_messages = False, reason = reason)
                     await interaction.response.send_message(f"Locked {interaction.channel.mention}.")
@@ -296,7 +296,7 @@ class ModerationApp(commands.Cog):
             reason = f'Locked down by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
-                if overwrites.send_messages != False:
+                if overwrites.read_messages != False:
                     await interaction.channel.set_permissions(interaction.guild.me, send_messages = True, reason = reason)
                     await interaction.channel.set_permissions(interaction.guild.default_role, send_messages = False, reason = reason)
                     await interaction.channel.set_permissions(interaction.guild.default_role, read_messages = False, reason = reason)
