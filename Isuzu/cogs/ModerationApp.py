@@ -231,7 +231,7 @@ class ModerationApp(commands.Cog):
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
                 if overwrites.send_messages != False:
-                    overwrites.send_messages == False
+                    overwrites.send_messages = False
                     await interaction.channel.set_permissions(interaction.guild.me, send_messages = True, reason = reason)
                     await interaction.channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
                     await interaction.response.send_message(f"Locked {interaction.channel.mention}.")
@@ -240,7 +240,7 @@ class ModerationApp(commands.Cog):
             else:
                 overwrites = channel.overwrites_for(interaction.guild.default_role)
                 if overwrites.send_messages != False:
-                    overwrites.send_messages == False
+                    overwrites.send_messages = False
                     await channel.set_permissions(interaction.guild.me, send_messages = True, reason = reason)
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
                     await interaction.response.send_message(f"Locked {channel.mention}.")
@@ -267,7 +267,7 @@ class ModerationApp(commands.Cog):
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
                 if overwrites.send_messages == False:
-                    overwrites.send_messages == None
+                    overwrites.send_messages = None
                     await interaction.channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
                     await interaction.response.send_message(f"Unlocked {interaction.channel.mention}.")
                 else:
@@ -275,7 +275,7 @@ class ModerationApp(commands.Cog):
             else:
                 overwrites = channel.overwrites_for(interaction.guild.default_role)
                 if overwrites.send_messages == False:
-                    overwrites.send_messages == None
+                    overwrites.send_messages = None
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
                     await interaction.response.send_message(f"Unlocked {channel.mention}.")
                 else:
