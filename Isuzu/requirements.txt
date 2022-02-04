@@ -1,5 +1,0 @@
-nextcord
-pendulum
-python-dotenv
-pymongo[srv]
-durations

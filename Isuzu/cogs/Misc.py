@@ -193,6 +193,10 @@ class Misc(commands.Cog):
 
     # ==== END OF QUEUE RELATED COMMANDS ==
 
+    @commands.command(aliases=['waki'])
+    async def wakipai(self, ctx):
+        await ctx.reply('Stop it. Get some help.')
+
     @commands.command()
     @commands.has_permissions(manage_messages = True)
     async def echo(self, ctx, channel : typing.Union[discord.TextChannel, discord.Thread], *, msg = None):

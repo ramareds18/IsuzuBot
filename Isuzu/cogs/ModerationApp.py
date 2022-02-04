@@ -12,16 +12,19 @@ class ModerationApp(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    # ALL THE SLASH COMMANDS HERE ARE ONLY IN WHITELISTED GUILDS SO THERE IS ACTUALLY `guild_ids=` VARIABLE IN THE SLASH COMMAND FUNCTION        
-        
-    @discord.slash_command(name="slowmode", description="Put slowmode to a channel")
+    Moonacord = 735868176595812422
+    Luicord = 913649915467542529
+    FF14_creators = 878407001519054891
+    MumeiCiv = 879687330124922880 
+
+    @discord.slash_command(name="slowmode", description="Put slowmode to a channel", guild_ids=[Moonacord, Luicord, MumeiCiv])
     async def slowmode_slash(
         self, 
         interaction: Interaction,
         channel: GuildChannel = SlashOption(
             name = "channel",
             description = "The channel or thread to put on slowmode",
-            channel_types = [ChannelType.text, ChannelType.public_thread],
+            channel_types = [discord.ChannelType.text, discord.ChannelType.public_thread],
         ),
         time = SlashOption(
             name = "duration",
@@ -62,7 +65,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Manage Channels` permission.")
 
-    @discord.slash_command(name="timeout", description="Timeout a user in the server")
+    @discord.slash_command(name="timeout", description="Timeout a user in the server", guild_ids=[Moonacord, Luicord, FF14_creators])
     async def timeout_slash(
         self, 
         interaction: Interaction, 
@@ -146,7 +149,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Timeout Members` permission.")
 
-    @discord.slash_command(name="untimeout", description="Remove timeout from a user in the server")
+    @discord.slash_command(name="untimeout", description="Remove timeout from a user in the server", guild_ids=[Moonacord, Luicord, FF14_creators])
     async def untimeout_slash(
         self,
         interaction: Interaction, 
@@ -212,7 +215,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Timeout Members` permission.")
 
-    @discord.slash_command(name="lock", description="Lockdown a channel")
+    @discord.slash_command(name="lock", description="Lockdown a channel", guild_ids=[Moonacord])
     async def lock_slash(
         self,
         interaction: Interaction, 
@@ -248,7 +251,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Manage Roles` permission.")
 
-    @discord.slash_command(name="unlock", description="Unlock a locked channel")
+    @discord.slash_command(name="unlock", description="Unlock a locked channel", guild_ids=[Moonacord])
     async def unlock_slash(
         self,
         interaction: Interaction, 
