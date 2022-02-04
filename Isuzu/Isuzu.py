@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 import nextcord as discord
 import os
 import re
