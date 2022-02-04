@@ -299,9 +299,9 @@ class Moderation(commands.Cog):
                     member_in_guild_id = "".join(f"{member.id}\n" for member in member_in_guild)
                     ban_message = f"Found {len(member_in_guild)} member(s) in this server. Proceed to ban? You have 2 minutes."
                     ban_message += f"\nThey are: {member_in_guild_mention}\n```\n{member_in_guild_id}```"
-                    msg = await ctx.reply(ban_message)
-                    await msg.add_reaction("✅")
-                    await msg.add_reaction("❌")
+                    msg1 = await ctx.reply(ban_message)
+                    await msg1.add_reaction("✅")
+                    await msg1.add_reaction("❌")
                     yas = '✅'
                     nay = '❌'
                     valid_reactions = ['✅', '❌']
@@ -313,7 +313,7 @@ class Moderation(commands.Cog):
                         confirm = True
                     else:
                         confirm = False
-                    await msg.delete()
+                    await msg1.delete()
 
                 if confirm:
                     valid_accounts = valid_accounts
