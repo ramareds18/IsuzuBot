@@ -282,5 +282,82 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Manage Roles` permission.")  
 
+    # @discord.slash_command(name="prune", description="Kick users with a certain condition from the server")
+    # async def prune_slash(
+    #     self,
+    #     interaction : Interaction,
+    #     arg = SlashOption(
+    #         name = 'option',
+    #         description = 'Condition to be kicked',
+    #         choices = {
+    #             'No Avatar and norole' : 'noboth',
+    #             'No Avatar' : 'noavatar',
+    #             'No Role' : 'norole',
+    #         }
+    #     )
+    # ):
+    #     members = interaction.guild.members
+    #     to_be_kicked = []
+    #     for member in members:
+    #         if arg == 'noboth':
+    #             if not member.avatar and len(member.roles) == 1:
+    #                 to_be_kicked.append(member)
+    #                 reason = 'Kicked due to using default avatar and has no roles.'
+    #         elif arg == "noavatar":
+    #             if not member.avatar:
+    #                 to_be_kicked.append(member)
+    #                 reason = 'Kicked due to using default avatar.'
+    #         elif arg == "norole":
+    #             if len(member.roles) == 1:
+    #                 to_be_kicked.append(member)
+    #                 reason = 'Kicked due to having no roles.'
+    #     if len(to_be_kicked) != 0:
+    #         if not arg:
+    #             msg_body = f'Users with no role and default avatar to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
+    #         elif arg.lower() == 'norole':
+    #             msg_body = f'Users with no role to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
+    #         elif arg.lower() == 'noavatar':
+    #             msg_body = f'Users with default avatar to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
+    #         msg = await interaction.response.send_message(msg_body)
+    #         await msg.add_reaction("✅")
+    #         await msg.add_reaction("❌")
+    #         await msg.add_reaction("🛑")
+    #         valid_reactions = ['✅', '❌', '🛑']
+    #         yas = '✅'
+    #         nay = '❌'
+    #         cancel = '🛑'
+    #         def check(reaction, user):
+    #             return user == interaction.user and str(reaction.emoji) in valid_reactions
+    #         reaction, user = await self.client.wait_for('reaction_add', timeout=120.0, check=check)
+    #         if str(reaction.emoji) == yas:
+    #             await msg.clear_reactions()
+    #             output = ''
+    #             for kick in to_be_kicked:
+    #                 output += f'{kick.mention} - {str(kick.id)}\n'
+    #             em = discord.Embed(title='Users to be pruned:',description=output, colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
+    #             em.set_footer(text = f"{interaction.user.display_name} ({interaction.user.id})", icon_url = interaction.user.display_avatar)
+    #             msg1 = await interaction.edit_original_message(content = 'Proceed to prune? You have 3 minutes.', embed = em)
+    #             await msg1.add_reaction("✅")
+    #             await msg1.add_reaction("❌")
+    #             reaction1, user1 = await self.client.wait_for('reaction_add', timeout=180.0, check=check)
+    #             if str(reaction1.emoji) == yas:
+    #                 processing_message = await interaction.response.send_message('Pruning...', mention_author = False)
+    #                 for kick in to_be_kicked:
+    #                     await interaction.guild.kick(kick, reason = reason)
+    #                 await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
+    #             else:
+    #                 await interaction.response.send_message('Prune cancelled.')
+    #             await msg1.clear_reactions()
+    #         elif str(reaction.emoji) == nay:
+    #             processing_message = await interaction.response.send_message('Pruning...', mention_author = False)
+    #             for kick in to_be_kicked:
+    #                 await interaction.guild.kick(kick, reason = reason)
+    #             await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
+    #         else:
+    #             await interaction.response.send_message('Prune cancelled.')
+    #         await msg.clear_reactions()
+    #     else:
+    #         await interaction.response.send_message('No members to be pruned.', mention_author = False)
+
 def setup(client):
     client.add_cog(ModerationApp(client))
