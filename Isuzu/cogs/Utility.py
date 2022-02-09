@@ -106,9 +106,13 @@ class Utility(commands.Cog):
                 errouput = f"Wrong order of input.\nYour input:\n```\n{timezone} {talent}```\nCorrect input:\n```\n{talent} {timezone}```"
                 await ctx.reply(errouput, mention_author = False)
             else:
-                await ctx.reply('Invalid data input. Run `help schedule` for more information.', mention_author = False)
+                await ctx.reply('Timezone is not supported yet. Run `help schedule` for more information.', mention_author = False)
         except:
-            await ctx.reply('Invalid data input. Run `help schedule` for more information.', mention_author = False)
+            output = 'Invalid data input. Error possibilities:\n'
+            output += "• You inputted a time that exceed 23:00\n"
+            output += "• You didn't put '~' between the date and activity title\n"
+            output += "• Your didn't put the correct format, run `help schedule` for more information\n"
+            await ctx.reply(output, mention_author = False)
 
     @commands.command(aliases=['who', 'userinfo'])
     @commands.has_permissions(manage_messages = True)
