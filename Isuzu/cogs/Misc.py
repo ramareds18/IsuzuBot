@@ -261,7 +261,7 @@ class Misc(commands.Cog):
     @commands.command(aliases=['inv'])
     async def invitelink(self, ctx):
         output = 'Here is the invite link for the bot\n'
-        output += "https://discord.com/api/oauth2/authorize?client_id=873300341150613554&permissions=1376805842134&scope=applications.commands%20bot"
+        output += "https://discord.com/api/oauth2/authorize?client_id=873300341150613554&permissions=1514311904470&scope=applications.commands%20bot"
         await ctx.reply(output, mention_author = False)
 
     # Error-handling section
