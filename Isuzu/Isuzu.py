@@ -275,11 +275,6 @@ def main():
             collection.insert_one(default_assigned)
         else: return
 
-    # @client.event
-    # async def on_guild_remove(guild):
-    #     collection = loadsettings()
-    #     collection.delete_one({"_id":guild.id})
-
     @client.event
     async def on_thread_join(thread):
         try:
