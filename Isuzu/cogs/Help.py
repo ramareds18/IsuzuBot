@@ -23,7 +23,7 @@ class Help(commands.Cog):
     async def queue(self, ctx):
         em = discord.Embed(title = '**queue**', description = "Commands for karaoke queue related.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Variations', value = '`queue`, `queuenext`, `queuelist`, `queueremove`, `queueswap`, `queueclear`, `forcequeue`')
-        em.add_field(name = 'Aliases', value = '`q`, `qn`, `ql`, `qr`, `qs`, `qc`, `fq`', inline = False)
+        em.add_field(name = 'Aliases', value = '`q`, `ql`, `qn`, `qr`, `qs`, `qc`, `fq`', inline = False)
         queuecommmands = '`queue` to queue yourself in.\n'
         queuecommmands += '`queuelist` to see the queue.\n'
         queuecommmands += '`queuenext` to move on to the next person in queue.\n'
@@ -58,7 +58,7 @@ class Help(commands.Cog):
     async def when(self, ctx):
         em = discord.Embed(title = '**when**', description = "Gets unix timestamp and calculates how much time until the given date.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Supported Timezones', value = '• UTC or GMT\n• WIB\n• JST\n• MSK\n• EDT or EST or ET\n• PDT or PST or PT', inline = False)
-        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /when.\nTime input examples:\n```\n2022/1/20 13:34\n2022/03/13 3am```', inline = False)
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /when.\nTime input examples:\n```\n2022/1/20 13:34\n2022/03/13 3am```\n**Input time must not exceed 23:00.**', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -71,7 +71,8 @@ class Help(commands.Cog):
         usage_and_examples = 'schedule JST Lui\n'
         usage_and_examples += '2022/1/20 13:00~Apex collab with EN & ID Senpai\n'
         usage_and_examples += '1/20/2022 11pm~hololiveERROR\n'
-        em.add_field(name = 'Usage and Examples', value = f'```schedule timezone talent\nmonth/day/year hour:minute~Stream Title\nyear/month/day hour:minute~Stream Title```\n```\n{usage_and_examples}```', inline = False)
+        usage_and_examples += '**Input time must not exceed 23:00.**'
+        em.add_field(name = 'Usage and Examples', value = f'x\n```schedule timezone talent\nmonth/day/year hour:minute~Stream Title\nyear/month/day hour:minute~Stream Title```\n```\n{usage_and_examples}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -196,8 +197,8 @@ class Help(commands.Cog):
         command_usage += "nodiscussion ignored\n"
         command_usage += "nodiscussion remove <channel><channel><channel> (or more)\n"
         example = "nodiscussion channel 793272704182386718 793272785345577002 #sounds\n"
-        example += "nodiscussion ignore 793272704182386718 793272785345577002 #sounds\n"
-        example += "nodiscussion unignore 793272704182386718 793272785345577002 #sounds\n"
+        example += "nodiscussion ignore 793272704182386718 793272785345577002 @role\n"
+        example += "nodiscussion unignore 793272704182386718 793272785345577002 @role\n"
         example += "nodiscussion remove 793272704182386718 793272785345577002 #sounds\n"
         em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
