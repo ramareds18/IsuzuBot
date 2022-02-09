@@ -57,7 +57,7 @@ class ModerationApp(commands.Cog):
                 except:
                     await interaction.response.send_message("Something went wrong.", ephemeral=True)
 
-        elif not interaction.user.guild_permissions.manage_channels:
+        elif not interaction.user.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
             await interaction.response.send_message("I don't have `Manage Channels` permission.")
