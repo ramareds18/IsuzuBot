@@ -34,7 +34,7 @@ class UtilityApp(commands.Cog):
         ),
         time = SlashOption(
             name = "date-and-time",
-            description = "Date and time in format of yyyy/mm/dd hour:minute",
+            description = "Date and time in format of yyyy/mm/dd hour:minute. Time must not exceed 23:59",
         ),
     ):
         UTC = "UTC"
