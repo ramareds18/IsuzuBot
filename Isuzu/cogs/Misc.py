@@ -169,8 +169,8 @@ class Misc(commands.Cog):
         else:
             await ctx.reply('Queue is empty.', mention_author = False)
 
-    @commands.has_permissions(manage_messages = True)
     @commands.command(aliases=['qc'])
+    @commands.has_permissions(manage_messages = True)
     async def queueclear(self, ctx):
         try:
             q = loadqueue(ctx)
