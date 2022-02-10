@@ -423,11 +423,12 @@ def main():
 
             if message.content: 
                 embed_body += f'\n{message.content}'
-            file_contained = discord.Attachment
+            has_non_image = False
             if message.attachments:
                 for file_contained in message.attachments:
                     if not (file_contained.content_type).startswith("image"):
                         embed_body += f'\n{file_contained.url}'
+                        has_non_image = True
             if message.stickers:
                 embed_body += '\n**(Message contained sticker)**'
 
@@ -439,7 +440,7 @@ def main():
             else:
                 em.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)
                 em1.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)
-            if message.content or not str(file_contained.content_type).startswith("image"):
+            if message.content or has_non_image:
                 if message.author.avatar:
                     url = message.author.avatar
                 else:
