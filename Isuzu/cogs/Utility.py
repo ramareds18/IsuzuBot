@@ -45,26 +45,10 @@ class Utility(commands.Cog):
         print('Bot ID: {}'.format(self.client.user.id))
 
     @commands.command(aliases=['cv'])
-    @commands.bot_has_permissions(send_messages = True)
     @commands.has_permissions(manage_messages = True)
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def checkvera(self, ctx, channel: discord.TextChannel):
-        try:
-            channel = self.client.get_channel(channel.id) 
-            links = "" 
-            async for message in channel.history(limit = 500):
-                reactions = message.reactions
-                for reaction in reactions:
-                    if reaction.emoji == '✅':
-                        async for user in reaction.users():
-                            if user.bot:
-                                links += message.jump_url + "\n"
-            if links == "":
-                await ctx.reply("Everything looks good.", mention_author = False)
-            else:
-                await ctx.reply("Membership not processed yet:\n" + links, mention_author = False)
-        except Forbidden:
-            await ctx.reply("Bot doesn't have access to that channel.")
+        await ctx.reply("This command has now been moved to slash command. Try running /checkvera.")
 
     @commands.command(aliases=['sch'])
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -109,7 +93,7 @@ class Utility(commands.Cog):
                 await ctx.reply('Timezone is not supported yet. Run `help schedule` for more information.', mention_author = False)
         except:
             output = 'Invalid data input. Error possibilities:\n'
-            output += "• You inputted a time that exceed 23:00\n"
+            output += "• You inputted a time that exceed 23:59\n"
             output += "• You didn't put '~' between the date and activity title\n"
             output += "• Your didn't put the correct format, run `help schedule` for more information\n"
             await ctx.reply(output, mention_author = False)
@@ -160,32 +144,7 @@ class Utility(commands.Cog):
         em.set_thumbnail(url = url)
 
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        await ctx.reply(embed = em, mention_author = False)
-
-    @commands.command(aliases=['bn'])
-    @commands.has_permissions(manage_messages = True)
-    async def banner(self, ctx, member: typing.Union[discord.Member, discord.User] = None):
-        member = ctx.author if not member else member
-        user = await self.client.fetch_user(member.id)
-        embed_body = f'{member.mention} - User Banner\n'
-        embed_body += '\n'
-        if user.banner:
-            embed_body += f"[Download banner]({user.banner.url})"
-        else:
-            embed_body += "*This user has no banner.*"
-        em = discord.Embed(description= f'{embed_body}', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        if isinstance(member, discord.Member):
-            if member.nick:
-                em.set_author(name = f'{member.name}#{member.discriminator}  ({member.nick})', icon_url = member.display_avatar)
-            else:
-                em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
-        else:
-            em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
-        if user.banner:
-            em.set_image(url = user.banner)
-
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        await ctx.reply(embed = em, mention_author = False)
+        await ctx.reply(content = 'Commands are now migrating to slash commands, try /who as well.',embed = em, mention_author = False)
 
     # Error-handling section
 
@@ -203,11 +162,6 @@ class Utility(commands.Cog):
     async def whois_error(self, ctx, error):
         if isinstance(error, commands.BadUnionArgument):
             await ctx.reply ("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.", mention_author = False)
-
-    @banner.error
-    async def banner_error(self, ctx, error):
-        if isinstance(error, commands.BadUnionArgument):
-            await ctx.reply("User could not be recognized. This is most likely due to the ID inputted wasn't a user ID.", mention_author = False)
 
 def setup(client):
     client.add_cog(Utility(client))
