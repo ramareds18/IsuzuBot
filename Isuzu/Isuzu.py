@@ -244,7 +244,7 @@ def main():
         while True:
             dtN = pen.now(WIB)
             await client.change_presence(activity=discord.Game(dtN.format("HH:mm zz, D MMM YYYY")))
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
 
     @client.event
     async def on_ready():
@@ -294,9 +294,9 @@ def main():
 
     @client.listen()
     async def on_message(message):
+        await asyncio.sleep(2)
         if not message.guild or message.author.bot or not filtering_toggle(message) or not filtering_toggle(message) or message.author.guild_permissions.administrator: return
         
-        await asyncio.sleep(1)
         collection = loadblacklistedYT()
         blacklistedID = collection.find({})
         found = False
@@ -342,6 +342,7 @@ def main():
 
     @client.listen()
     async def on_message(message):
+        await asyncio.sleep(2)        
         x = re.search("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})", message.content)
         if message.author.bot or not message.guild or message.attachments or x or not nodiscussion_toggle(message) or message.author.guild_permissions.administrator: return
         
@@ -366,6 +367,7 @@ def main():
         
     @client.event
     async def on_bulk_message_delete(messages):
+        await asyncio.sleep(2)
         message = messages[0]
         if not message.guild or message.author.bot or not logging_toggle(message): return
 
@@ -394,6 +396,7 @@ def main():
 
     @client.event
     async def on_message_delete(message):
+        await asyncio.sleep(2)
         if not message.guild or message.author.bot or not logging_toggle(message): return
         
         collection = loadsettings()
@@ -487,6 +490,7 @@ def main():
 
     @client.event
     async def on_message_edit(before, after):
+        await asyncio.sleep(2)
         if not before.guild or before.author.bot or before.content == after.content or not logging_toggle(before): return
         
         collection = loadsettings()
@@ -543,6 +547,7 @@ def main():
 
     @client.event
     async def on_member_join(member):
+        await asyncio.sleep(2)
         collection = loadsettings()
         guild_settings = collection.find_one({"_id":member.guild.id})
         min_age = guild_settings["minage"]["days"]
@@ -647,6 +652,7 @@ def main():
 
     @client.event
     async def on_voice_state_update(member, before, after):
+        await asyncio.sleep(2)
         if member.bot or not voicelink_toggle(member) or member.guild_permissions.administrator: return
         
         collection = loadsettings()
@@ -663,6 +669,7 @@ def main():
 
     @client.listen()
     async def on_voice_state_update(member, before, after):
+        await asyncio.sleep(2)
         if member.bot or not streamlink_toggle(member) or member.guild_permissions.administrator: return
         
         collection = loadsettings()
