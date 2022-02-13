@@ -60,7 +60,7 @@ class ModerationApp(commands.Cog):
                 except:
                     await interaction.response.send_message("Something went wrong.", ephemeral=True)
 
-        elif not interaction.user.guild_permissions.manage_channels:
+        elif not interaction.user.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
             await interaction.response.send_message("I don't have `Manage Channels` permission.")
@@ -285,6 +285,131 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Manage Roles` permission.")  
 
+    @discord.slash_command(name="kick", description="Kick a user from the server", guild_ids=[Moonacord])
+    async def kick_slash(
+        self, 
+        interaction: Interaction,
+        member: discord.Member = SlashOption(
+            name="user",
+            description="The user you want to ban",
+        ),
+        reason = SlashOption(
+            name="reason",
+            description="Your reason to ban the user",
+            required=False,
+        )
+    ):
+        if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.kick_members:
+            if isinstance(member, discord.User):
+                await interaction.response.send_message("User is not a member of the server.")
+            else:
+                try:
+                    msg = await interaction.response.send_message('Kicking...', mention_author = False)
+                    if member.top_role >= interaction.user.top_role:
+                        await msg.edit('You are not allowed to kick this user.')
+                    else:
+                        comment = ''
+                        if reason and len(reason) <= 450:
+                            reason += f' | Kicked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                        elif reason and len(reason) > 450:
+                            reason = f'Kicked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                            comment = 'Reason too long.'
+                        else:
+                            reason = f'Kicked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                        await interaction.guild.kick(member, reason = reason)
+                        
+                        embed_body = f'**Kicked** {member.mention} ({member.id})\n'
+                        embed_body += '\n'
+                        embed_body += f'**Reason:** {reason}\n'
+                        if comment:
+                            embed_body += f'**Note**: {comment}'
+                        em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+                        await msg.edit(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
+                except Forbidden:
+                    await msg.edit("Can't kick user with equal or higher role.")
+        elif not interaction.user.guild_permissions.kick_members:
+            await interaction.response.send_message("You don't have `Kick Members` permission.", ephemeral=True)
+        else:
+            await interaction.response.send_message("I don't have `Kick Members` permission.")
+
+    @discord.slash_command(name="ban", description="Ban a user from the server", guild_ids=[Moonacord])
+    async def ban_slash(
+        self, 
+        interaction: Interaction,
+        member: discord.User = SlashOption(
+            name="user",
+            description="The user you want to ban",
+        ),
+        reason = SlashOption(
+            name="reason",
+            description="Your reason to ban the user",
+            required=False,
+        )
+    ):
+        if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.ban_members:
+            try:
+                await interaction.response.send_message('Banning...')
+                if isinstance(member, discord.Member) and member.top_role >= interaction.user.top_role:
+                    await interaction.edit_original_message(content='You are not allowed to ban this user.')
+                else:
+                    comment = ''
+                    if reason and len(reason) <= 450:
+                        reason += f' | Banned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                    elif reason and len(reason) > 450:
+                        reason = f'Banned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                        comment = 'Reason too long.'
+                    else:
+                        reason = f'Banned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                    await interaction.guild.ban(member, reason = reason)
+                    
+                    embed_body = f'**Banned** {member.mention} ({member.id})\n'
+                    embed_body += '\n'
+                    embed_body += f'**Reason:** {reason}\n'
+                    if comment:
+                        embed_body += f'**Note**: {comment}'
+                    em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+                    await interaction.edit_original_message(content = None, embed = em)
+            except Forbidden:
+                await interaction.edit_original_message(content="Can't ban user with equal or higher role.")
+        elif not interaction.user.guild_permissions.ban_members:
+            await interaction.response.send_message("You don't have `Ban Members` permission.", ephemeral=True)
+        else:
+            await interaction.response.send_message("I don't have `Ban Members` permission.")
+
+    @discord.slash_command(name="unban", description="Unban a user from the server", guild_ids=[Moonacord])
+    async def unban_slash(
+        self, 
+        interaction: Interaction, 
+        member: discord.User = SlashOption(
+            name="user",
+            description="The user you want to unban",
+        ),
+        reason = SlashOption(
+            name="reason",
+            description="Your reason to unban the user",
+            required=False,
+        )
+    ):
+        if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.ban_members:
+            try:
+                is_banned = await interaction.guild.fetch_ban(member)
+                if reason:
+                    reason += f' | Unbanned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                else:
+                    reason = f'Unbanned by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                await interaction.guild.unban(member, reason = reason)
+                embed_body = f'**Unbanned** {member.mention} ({member.id})\n'
+                embed_body += '\n'
+                embed_body += f'**Reason:** {reason}'
+                em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
+                await interaction.response.send_message(embed = em)
+            except NotFound:
+                await interaction.response.send_message('That is not a banned user.')
+        elif not interaction.user.guild_permissions.ban_members:
+            await interaction.response.send_message("You don't have `Ban Members` permission.", ephemeral=True)
+        else:
+            await interaction.response.send_message("I don't have `Ban Members` permission.")
+
     # @discord.slash_command(name="prune", description="Kick users with a certain condition from the server")
     # async def prune_slash(
     #     self,
@@ -293,9 +418,9 @@ class ModerationApp(commands.Cog):
     #         name = 'option',
     #         description = 'Condition to be kicked',
     #         choices = {
-    #             'No Avatar and norole' : 'noboth',
-    #             'No Avatar' : 'noavatar',
-    #             'No Role' : 'norole',
+    #             'No avatar and no role' : 'noboth',
+    #             'No avatar' : 'noavatar',
+    #             'No role' : 'norole',
     #         }
     #     )
     # ):

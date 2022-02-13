@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python3.9
 
 import nextcord as discord
 import os
@@ -246,7 +246,7 @@ def main():
         while True:
             dtN = pen.now(WIB)
             await client.change_presence(activity=discord.Game(dtN.format("HH:mm zz, D MMM YYYY")))
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
 
     @client.event
     async def on_ready():
@@ -277,11 +277,6 @@ def main():
             collection.insert_one(default_assigned)
         else: return
 
-    # @client.event
-    # async def on_guild_remove(guild):
-    #     collection = loadsettings()
-    #     collection.delete_one({"_id":guild.id})
-
     @client.event
     async def on_thread_join(thread):
         try:
@@ -301,9 +296,9 @@ def main():
 
     @client.listen()
     async def on_message(message):
+        await asyncio.sleep(2)
         if not message.guild or message.author.bot or not filtering_toggle(message) or not filtering_toggle(message) or message.author.guild_permissions.administrator: return
         
-        await asyncio.sleep(1)
         collection = loadblacklistedYT()
         blacklistedID = collection.find({})
         found = False
@@ -349,6 +344,7 @@ def main():
 
     @client.listen()
     async def on_message(message):
+        await asyncio.sleep(2)        
         x = re.search("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})", message.content)
         if message.author.bot or not message.guild or message.attachments or x or not nodiscussion_toggle(message) or message.author.guild_permissions.administrator: return
         
@@ -373,6 +369,7 @@ def main():
         
     @client.event
     async def on_bulk_message_delete(messages):
+        await asyncio.sleep(2)
         message = messages[0]
         if not message.guild or message.author.bot or not logging_toggle(message): return
 
@@ -401,6 +398,7 @@ def main():
 
     @client.event
     async def on_message_delete(message):
+        await asyncio.sleep(2)
         if not message.guild or message.author.bot or not logging_toggle(message): return
         
         collection = loadsettings()
@@ -430,11 +428,12 @@ def main():
 
             if message.content: 
                 embed_body += f'\n{message.content}'
-            file_contained = discord.Attachment
+            has_non_image = False
             if message.attachments:
                 for file_contained in message.attachments:
                     if not (file_contained.content_type).startswith("image"):
                         embed_body += f'\n{file_contained.url}'
+                        has_non_image = True
             if message.stickers:
                 embed_body += '\n**(Message contained sticker)**'
 
@@ -446,7 +445,7 @@ def main():
             else:
                 em.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)
                 em1.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)
-            if message.content or not str(file_contained.content_type).startswith("image"):
+            if message.content or has_non_image:
                 if message.author.avatar:
                     url = message.author.avatar
                 else:
@@ -493,6 +492,7 @@ def main():
 
     @client.event
     async def on_message_edit(before, after):
+        await asyncio.sleep(2)
         if not before.guild or before.author.bot or before.content == after.content or not logging_toggle(before): return
         
         collection = loadsettings()
@@ -549,6 +549,7 @@ def main():
 
     @client.event
     async def on_member_join(member):
+        await asyncio.sleep(2)
         collection = loadsettings()
         guild_settings = collection.find_one({"_id":member.guild.id})
         min_age = guild_settings["minage"]["days"]
@@ -653,6 +654,7 @@ def main():
 
     @client.event
     async def on_voice_state_update(member, before, after):
+        await asyncio.sleep(2)
         if member.bot or not voicelink_toggle(member) or member.guild_permissions.administrator: return
         
         collection = loadsettings()
@@ -669,6 +671,7 @@ def main():
 
     @client.listen()
     async def on_voice_state_update(member, before, after):
+        await asyncio.sleep(2)
         if member.bot or not streamlink_toggle(member) or member.guild_permissions.administrator: return
         
         collection = loadsettings()

@@ -11,56 +11,32 @@ class Help(commands.Cog):
     async def help(self, ctx):
         em = discord.Embed(title = '**Help**', description = 'Use `help <command>` for extended information on a command.', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
 
-        em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `whois`, `banner`', inline = False)
-        em.add_field(name = 'Management', value = '`changeprefix`, `log`, `voicelink`, `streamlink`, `nodiscussion`', inline = False)
-        em.add_field(name = 'Miscellaneous', value = '`queue`, `echo`, `stickerinfo`, `ping`, `invitelink`', inline = False)
-        em.add_field(name = 'Moderation', value = '`slowmode`, `prune`, `timeout`, `untimeout`, `kick`, `masskick`, `ban`, `unban`, `massban`, `massunban`, `minage`, `filtering`', inline = False)
+        em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `whois`, `avatar`, `banner`', inline = False)
+        em.add_field(name = 'Management', value = '`changeprefix`, `minage`, `filtering`, `log`, `voicelink`, `streamlink`, `nodiscussion`', inline = False)
+        em.add_field(name = 'Miscellaneous', value = '`echo`, `stickerinfo`, `ping`, `invitelink`', inline = False)
+        em.add_field(name = 'Moderation', value = '`slowmode`, `prune`, `timeout`, `untimeout`, `kick`, `masskick`, `ban`, `unban`, `massban`, `massunban`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
 
-    @help.command(aliases = ['q'])
-    async def queue(self, ctx):
-        em = discord.Embed(title = '**queue**', description = "Commands for karaoke queue related.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Variations', value = '`queue`, `queuenext`, `queuelist`, `queueremove`, `queueswap`, `queueclear`, `forcequeue`')
-        em.add_field(name = 'Aliases', value = '`q`, `qn`, `ql`, `qr`, `qs`, `qc`, `fq`', inline = False)
-        queuecommmands = '`queue` to queue yourself in.\n'
-        queuecommmands += '`queuelist` to see the queue.\n'
-        queuecommmands += '`queuenext` to move on to the next person in queue.\n'
-        queuecommmands += '`queueremove` to remove yourself from queue **OR**,\n`queueremove <order number>` to remove someone from the queue.\n'
-        queuecommmands += '`queueswap` to swap order. How to run ```\nqueueswap <order number> <order number>.```\n'
-        queuecommmands += '`queueclear` to clear the queue, only mods can run this command.\n'
-        queuecommmands += '`forcequeue` to force queue someone in, only mods can run this command. How to run ```forcequeue <userID> <order number> (optional)```'
-        em.add_field(name = 'Description', value = f'{queuecommmands}')
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+    # Utility
 
-        await ctx.reply(embed = em, mention_author = False)
-
-    @help.command(aliases = ['cp'])
-    async def changeprefix(self, ctx):
-        em = discord.Embed(title = '**changeprefix**', description = "Changes the bot's prefix.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Aliases', value = '`cp`')
-        em.add_field(name = 'Usage and Examples', value = '`changeprefix <your_new_prefix>`\n```\nchangeprefix .```', inline = False)
+    @help.command()
+    async def when(self, ctx):
+        em = discord.Embed(title = '**when**', description = "Gets unix timestamp and calculates how much time until the given date.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Supported Timezones', value = '• UTC or GMT\n• WIB\n• JST\n• MSK\n• EDT or EST or ET\n• PDT or PST or PT', inline = False)
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /when.\nTime input examples:\n```\n2022/1/20 13:34\n2022/03/13 3am```\n**Input time must not exceed 23:59.**', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
 
     @help.command(aliases = ['cv'])
     async def checkvera(self, ctx):
-        em = discord.Embed(title = '**checkvera**', description = "Checks unprocessed membership proof.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**checkvera**', description = "Checks unprocessed membership proof by VeraBot.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Aliases', value = '`cv`')
         em.add_field(name = 'Usage and Examples', value = '`checkvera <channel>`\n```\ncheckvera 846974427450572870\ncheckvera #vera-logs```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
-        await ctx.reply(embed = em, mention_author = False)
-
-    @help.command()
-    async def when(self, ctx):
-        em = discord.Embed(title = '**when**', description = "Gets unix timestamp and calculates how much time until the given date.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Supported Timezones', value = '• UTC or GMT\n• WIB\n• JST\n• MSK\n• EDT or EST or ET\n• PDT or PST or PT', inline = False)
-        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /when.\nTime input examples:\n```\n2022/1/20 13:34\n2022/03/13 3am```', inline = False)
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-
         await ctx.reply(embed = em, mention_author = False)
 
     @help.command(aliases = ['sch'])
@@ -71,7 +47,8 @@ class Help(commands.Cog):
         usage_and_examples = 'schedule JST Lui\n'
         usage_and_examples += '2022/1/20 13:00~Apex collab with EN & ID Senpai\n'
         usage_and_examples += '1/20/2022 11pm~hololiveERROR\n'
-        em.add_field(name = 'Usage and Examples', value = f'```schedule timezone talent\nmonth/day/year hour:minute~Stream Title\nyear/month/day hour:minute~Stream Title```\n```\n{usage_and_examples}```', inline = False)
+        usage_and_examples += '**Input time must not exceed 23:59.**'
+        em.add_field(name = 'Usage and Examples', value = f'x\n```schedule timezone talent\nmonth/day/year hour:minute~Stream Title\nyear/month/day hour:minute~Stream Title```\n```\n{usage_and_examples}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -86,63 +63,27 @@ class Help(commands.Cog):
         await ctx.reply(embed = em, mention_author = False)
 
     @help.command()
-    async def prune(self, ctx):
-        em = discord.Embed(title = '**prune**', description = "Kick members with condition.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        command_addition = '`prune` to kick members with no role AND default avatar\n'
-        command_addition += '`prune norole` to kick members with no role\n'
-        command_addition += '`prune noavatar` to kick members with default avatar'
-        em.add_field(name = 'Command options', value = command_addition, inline = False)
-        command_usage = '\nprune\nprune norole\nprune noavatar'
-        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```', inline = False)
+    async def avatar(self, ctx):
+        em = discord.Embed(title = '**avatar**', description = "Checks avatar of a user. You can choose whether you want to see their server or global avatar.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /avatar.', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        
-        await ctx.reply(embed = em, mention_author = False)
-
-    @help.command(aliases = ['bn'])
-    async def banner(self, ctx):
-        em = discord.Embed(title = '**banner**', description = "Checks banner of a user.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Aliases', value = '`bn`')
-        em.add_field(name = 'Usage and Examples', value = '`banner <userID>`\n```\nbanner 302064098739355652```', inline = False)
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        
         await ctx.reply(embed = em, mention_author = False)
 
     @help.command()
-    async def minage(self, ctx):
-        em = discord.Embed(title = '**minage**', description = "Set a minimum age to join the server. Turned off by default.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Command options', value = '`message`, `channel`, `settings`')
-        command_addition = "`minage` to set the minimum age (in day format).\n"
-        command_addition += "`minage message` to set a message to send to the user kicked. Will use the default message if not set.\n"
-        command_addition += "`minage message remove` to delete the set message and go back using the default message.\n"
-        command_addition += "`minage channel` to set a channel where bot will log when do any minage actions.\n"
-        command_addition += "`minage settings` to see the current settings of minage module of the server."
-        em.add_field(name = 'Description', value = command_addition, inline = False)
-        dm_options = "`{minage}` server minimum Account Age - `Ex: 30 Days`\n"
-        dm_options += "`{rejoindate}` built-in discord display for date the user can try to rejoin - `Ex:` <t:1645586955:F>\n"
-        dm_options += "`{rejoincount}` built-in discord display for time left until the user can try to rejoin - `Ex:` <t:1645586955:R>"
-        em.add_field(name = 'Variables you can use in minage message', value = dm_options, inline = False)
-        command_usage = "minage <days>\n"
-        command_usage += "minage message <your message>\n"
-        command_usage += "minage channel <logchannel>\n"
-        command_usage += "minage settings"
-        example = "minage 30\n"
-        example += "minage message Thank you for joining but your account is less than {minage}. You can try joining the server again on {rejoindate} or {rejoincount}\n"
-        example += "minage channel 918340003086614578\n"
-        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
+    async def banner(self, ctx):
+        em = discord.Embed(title = '**banner**', description = "Checks banner of a user.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Usage and Examples', value = 'Slash command, type /banner.', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
         await ctx.reply(embed = em, mention_author = False)
+    
+    # Management 
 
-    @help.command(aliases = ['filtering'])
-    async def filter(self, ctx):
-        em = discord.Embed(title = '**filter**', description = "Toggle on or off content filtering module. Turned off by default", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Description', value = 'Filter message containing video from a blacklisted clipper.')
-        em.add_field(name = 'Command options', value = '`on`, `off`, `list`, `status`', inline = False)        
-        command_usage = "filter on\n"
-        command_usage += "filter off\n"
-        command_usage += "filter list\n"
-        command_usage += "filter status"
-        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```', inline = False)
+    @help.command(aliases = ['cp'])
+    async def changeprefix(self, ctx):
+        em = discord.Embed(title = '**changeprefix**', description = "Changes the bot prefix.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Aliases', value = '`cp`')
+        em.add_field(name = 'Usage and Examples', value = '`changeprefix <your_new_prefix>`\n```\nchangeprefix .```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -178,6 +119,76 @@ class Help(commands.Cog):
         
         await ctx.reply(embed = em, mention_author = False)
 
+    @help.command()
+    async def minage(self, ctx):
+        em = discord.Embed(title = '**minage**', description = "Set a minimum age to join the server. Turned off by default.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Command options', value = '`message`, `channel`, `settings`')
+        command_addition = "`minage` to set the minimum age (in day format).\n"
+        command_addition += "`minage message` to set a message to send to the kicked user. Will use the default message if not set.\n"
+        command_addition += "`minage message remove` to delete the set message and go back using the default message.\n"
+        command_addition += "`minage channel` to set a channel where bot will log when do any minage actions.\n"
+        command_addition += "`minage settings` to see the current settings of minage module of the server."
+        em.add_field(name = 'Description', value = command_addition, inline = False)
+        dm_options = "`{minage}` server minimum Account Age - `Ex: 30 Days`\n"
+        dm_options += "`{rejoindate}` built-in discord display for date the user can try to rejoin - `Ex:` <t:1645586955:F>\n"
+        dm_options += "`{rejoincount}` built-in discord display for time left until the user can try to rejoin - `Ex:` <t:1645586955:R>"
+        em.add_field(name = 'Variables you can use in minage message', value = dm_options, inline = False)
+        command_usage = "minage <days>\n"
+        command_usage += "minage message <your message>\n"
+        command_usage += "minage channel <logchannel>\n"
+        command_usage += "minage settings"
+        example = "minage 30\n"
+        example += "minage message Thank you for joining but your account is less than {minage}. You can try joining the server again on {rejoindate} or {rejoincount}\n"
+        example += "minage channel 918340003086614578\n"
+        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command(aliases = ['filtering'])
+    async def filter(self, ctx):
+        em = discord.Embed(title = '**filter**', description = "Toggle on or off content filtering module. Turned off by default", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Description', value = 'Filter message containing video from a blacklisted clipper.')
+        em.add_field(name = 'Command options', value = '`on`, `off`, `list`, `status`', inline = False)        
+        command_usage = "filter on\n"
+        command_usage += "filter off\n"
+        command_usage += "filter list\n"
+        command_usage += "filter status"
+        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command(aliases=['vl'])
+    async def voicelink(self, ctx):
+        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to user joining voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
+        command_addition = "`voicelink on/off/status` to turn on/off or see the current settings of voicelink.\n"
+        command_addition += "`voicelink role` to set a role which bot will give to users who join voice chat.\n"
+        em.add_field(name = 'Description', value = command_addition, inline = False)
+        command_usage = "voicelink on/off/status\n"
+        command_usage += "voicelink role <role>\n"
+        example = "voicelink role 854617721898663956\nvoicelink role @rolename"
+        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command(aliases=['sl'])
+    async def streamlink(self, ctx):
+        em = discord.Embed(title = '**streamlink**', description = "Automatically give a set role to user going live in voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
+        command_addition = "`streamlink on/off/status` to turn on/off or see the current settings of streamlink.\n"
+        command_addition += "`streamlink role` to set a role which bot will give to users who go live in voice chat.\n"
+        em.add_field(name = 'Description', value = command_addition, inline = False)
+        command_usage = "streamlink on/off/status\n"
+        command_usage += "streamlink role <role>\n"
+        example = "streamlink role 854617721898663956\streamlink role @rolename"
+        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        
+        await ctx.reply(embed = em, mention_author = False)
+
     @help.command(aliases=['nd'])
     async def nodiscussion(self, ctx):
         em = discord.Embed(title = '**nodiscussion**', description = "Deletes message that doesn't contain link or attachments. If a message doesn't contain either, it will delete the latest message sent (if the author of the last 2 messages aren't the same user).", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
@@ -196,43 +207,15 @@ class Help(commands.Cog):
         command_usage += "nodiscussion ignored\n"
         command_usage += "nodiscussion remove <channel><channel><channel> (or more)\n"
         example = "nodiscussion channel 793272704182386718 793272785345577002 #sounds\n"
-        example += "nodiscussion ignore 793272704182386718 793272785345577002 #sounds\n"
-        example += "nodiscussion unignore 793272704182386718 793272785345577002 #sounds\n"
+        example += "nodiscussion ignore 793272704182386718 793272785345577002 @role\n"
+        example += "nodiscussion unignore 793272704182386718 793272785345577002 @role\n"
         example += "nodiscussion remove 793272704182386718 793272785345577002 #sounds\n"
         em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
         
         await ctx.reply(embed = em, mention_author = False)
-
-    @help.command(aliases=['vl'])
-    async def voicelink(self, ctx):
-        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to users joining voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
-        command_addition = "`voicelink on/off/status` to turn on/off or see the current settings of voicelink.\n"
-        command_addition += "`voicelink role` to set a role which bot will give to users who join voice chat.\n"
-        em.add_field(name = 'Description', value = command_addition, inline = False)
-        command_usage = "voicelink on/off/status\n"
-        command_usage += "voicelink role <role>\n"
-        example = "voicelink role 854617721898663956\nvoicelink role @rolename"
-        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        
-        await ctx.reply(embed = em, mention_author = False)
-
-    @help.command(aliases=['sl'])
-    async def streamlink(self, ctx):
-        em = discord.Embed(title = '**streamlink**', description = "Automatically give a set role to users going live in voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
-        command_addition = "`streamlink on/off/status` to turn on/off or see the current settings of streamlink.\n"
-        command_addition += "`streamlink role` to set a role which bot will give to users who go live in voice chat.\n"
-        em.add_field(name = 'Description', value = command_addition, inline = False)
-        command_usage = "streamlink on/off/status\n"
-        command_usage += "streamlink role <role>\n"
-        example = "streamlink role 854617721898663956\streamlink role @rolename"
-        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```\n```\n{example}```', inline = False)
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        
-        await ctx.reply(embed = em, mention_author = False)
+    
+    # Miscellaneous
 
     @help.command()
     async def echo(self, ctx):
@@ -243,12 +226,52 @@ class Help(commands.Cog):
         await ctx.reply(embed = em, mention_author = False)
 
     @help.command()
+    async def ping(self, ctx):
+        em = discord.Embed(title = '**ping**', description = "Get latency of the bot.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command()
+    async def stickerinfo(self, ctx):
+        em = discord.Embed(title = '**stickerinfo**', description = "Get information from a given sticker.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Aliases', value = '`ss`, `steal sticker`')
+        em.add_field(name = 'Usage and Examples', value = '`stickerinfo <send your message with a sticker>`', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command()
+    async def invitelink(self, ctx):
+        em = discord.Embed(title = '**invitelink**', description = "Get invite link of the bot.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em.add_field(name = 'Aliases', value = '`inv`')
+        em.add_field(name = 'Usage and Examples', value = '`invitelink`', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+
+        await ctx.reply(embed = em, mention_author = False)
+
+    # Moderation
+
+    @help.command()
     async def slowmode(self, ctx):
         em = discord.Embed(title = '**slowmode**', description = "Slowmode a channel or thread for a given time. Maxed at 6 hours. (Currently only available in whitelisted guilds)", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Duration options', value='• h - Hour\n• m - Minute\n• s - Second', inline = False)
         em.add_field(name = 'Usage and Examples', value = 'Slash command, type /slowmode.\nDuration examples:\n```\n1h2m3s\n1h4s```', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
+        await ctx.reply(embed = em, mention_author = False)
+
+    @help.command()
+    async def prune(self, ctx):
+        em = discord.Embed(title = '**prune**', description = "Kick members with condition.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
+        command_addition = '`prune` to kick members with no role AND default avatar\n'
+        command_addition += '`prune norole` to kick members with no role\n'
+        command_addition += '`prune noavatar` to kick members with default avatar'
+        em.add_field(name = 'Command options', value = command_addition, inline = False)
+        command_usage = '\nprune\nprune norole\nprune noavatar'
+        em.add_field(name = 'Usage and Examples', value = f'```\n{command_usage}```', inline = False)
+        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
+        
         await ctx.reply(embed = em, mention_author = False)
 
     @help.command()
@@ -280,24 +303,6 @@ class Help(commands.Cog):
     async def unlock(self, ctx):
         em = discord.Embed(title = '**unlock**', description = "Unlock a locked channel.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Usage and Examples', value = 'Slash command, type /unlock.', inline = False)
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-
-        await ctx.reply(embed = em, mention_author = False)
-
-    @help.command()
-    async def stickerinfo(self, ctx):
-        em = discord.Embed(title = '**stickerinfo**', description = "Get information from a given sticker.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Aliases', value = '`ss`, `steal sticker`')
-        em.add_field(name = 'Usage and Examples', value = '`stickerinfo <send your message with a sticker>`', inline = False)
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-
-        await ctx.reply(embed = em, mention_author = False)
-
-    @help.command()
-    async def invitelink(self, ctx):
-        em = discord.Embed(title = '**invitelink**', description = "Get invite link of the bot.", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Aliases', value = '`inv`')
-        em.add_field(name = 'Usage and Examples', value = '`invitelink`', inline = False)
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)
@@ -347,13 +352,6 @@ class Help(commands.Cog):
     async def massunban(self, ctx):
         em = discord.Embed(title = '**massunban**', description = "Unban a bulk of users from the server. Reason is optional", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Usage and Examples', value = '`massunban <userID>\n<userID> <userID> <reason>`\n```\nmassunban 302064098739355652 137683987073073152 178089220185784320 these ppl are ok now```', inline = False)
-        em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-
-        await ctx.reply(embed = em, mention_author = False)
-
-    @help.command()
-    async def ping(self, ctx):
-        em = discord.Embed(title = '**ping**', description = "Pong.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
 
         await ctx.reply(embed = em, mention_author = False)

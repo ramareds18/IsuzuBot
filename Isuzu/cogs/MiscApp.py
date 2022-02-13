@@ -10,6 +10,20 @@ class MiscApp(commands.Cog):
 
     Moonacord = 735868176595812422
 
+    # Slash commands
+
+    @discord.slash_command(name="ping", description="Get the bot latency")
+    async def ping_slash(self, interaction: Interaction):
+        await interaction.response.send_message(f'🏓 Pong! `{round(self.client.latency * 1000)}ms`')
+
+    @discord.slash_command(name="invitelink", description="Get invite link of the bot")
+    async def invitelink_slash(self, interaction: Interaction):
+        output = 'Here is the invite link for the bot\n'
+        output += "https://discord.com/api/oauth2/authorize?client_id=873300341150613554&permissions=1514311904470&scope=applications.commands%20bot"
+        await interaction.response.send_message(output) 
+
+    # Message command app
+
     @discord.message_command(name="Sticker Info")
     async def stickerinfo_msg_command(self, interaction: Interaction, message: discord.Message):
         if message.stickers:
@@ -21,7 +35,9 @@ class MiscApp(commands.Cog):
             em.set_image(url = s.url)
             await interaction.response.send_message(embed = em, ephemeral=True)
         else:
-            await interaction.response.send_message("Message doesn't contain sticker.", ephemeral=True)
+            await interaction.response.send_message("Message doesn't contain sticker.", ephemeral=True)       
+
+    # Just me messing around
 
     @discord.message_command(name="Hilih", guild_ids=[Moonacord])
     async def hilih_msg_command(self, interaction: Interaction, message: discord.Message):
