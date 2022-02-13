@@ -99,6 +99,7 @@ class UtilityApp(commands.Cog):
         member: discord.User = SlashOption(
             name = "user",
             description = "The user whose information you want to see",
+            required = False,                       
         ),
     ):
         if interaction.user.guild_permissions.manage_messages:
@@ -158,6 +159,7 @@ class UtilityApp(commands.Cog):
         member: discord.User = SlashOption(
             name = "user",
             description = "The user whose avatar you want to see",
+            required = False,
         ),
         arg = SlashOption(
             name = 'type',
@@ -207,6 +209,7 @@ class UtilityApp(commands.Cog):
         member: discord.User = SlashOption(
             name = "user",
             description = "The user whose banner you want to see",
+            required = False,
         ),
     ):
         if interaction.user.guild_permissions.manage_messages:
