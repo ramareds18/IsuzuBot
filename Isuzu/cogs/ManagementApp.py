@@ -1,7 +1,7 @@
 import nextcord as discord
 import pendulum as pen
 import Isuzu as i
-import Management as m
+import cogs.Management as m
 from nextcord import Interaction, SlashOption, ChannelType, Forbidden
 from nextcord.abc import GuildChannel
 from nextcord.ext import commands
