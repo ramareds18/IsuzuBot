@@ -285,6 +285,40 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Manage Roles` permission.")  
 
+    @discord.slash_command(name="VoiceActivity", description="Activate/deactivate voice activity for a voice channel", guild_ids=[Moonacord])
+    async def vcva_slash(
+        self,
+        interaction: Interaction, 
+        channel: GuildChannel = SlashOption(
+            name = "channel",
+            description = "Channel to change to voice activity",
+            channel_types = [ChannelType.voice],
+        ),
+        switch = SlashOption(
+            name = 'switch',
+            description = 'Activate/deactivate voice activity',
+            choices = {'Activate' : 'on', 'Deactivate' : 'off'},
+        )
+    ):
+        if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
+            overwrites = channel.overwrites_for(interaction.guild.default_role)
+            if switch == 'on':
+                reason = f'Voice activity enabled by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                if overwrites.use_voice_activation != True:
+                    overwrites.use_voice_activation = True
+                    await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
+                    await interaction.response.send_message(f"Turning on voice activity for {channel.mention}.")
+            else:
+                reason = f'Voice activity disabled by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
+                if overwrites.use_voice_activation == True:
+                    overwrites.use_voice_activation = None
+                    await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
+                    await interaction.response.send_message(f"Turning off voice activity for {channel.mention}.")
+        elif not interaction.user.guild_permissions.manage_messages:
+            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+        else:
+            await interaction.response.send_message("I don't have `Manage Roles` permission.")  
+
     @discord.slash_command(name="kick", description="Kick a user from the server", guild_ids=[Moonacord])
     async def kick_slash(
         self, 

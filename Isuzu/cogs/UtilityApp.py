@@ -37,24 +37,27 @@ class UtilityApp(commands.Cog):
             description = "Date and time in format of yyyy/mm/dd hour:minute. Time must not exceed 23:59",
         ),
     ):
-        UTC = "UTC"
-        msg = ""
-        now = pen.now(UTC)
-        target = pen.parse(time, strict = False, tz = timezone, dayfirst = True).in_tz(UTC)
-        epoch = round((target - dt(1970,1,1)).total_seconds())
-        c = (target - now)
-        hour = c.total_seconds() // 3600
-        minutes = (c.total_seconds() % 3600) / 60
-        if(c.total_seconds() >= 0):
-            msg += "Time left: "
-            if(hour <= 0):
-                msg += f"{str(round(minutes))}m"
-            else:
-                msg += f"{str(round(hour))}h{str(round(minutes))}m"
-        msg += "\nUnix Timestamp:"
-        msg += f'\n`<t:{epoch}:F>` <t:{epoch}:F>'
-        msg += f'\n`<t:{epoch}:R>` <t:{epoch}:R>'
-        await interaction.response.send_message(msg)
+        try:
+            UTC = "UTC"
+            msg = ""
+            now = pen.now(UTC)
+            target = pen.parse(time, strict = False, tz = timezone, dayfirst = True).in_tz(UTC)
+            epoch = round((target - dt(1970,1,1)).total_seconds())
+            c = (target - now)
+            hour = c.total_seconds() // 3600
+            minutes = (c.total_seconds() % 3600) / 60
+            if(c.total_seconds() >= 0):
+                msg += "Time left: "
+                if(hour <= 0):
+                    msg += f"{str(round(minutes))}m"
+                else:
+                    msg += f"{str(round(hour))}h{str(round(minutes))}m"
+            msg += "\nUnix Timestamp:"
+            msg += f'\n`<t:{epoch}:F>` <t:{epoch}:F>'
+            msg += f'\n`<t:{epoch}:R>` <t:{epoch}:R>'
+            await interaction.response.send_message(msg)
+        except:
+            await interaction.response.send_message('Oops, something went wrong, please see `/help when` for more information.')
 
     @discord.slash_command(
         name = "checkvera",

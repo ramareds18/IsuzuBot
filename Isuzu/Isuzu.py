@@ -296,6 +296,13 @@ def main():
 
     @client.listen()
     async def on_message(message):
+        if message.guild.id != 735868176595812422 and message.author.id != 692399869998006303: return
+
+        if ':pinched_fingers:' in message.content:
+            await message.reply("Stop using that emote, it's annoying, sIeNn.")
+
+    @client.listen()
+    async def on_message(message):
         await asyncio.sleep(2)
         if not message.guild or message.author.bot or not filtering_toggle(message) or not filtering_toggle(message) or message.author.guild_permissions.administrator: return
         
