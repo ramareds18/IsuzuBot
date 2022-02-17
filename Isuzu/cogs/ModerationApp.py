@@ -285,7 +285,7 @@ class ModerationApp(commands.Cog):
         else:
             await interaction.response.send_message("I don't have `Manage Roles` permission.")  
 
-    @discord.slash_command(name="VoiceActivity", description="Activate/deactivate voice activity for a voice channel", guild_ids=[Moonacord])
+    @discord.slash_command(name="voiceactivity", description="Activate/deactivate voice activity for a voice channel", guild_ids=[Moonacord])
     async def vcva_slash(
         self,
         interaction: Interaction, 
