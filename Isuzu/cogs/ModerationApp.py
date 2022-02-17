@@ -308,12 +308,16 @@ class ModerationApp(commands.Cog):
                     overwrites.use_voice_activation = True
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
                     await interaction.response.send_message(f"Turning on voice activity for {channel.mention}.")
+                else:
+                    await interaction.response.send_message(f"Voice activity is already enabled for {channel.mention}.")
             else:
                 reason = f'Voice activity disabled by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
                 if overwrites.use_voice_activation == True:
                     overwrites.use_voice_activation = None
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
                     await interaction.response.send_message(f"Turning off voice activity for {channel.mention}.")
+                else:
+                    await interaction.response.send_message(f"Voice activity is already disabled for {channel.mention}.")
         elif not interaction.user.guild_permissions.manage_messages:
             await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
