@@ -296,7 +296,63 @@ def main():
 
     @client.listen()
     async def on_message(message):
-        if message.guild.id != 735868176595812422 and message.author.id != 692399869998006303: return
+        await asyncio.sleep(2)        
+        if message.guild: return
+
+        user = await client.fetch_user(myid)
+
+        embed_body = f'{message.author.mention} sent me a message.'
+        if message.content: 
+            embed_body += f'\n{message.content}'
+        if message.attachments:
+            for file_contained in message.attachments:
+                if not (file_contained.content_type).startswith("image"):
+                    embed_body += f'\n{file_contained.url}'
+        if message.stickers:
+            embed_body += '\n**(Message contained sticker)**'
+        em = discord.Embed(description=embed_body, colour=0xcaa686, timestamp = pen.now(WIB))
+        em1 = discord.Embed(description=embed_body, colour=0xcaa686, timestamp = pen.now(WIB))
+        em.set_thumbnail(url = message.author.display_avatar)
+        em.set_footer(text = f"Author ID: {message.author.id} | Message ID {message.id}")
+        if message.stickers:
+            for sticker in message.stickers:
+                sticker_url = sticker.url
+                em.set_image(url = sticker_url)
+
+        if message.attachments and len(message.attachments) == 1:
+            if message.stickers:
+                em.set_image(url = sticker_url)
+                await user.send(embed = em)
+                for image in message.attachments:
+                    if (image.content_type).startswith("image"):
+                        em1.set_image(url = image.url)
+                        await user.send(embed = em1)
+            else: 
+                for image in message.attachments:
+                    if (image.content_type).startswith("image"):
+                        em.set_image(url = image.url)
+                    await user.send(embed = em)
+
+        elif message.attachments and len(message.attachments) > 1:
+            if message.stickers:
+                em.set_image(url = sticker_url)
+                await user.send(embed = em)
+            else: await user.send(embed = em)
+            for image in message.attachments:
+                if (image.content_type).startswith("image"):
+                    em1.set_image(url = image.url)
+                    await user.send(embed = em1)
+
+        elif message.stickers:
+            em.set_image(url = sticker_url)
+            await user.send(embed = em)
+
+        else:
+            await user.send(embed = em)
+
+    @client.listen()
+    async def on_message(message):
+        if (message.guild.id != 735868176595812422 and message.author.id != 692399869998006303) or not message.guild: return
 
         if ':pinched_fingers:' in message.content:
             await message.reply("Stop using that emote, it's annoying, sIeNn.")
@@ -304,7 +360,7 @@ def main():
     @client.listen()
     async def on_message(message):
         await asyncio.sleep(2)
-        if not message.guild or message.author.bot or not filtering_toggle(message) or not filtering_toggle(message) or message.author.guild_permissions.administrator: return
+        if not message.guild or message.author.bot or not filtering_toggle(message) or message.author.guild_permissions.administrator: return
         
         collection = loadblacklistedYT()
         blacklistedID = collection.find({})
