@@ -318,7 +318,7 @@ class ModerationApp(commands.Cog):
                         if comment:
                             embed_body += f'**Note**: {comment}'
                         em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-                        await interaction.response.send_message(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
+                        await interaction.response.send_message(content=None, embed = em)
                 except Forbidden:
                     await interaction.response.send_message("Can't kick user with equal or higher role.")
         elif not interaction.user.guild_permissions.kick_members:
