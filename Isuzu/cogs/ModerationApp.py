@@ -342,7 +342,7 @@ class ModerationApp(commands.Cog):
                 await interaction.response.send_message("User is not a member of the server.")
             else:
                 try:
-                    msg = await interaction.response.send_message('Kicking...', mention_author = False)
+                    msg = await interaction.response.send_message('Kicking...')
                     if member.top_role >= interaction.user.top_role:
                         await msg.edit('You are not allowed to kick this user.')
                     else:
@@ -507,7 +507,7 @@ class ModerationApp(commands.Cog):
     #             await msg1.add_reaction("❌")
     #             reaction1, user1 = await self.client.wait_for('reaction_add', timeout=180.0, check=check)
     #             if str(reaction1.emoji) == yas:
-    #                 processing_message = await interaction.response.send_message('Pruning...', mention_author = False)
+    #                 processing_message = await interaction.response.send_message('Pruning...')
     #                 for kick in to_be_kicked:
     #                     await interaction.guild.kick(kick, reason = reason)
     #                 await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
@@ -515,7 +515,7 @@ class ModerationApp(commands.Cog):
     #                 await interaction.response.send_message('Prune cancelled.')
     #             await msg1.clear_reactions()
     #         elif str(reaction.emoji) == nay:
-    #             processing_message = await interaction.response.send_message('Pruning...', mention_author = False)
+    #             processing_message = await interaction.response.send_message('Pruning...')
     #             for kick in to_be_kicked:
     #                 await interaction.guild.kick(kick, reason = reason)
     #             await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.', allowed_mentions = discord.AllowedMentions.none())
@@ -523,7 +523,7 @@ class ModerationApp(commands.Cog):
     #             await interaction.response.send_message('Prune cancelled.')
     #         await msg.clear_reactions()
     #     else:
-    #         await interaction.response.send_message('No members to be pruned.', mention_author = False)
+    #         await interaction.response.send_message('No members to be pruned.')
 
 def setup(client):
     client.add_cog(ModerationApp(client))
