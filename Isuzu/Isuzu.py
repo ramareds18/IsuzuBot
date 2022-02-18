@@ -295,7 +295,7 @@ def main():
     @client.listen()
     async def on_message(message):
         await asyncio.sleep(2)
-        if not message.guild or message.author.bot or not filtering_toggle(message) or not filtering_toggle(message) or message.author.guild_permissions.administrator: return
+        if not message.guild or message.author.bot or not filtering_toggle(message) or message.author.guild_permissions.administrator: return
         
         collection = loadblacklistedYT()
         blacklistedID = collection.find({})
