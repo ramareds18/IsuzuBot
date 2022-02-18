@@ -299,9 +299,8 @@ class ModerationApp(commands.Cog):
                 await interaction.response.send_message("User is not a member of the server.")
             else:
                 try:
-                    msg = await interaction.response.send_message('Kicking...', mention_author = False)
                     if member.top_role >= interaction.user.top_role:
-                        await msg.edit('You are not allowed to kick this user.')
+                        await interaction.response.send_message('You are not allowed to kick this user.')
                     else:
                         comment = ''
                         if reason and len(reason) <= 450:
@@ -319,9 +318,9 @@ class ModerationApp(commands.Cog):
                         if comment:
                             embed_body += f'**Note**: {comment}'
                         em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-                        await msg.edit(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
+                        await interaction.response.send_message(content=None, embed = em, allowed_mentions = discord.AllowedMentions.none())
                 except Forbidden:
-                    await msg.edit("Can't kick user with equal or higher role.")
+                    await interaction.response.send_message("Can't kick user with equal or higher role.")
         elif not interaction.user.guild_permissions.kick_members:
             await interaction.response.send_message("You don't have `Kick Members` permission.", ephemeral=True)
         else:
