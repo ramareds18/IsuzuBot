@@ -111,7 +111,7 @@ class ManagementApp(commands.Cog):
 
     @discord.slash_command(name="voicelink", description='dummy desc')
     async def voicelink_slash(self, interaction: Interaction):
-        await interaction.response.send_message('This will never be called.')
+        await interaction.send('This will never be called.')
     
     @voicelink_slash.subcommand(name="status", description="Voicelink status")
     async def voicelink_status(
@@ -124,13 +124,14 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.guild.me.guild_permissions.manage_roles and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             output = voicelink_func(interaction, state, collection)
-            await interaction.response.send_message(output)
+            await interaction.send(output)
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Manage Roles' permission.")
+            await interaction.send("I don't have 'Manage Roles' permission.")
 
     @voicelink_slash.subcommand(name="role", description="Voicelink role")
     async def voicelink_role(
@@ -142,33 +143,35 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.guild.me.guild_permissions.manage_roles and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
-            await interaction.response.send_message(f"Voice link role has been set to {role.mention}")
+            await interaction.send(f"Voice link role has been set to {role.mention}")
             collection.update_one({"_id": interaction.guild.id}, {"$set":{"voicelink.role":role.id}})
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Manage Roles' permission.")
+            await interaction.send("I don't have 'Manage Roles' permission.")
 
     @voicelink_slash.subcommand(name="settings", description="Voicelink current settings")
     async def voicelink_settings(self, interaction: Interaction):
         if interaction.guild.me.guild_permissions.manage_roles and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             voicelink_role = i.check_voicelink_role(interaction, collection)
             if voicelink_role:
                 voicelink_role = interaction.guild.get_role(voicelink_role)
             output = voicelink_settings(interaction, voicelink_role, collection)
-            await interaction.response.send_message(output)
+            await interaction.send(output)
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Manage Roles' permission.")
+            await interaction.send("I don't have 'Manage Roles' permission.")
 
     # Streamlink
 
     @discord.slash_command(name="streamlink", description='dummy desc')
     async def streamlink_slash(self, interaction: Interaction):
-        await interaction.response.send_message('This will never be called.')
+        await interaction.send('This will never be called.')
     
     @streamlink_slash.subcommand(name="status", description="Streamlink status")
     async def streamlink_status(
@@ -181,13 +184,14 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.guild.me.guild_permissions.manage_roles and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             output = streamlink_func(interaction, state, collection)
-            await interaction.response.send_message(output)
+            await interaction.send(output)
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Manage Roles' permission.")
+            await interaction.send("I don't have 'Manage Roles' permission.")
 
     @streamlink_slash.subcommand(name="role", description="Streamlink role")
     async def streamlink_role(
@@ -199,33 +203,35 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.guild.me.guild_permissions.manage_roles and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
-            await interaction.response.send_message(f"Voice link role has been set to {role.mention}")
+            await interaction.send(f"Voice link role has been set to {role.mention}")
             collection.update_one({"_id": interaction.guild.id}, {"$set":{"streamlink.role":role.id}})
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Manage Roles' permission.")
+            await interaction.send("I don't have 'Manage Roles' permission.")
 
     @streamlink_slash.subcommand(name="settings", description="Streamlink current settings")
     async def streamlink_settings(self, interaction: Interaction):
         if interaction.guild.me.guild_permissions.manage_roles and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             streamlink_role = i.check_streamlink_role(interaction, collection)
             if streamlink_role:
                 streamlink_role = interaction.guild.get_role(streamlink_role)
             output = streamlink_settings(interaction, streamlink_role, collection)
-            await interaction.response.send_message(output)
+            await interaction.send(output)
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Manage Roles' permission")
+            await interaction.send("I don't have 'Manage Roles' permission")
 
     # Minage
 
     @discord.slash_command(name="minage", description='dummy desc')
     async def minage_slash(self, interaction: Interaction):
-        await interaction.response.send_message('This will never be called.')
+        await interaction.send('This will never be called.')
 
     @minage_slash.subcommand(name="days", description="Minimum age in day format")
     async def minage_days(
@@ -238,13 +244,14 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.guild.me.guild_permissions.kick_members and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             collection.update_one({"_id": interaction.guild.id}, {"$set":{"minage.days":days}})
-            await interaction.response.send_message(f"Minimum age setting has been set to `{days}` day(s).\nSee more information in `/help minage`.")
+            await interaction.send(f"Minimum age setting has been set to `{days}` day(s).\nSee more information in `/help minage`.")
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Kick Members' permission.")
+            await interaction.send("I don't have 'Kick Members' permission.")
 
     @minage_slash.subcommand(name="message", description="Message to send to the kicked user")
     async def minage_message(
@@ -264,15 +271,16 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             if remove or remove == 'True':
                 collection.update_one({"_id": interaction.guild.id}, {"$unset":{"minage.message":""}})
-                await interaction.response.send_message("Minage message has been removed. Will be back using the default one.")
+                await interaction.send("Minage message has been removed. Will be back using the default one.")
             else:
                 collection.update_one({"_id": interaction.guild.id}, {"$set":{"minage.message":message}})
-                await interaction.response.send_message(f"Message has been set to\n```\n{message}```")
+                await interaction.send(f"Message has been set to\n```\n{message}```")
         else:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
 
     @minage_slash.subcommand(name="channel", description="Channel where bot will log when do any minage actions")
     async def minage_channel(
@@ -285,15 +293,16 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             try:
                 await ch.send("This channel is set to be minage logging channel.")
-                await interaction.response.send_message(f"Logs channel has been set to {ch.mention}")
+                await interaction.send(f"Logs channel has been set to {ch.mention}")
                 collection.update_one({"_id": interaction.guild.id}, {"$set":{"minage.logging_channel":ch.id}})
             except Forbidden as f:
-                await interaction.response.send_message("Can't set that channel as logging channel because bot doesn't have access or can't send messages to that channel.")
+                await interaction.send("Can't set that channel as logging channel because bot doesn't have access or can't send messages to that channel.")
         else:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
 
     @minage_slash.subcommand(name="settings", description="Current settings of minage")
     async def minage_settings(
@@ -301,6 +310,7 @@ class ManagementApp(commands.Cog):
         interaction: Interaction,
     ):
         if interaction.user.guild_permissions.manage_messages:
+            await interaction.response.defer()
             collection = i.loadsettings()
             guild_settings = collection.find_one({"_id": interaction.guild.id})
             min_age = guild_settings['minage']['days']
@@ -313,15 +323,15 @@ class ManagementApp(commands.Cog):
             embed_body += f"**Minage message:**\n```\n{chk_minage_msg}```"
             em = discord.Embed(title = 'Current minage settings for this server', description = embed_body, colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
             em.set_footer(text = f"{interaction.user.display_name} ({interaction.user.id})", icon_url = interaction.user.display_avatar)
-            await interaction.response.send_message(embed = em)
+            await interaction.send(embed = em)
         else:
-            await interaction.response.send_message("You don't have 'Manage Messages' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Messages' permission.", ephemeral = True)
 
     # Filter
 
     @discord.slash_command(name="filter", description='dummy desc')
     async def filter_slash(self, interaction: Interaction):
-        await interaction.response.send_message('This will never be called.')
+        await interaction.send('This will never be called.')
 
     @filter_slash.subcommand(name="status", description="Filter status")
     async def filter_status(
@@ -334,25 +344,26 @@ class ManagementApp(commands.Cog):
         ),
     ):
         if interaction.guild.me.guild_permissions.manage_messages and interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             guild_settings = collection.find_one({"_id": interaction.guild.id})
             current_settings = guild_settings["filtering"]
             if state == 'on':
                 if not current_settings:
                     collection.update_one({"_id": interaction.guild.id}, {"$set":{"filtering":True}})
-                    await interaction.response.send_message("Filtering has been enabled.")
+                    await interaction.send("Filtering has been enabled.")
                 else:
-                    await interaction.response.send_message("Filtering is already enabled.")
+                    await interaction.send("Filtering is already enabled.")
             elif state == 'off':
                 if current_settings:
                     collection.update_one({"_id": interaction.guild.id}, {"$set":{"filtering":False}})
-                    await interaction.response.send_message("Filtering has been disabled.")
+                    await interaction.send("Filtering has been disabled.")
                 else:
-                    await interaction.response.send_message("Filtering is already disabled.")
+                    await interaction.send("Filtering is already disabled.")
         elif not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
         else:
-            await interaction.response.send_message("I don't have 'Manage Messages' permission.")
+            await interaction.send("I don't have 'Manage Messages' permission.")
 
     @filter_slash.subcommand(name="settings", description="Filter settings")
     async def filter_settings(
@@ -360,6 +371,7 @@ class ManagementApp(commands.Cog):
         interaction: Interaction, 
     ):
         if interaction.user.guild_permissions.manage_guild:
+            await interaction.response.defer()
             collection = i.loadsettings()
             collectionYT = i.loadblacklistedYT()
             channels = collectionYT.find({})
@@ -367,11 +379,11 @@ class ManagementApp(commands.Cog):
             guild_settings = collection.find_one({"_id": interaction.guild.id})
             current_settings = guild_settings["filtering"]
             if not current_settings:
-                await interaction.response.send_message("Current state of filtering: disabled.")
+                await interaction.send("Current state of filtering: disabled.")
             else:
-                await interaction.response.send_message(f"Current state of filtering: enabled.\nBlacklisted channels:\n```\n{blacklisted}```")
+                await interaction.send(f"Current state of filtering: enabled.\nBlacklisted channels:\n```\n{blacklisted}```")
         else:
-            await interaction.response.send_message("You don't have 'Manage Server' permission.", ephemeral = True)
+            await interaction.send("You don't have 'Manage Server' permission.", ephemeral = True)
 
 def setup(client):
     client.add_cog(ManagementApp(client))
