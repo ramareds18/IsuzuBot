@@ -240,7 +240,7 @@ class HelpApp(commands.Cog):
         if not arg:
             em = discord.Embed(title = '**Help**', description = 'Use `help <command>` for extended information on a command.', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
             em.add_field(name = 'Utility', value = '`when`, `checkvera`, `schedule`, `who`, `avatar`, `banner`', inline = False)
-            em.add_field(name = 'Management', value = '`log`,`minage`, `filtering`, `voicelink`, `streamlink`, `nodiscussion`', inline = False)
+            em.add_field(name = 'Management', value = '`log`, `minage`, `filtering`, `voicelink`, `streamlink`, `nodiscussion`', inline = False)
             em.add_field(name = 'Miscellaneous', value = '`echo`, `ping`, `invitelink`', inline = False)
             em.add_field(name = 'Moderation', value = '`slowmode`, `prune`, `timeout`, `untimeout`, `kick`, `masskick`, `ban`, `unban`, `massban`, `massunban`', inline = False)
             em.set_footer(text = f"{interaction.user.display_name} ({interaction.user.id})", icon_url = interaction.user.display_avatar)
@@ -301,10 +301,10 @@ class HelpApp(commands.Cog):
             em = massunban_option(interaction)
             eph = True
         else:
-            await interaction.response.send_message('Invalid command.', ephemeral = True)
+            await interaction.send('Invalid command.', ephemeral = True)
             return
 
-        await interaction.response.send_message(embed = em, ephemeral = eph)
+        await interaction.send(embed = em, ephemeral = eph)
 
 def setup(client):
     client.add_cog(HelpApp(client))
