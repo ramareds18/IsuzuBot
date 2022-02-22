@@ -12,13 +12,13 @@ class MiscApp(commands.Cog):
 
     @discord.slash_command(name="ping", description="Get the bot latency")
     async def ping_slash(self, interaction: Interaction):
-        await interaction.response.send_message(f'🏓 Pong! `{round(self.client.latency * 1000)}ms`')
+        await interaction.send(f'🏓 Pong! `{round(self.client.latency * 1000)}ms`')
 
     @discord.slash_command(name="invitelink", description="Get invite link of the bot")
     async def invitelink_slash(self, interaction: Interaction):
         output = 'Here is the invite link for the bot\n'
         output += "https://discord.com/api/oauth2/authorize?client_id=873300341150613554&permissions=1514311904470&scope=applications.commands%20bot"
-        await interaction.response.send_message(output) 
+        await interaction.send(output) 
 
     # Message command app
 
@@ -31,9 +31,9 @@ class MiscApp(commands.Cog):
             embed_body += f"**Sticker ID:** {s.id}\n"
             em = discord.Embed(title = 'Sticker Information', description = embed_body, color = 0xcaa686, timestamp = pen.now('Asia/Jakarta'))
             em.set_image(url = s.url)
-            await interaction.response.send_message(embed = em, ephemeral=True)
+            await interaction.send(embed = em, ephemeral=True)
         else:
-            await interaction.response.send_message("Message doesn't contain sticker.", ephemeral=True)       
+            await interaction.send("Message doesn't contain sticker.", ephemeral=True)       
 
 def setup(client):
     client.add_cog(MiscApp(client))
