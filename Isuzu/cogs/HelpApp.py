@@ -344,10 +344,10 @@ class HelpApp(commands.Cog):
             em = massunban_option(interaction)
             eph = True
         else:
-            await interaction.response.send_message('Invalid command.', ephemeral = True)
+            await interaction.send('Invalid command.', ephemeral = True)
             return
 
-        await interaction.response.send_message(embed = em, ephemeral = eph)
+        await interaction.send(embed = em, ephemeral = eph)
 
 def setup(client):
     client.add_cog(HelpApp(client))

@@ -37,6 +37,7 @@ class UtilityApp(commands.Cog):
             description = "Date and time in format of yyyy/mm/dd hour:minute. Time must not exceed 23:59",
         ),
     ):
+        await interaction.response.defer()
         try:
             UTC = "UTC"
             msg = ""
@@ -55,9 +56,9 @@ class UtilityApp(commands.Cog):
             msg += "\nUnix Timestamp:"
             msg += f'\n`<t:{epoch}:F>` <t:{epoch}:F>'
             msg += f'\n`<t:{epoch}:R>` <t:{epoch}:R>'
-            await interaction.response.send_message(msg)
+            await interaction.send(msg)
         except:
-            await interaction.response.send_message('Oops, something went wrong, please see `/help when` for more information.')
+            await interaction.send('Oops, something went wrong, please see `/help when` for more information.')
 
     @discord.slash_command(
         name = "checkvera",
@@ -73,6 +74,7 @@ class UtilityApp(commands.Cog):
         ),
     ):
         if interaction.user.guild_permissions.manage_messages:
+            await interaction.response.defer()
             try:
                 channel = self.client.get_channel(channel.id) 
                 links = "" 
@@ -84,13 +86,13 @@ class UtilityApp(commands.Cog):
                                 if user.bot:
                                     links += message.jump_url + "\n"
                 if links == "":
-                    await interaction.response.send_message("Everything looks good.")
+                    await interaction.send("Everything looks good.")
                 else:
-                    await interaction.response.send_message("Membership not processed yet:\n" + links)
+                    await interaction.send("Membership not processed yet:\n" + links)
             except Forbidden:
-                await interaction.response.send_message("Bot doesn't have access to that channel.", ephemeral=True)
+                await interaction.send("Bot doesn't have access to that channel.")
         else:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
 
     @discord.slash_command(
         name = "who",
@@ -106,6 +108,7 @@ class UtilityApp(commands.Cog):
         ),
     ):
         if interaction.user.guild_permissions.manage_messages:
+            await interaction.response.defer()
             member = interaction.user if not member else member
             user = await self.client.fetch_user(member.id)
             ca = round((member.created_at - dt(1970,1,1)).total_seconds())
@@ -148,9 +151,9 @@ class UtilityApp(commands.Cog):
             em.set_thumbnail(url = url)
 
             em.set_footer(text = f"{interaction.user.display_name} ({interaction.user.id})", icon_url = interaction.user.display_avatar)
-            await interaction.response.send_message(embed = em)
+            await interaction.send(embed = em)
         else:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
 
     @discord.slash_command(
         name = "avatar",
@@ -173,6 +176,7 @@ class UtilityApp(commands.Cog):
         ),
     ):
         if interaction.user.guild_permissions.manage_messages:
+            await interaction.response.defer()
             member = interaction.user if not member else member
             embed_body = f'{member.mention} - User Avatar\n'
             embed_body += '\n'
@@ -198,9 +202,9 @@ class UtilityApp(commands.Cog):
                 else:
                     em.set_image(url = member.display_avatar)
             em.set_footer(text = f"{interaction.user.display_name} ({interaction.user.id})", icon_url = interaction.user.display_avatar)
-            await interaction.response.send_message(embed = em)
+            await interaction.send(embed = em)
         else:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
 
     @discord.slash_command(
         name = "banner",
@@ -216,6 +220,7 @@ class UtilityApp(commands.Cog):
         ),
     ):
         if interaction.user.guild_permissions.manage_messages:
+            await interaction.response.defer()
             member = interaction.user if not member else member
             user = await self.client.fetch_user(member.id)
             embed_body = f'{member.mention} - User Banner\n'
@@ -236,9 +241,9 @@ class UtilityApp(commands.Cog):
                 em.set_image(url = user.banner)
 
             em.set_footer(text = f"{interaction.user.display_name} ({interaction.user.id})", icon_url = interaction.user.display_avatar)
-            await interaction.response.send_message(embed = em)
+            await interaction.send(embed = em)
         else:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
 
 def setup(client):
     client.add_cog(UtilityApp(client))

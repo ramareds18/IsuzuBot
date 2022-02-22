@@ -39,9 +39,10 @@ class ModerationApp(commands.Cog):
         if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_channels:
             seconds = Duration(time).to_seconds()
             if seconds > 2419200:
-                await interaction.response.send_message("Duration must not exceed 6 hours.", ephemeral=True)
+                await interaction.send("Duration must not exceed 6 hours.", ephemeral=True)
             else:
 
+                await interaction.response.defer()
                 try:
                     if isinstance(channel, discord.TextChannel):
                         if reason and len(reason) <= 450:
@@ -54,16 +55,16 @@ class ModerationApp(commands.Cog):
                     else:
                         await channel.edit(slowmode_delay=seconds)
                     if seconds != 0:
-                        await interaction.response.send_message(f"Slowmode is now enabled in {channel.mention}, members can only send one message every {time}.")
+                        await interaction.send(f"Slowmode is now enabled in {channel.mention}, members can only send one message every {time}.")
                     else:
-                        await interaction.response.send_message(f"Slowmode in {channel.mention} has been disabled.")
+                        await interaction.send(f"Slowmode in {channel.mention} has been disabled.")
                 except:
-                    await interaction.response.send_message("Something went wrong.", ephemeral=True)
+                    await interaction.send("Something went wrong.")
 
         elif not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Channels` permission.")
+            await interaction.send("I don't have `Manage Channels` permission.")
 
     @discord.slash_command(name="timeout", description="Timeout a user in the server", guild_ids=[Moonacord, Luicord, FF14_creators])
     async def timeout_slash(
@@ -92,16 +93,17 @@ class ModerationApp(commands.Cog):
     ):
         if interaction.user.guild_permissions.moderate_members and interaction.user.guild.me.guild_permissions.moderate_members:
             if isinstance(member, discord.User):
-                await interaction.response.send_message("User is not a member of this server.", ephemeral=True)
+                await interaction.send("User is not a member of this server.", ephemeral=True)
             else:
                 if member.top_role >= interaction.user.top_role:
-                    await interaction.response.send_message("You can't timeout that user.")
+                    await interaction.send("You can't timeout that user.")
                 else:
+                    await interaction.response.defer()
                     seconds = Duration(time).to_seconds()
                     if seconds > 2419200:
-                        await interaction.response.send_message("Duration must not exceed 28 days.", ephemeral=True)
+                        await interaction.send("Duration must not exceed 28 days.", ephemeral=True)
                     elif int(seconds) == 0:
-                        await interaction.response.send_message("Duration could not be recognized.", ephemeral=True)
+                        await interaction.send("Duration could not be recognized.", ephemeral=True)
                     else:
                         try:
                             comment = ''
@@ -141,13 +143,13 @@ class ModerationApp(commands.Cog):
                                     embed_body += "\n*Failed to DM the user due to their privacy settings.*"
 
                             em = discord.Embed(title = '', description = embed_body, colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-                            await interaction.response.send_message(embed=em)
+                            await interaction.send(embed=em)
                         except Forbidden:
-                            await interaction.response.send_message("I can't timeout that user.")
+                            await interaction.send("I can't timeout that user.")
         elif not interaction.user.guild_permissions.moderate_members:
-            await interaction.response.send_message("You don't have `Timeout Members` permission.", ephemeral=True)
+            await interaction.send("You don't have `Timeout Members` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Timeout Members` permission.")
+            await interaction.send("I don't have `Timeout Members` permission.")
 
     @discord.slash_command(name="untimeout", description="Remove timeout from a user in the server", guild_ids=[Moonacord, Luicord, FF14_creators])
     async def untimeout_slash(
@@ -172,11 +174,12 @@ class ModerationApp(commands.Cog):
     ):
         if interaction.user.guild_permissions.moderate_members and interaction.user.guild.me.guild_permissions.moderate_members:
             if isinstance(member, discord.User):
-                await interaction.response.send_message("User is not a member of this server.", ephemeral=True)
+                await interaction.send("User is not a member of this server.", ephemeral=True)
             else:
                 if member.top_role >= interaction.user.top_role:
-                    await interaction.response.send_message("You can't remove timeout from that user.")
+                    await interaction.send("You can't remove timeout from that user.")
                 else:            
+                    await interaction.response.defer()
                     try:
                         comment = ''
                         if reason and len(reason) <= 450:
@@ -207,13 +210,13 @@ class ModerationApp(commands.Cog):
                                 embed_body += "\n*Failed to DM the user due to their privacy settings.*"
 
                         em = discord.Embed(title = '', description = embed_body, colour=0x00ff10, timestamp = pen.now('Asia/Jakarta'))
-                        await interaction.response.send_message(embed=em)
+                        await interaction.send(embed=em)
                     except Forbidden:
-                        await interaction.response.send_message("I can't remove timeout from that user.")
+                        await interaction.send("I can't remove timeout from that user.")
         elif not interaction.user.guild_permissions.moderate_members:
-            await interaction.response.send_message("You don't have `Timeout Members` permission.", ephemeral=True)
+            await interaction.send("You don't have `Timeout Members` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Timeout Members` permission.")
+            await interaction.send("I don't have `Timeout Members` permission.")
 
     @discord.slash_command(name="lock", description="Lockdown a channel", guild_ids=[Moonacord])
     async def lock_slash(
@@ -227,6 +230,7 @@ class ModerationApp(commands.Cog):
         )
     ):
         if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
+            await interaction.response.defer()
             reason = f'Locked down by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
@@ -234,22 +238,22 @@ class ModerationApp(commands.Cog):
                     overwrites.send_messages = False
                     await interaction.channel.set_permissions(interaction.guild.me, send_messages = True, reason = reason)
                     await interaction.channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
-                    await interaction.response.send_message(f"Locked {interaction.channel.mention}.")
+                    await interaction.send(f"Locked {interaction.channel.mention}.")
                 else:
-                    await interaction.response.send_message(f"This channel is already locked.")
+                    await interaction.send(f"This channel is already locked.")
             else:
                 overwrites = channel.overwrites_for(interaction.guild.default_role)
                 if overwrites.send_messages != False:
                     overwrites.send_messages = False
                     await channel.set_permissions(interaction.guild.me, send_messages = True, reason = reason)
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
-                    await interaction.response.send_message(f"Locked {channel.mention}.")
+                    await interaction.send(f"Locked {channel.mention}.")
                 else:
-                    await interaction.response.send_message(f"That channel is already locked.")
+                    await interaction.send(f"That channel is already locked.")
         elif not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Roles` permission.")
+            await interaction.send("I don't have `Manage Roles` permission.")
 
     @discord.slash_command(name="unlock", description="Unlock a locked channel", guild_ids=[Moonacord])
     async def unlock_slash(
@@ -263,27 +267,28 @@ class ModerationApp(commands.Cog):
         )
     ):
         if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
+            await interaction.response.defer()
             reason = f'Lockdown removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
                 overwrites = interaction.channel.overwrites_for(interaction.guild.default_role)
                 if overwrites.send_messages == False:
                     overwrites.send_messages = None
                     await interaction.channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
-                    await interaction.response.send_message(f"Unlocked {interaction.channel.mention}.")
+                    await interaction.send(f"Unlocked {interaction.channel.mention}.")
                 else:
-                    await interaction.response.send_message(f"This channel is not locked.")
+                    await interaction.send(f"This channel is not locked.")
             else:
                 overwrites = channel.overwrites_for(interaction.guild.default_role)
                 if overwrites.send_messages == False:
                     overwrites.send_messages = None
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
-                    await interaction.response.send_message(f"Unlocked {channel.mention}.")
+                    await interaction.send(f"Unlocked {channel.mention}.")
                 else:
-                    await interaction.response.send_message(f"That channel is not locked.")
+                    await interaction.send(f"That channel is not locked.")
         elif not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Roles` permission.")  
+            await interaction.send("I don't have `Manage Roles` permission.")  
 
     @discord.slash_command(name="voiceactivity", description="Activate/deactivate voice activity for a voice channel", guild_ids=[Moonacord])
     async def vcva_slash(
@@ -301,27 +306,28 @@ class ModerationApp(commands.Cog):
         )
     ):
         if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
+            await interaction.response.defer()
             overwrites = channel.overwrites_for(interaction.guild.default_role)
             if switch == 'on':
                 reason = f'Voice activity enabled by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
                 if overwrites.use_voice_activation != True:
                     overwrites.use_voice_activation = True
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
-                    await interaction.response.send_message(f"Turning on voice activity for {channel.mention}.")
+                    await interaction.send(f"Turning on voice activity for {channel.mention}.")
                 else:
-                    await interaction.response.send_message(f"Voice activity is already enabled for {channel.mention}.")
+                    await interaction.send(f"Voice activity is already enabled for {channel.mention}.")
             else:
                 reason = f'Voice activity disabled by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
                 if overwrites.use_voice_activation == True:
                     overwrites.use_voice_activation = None
                     await channel.set_permissions(interaction.guild.default_role, overwrite = overwrites, reason = reason)
-                    await interaction.response.send_message(f"Turning off voice activity for {channel.mention}.")
+                    await interaction.send(f"Turning off voice activity for {channel.mention}.")
                 else:
-                    await interaction.response.send_message(f"Voice activity is already disabled for {channel.mention}.")
+                    await interaction.send(f"Voice activity is already disabled for {channel.mention}.")
         elif not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("You don't have `Manage Messages` permission.", ephemeral=True)
+            await interaction.send("You don't have `Manage Messages` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Manage Roles` permission.")  
+            await interaction.send("I don't have `Manage Roles` permission.")  
 
     @discord.slash_command(name="kick", description="Kick a user from the server", guild_ids=[Moonacord])
     async def kick_slash(
@@ -339,11 +345,12 @@ class ModerationApp(commands.Cog):
     ):
         if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.kick_members:
             if isinstance(member, discord.User):
-                await interaction.response.send_message("User is not a member of the server.")
+                await interaction.send("User is not a member of the server.")
             else:
+                await interaction.response.defer()
                 try:
                     if member.top_role >= interaction.user.top_role:
-                        await interaction.response.send_message('You are not allowed to kick this user.')
+                        await interaction.send('You are not allowed to kick this user.')
                     else:
                         comment = ''
                         if reason and len(reason) <= 450:
@@ -361,13 +368,13 @@ class ModerationApp(commands.Cog):
                         if comment:
                             embed_body += f'**Note**: {comment}'
                         em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-                        await interaction.response.send_message(content=None, embed = em)
+                        await interaction.send(content=None, embed = em)
                 except Forbidden:
-                    await interaction.response.send_message("Can't kick user with equal or higher role.")
+                    await interaction.send("Can't kick user with equal or higher role.")
         elif not interaction.user.guild_permissions.kick_members:
-            await interaction.response.send_message("You don't have `Kick Members` permission.", ephemeral=True)
+            await interaction.send("You don't have `Kick Members` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Kick Members` permission.")
+            await interaction.send("I don't have `Kick Members` permission.")
 
     @discord.slash_command(name="ban", description="Ban a user from the server", guild_ids=[Moonacord])
     async def ban_slash(
@@ -384,8 +391,9 @@ class ModerationApp(commands.Cog):
         )
     ):
         if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.ban_members:
+            await interaction.response.defer()
             try:
-                await interaction.response.send_message('Banning...')
+                await interaction.send('Banning...')
                 if isinstance(member, discord.Member) and member.top_role >= interaction.user.top_role:
                     await interaction.edit_original_message(content='You are not allowed to ban this user.')
                 else:
@@ -409,9 +417,9 @@ class ModerationApp(commands.Cog):
             except Forbidden:
                 await interaction.edit_original_message(content="Can't ban user with equal or higher role.")
         elif not interaction.user.guild_permissions.ban_members:
-            await interaction.response.send_message("You don't have `Ban Members` permission.", ephemeral=True)
+            await interaction.send("You don't have `Ban Members` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Ban Members` permission.")
+            await interaction.send("I don't have `Ban Members` permission.")
 
     @discord.slash_command(name="unban", description="Unban a user from the server", guild_ids=[Moonacord])
     async def unban_slash(
@@ -428,6 +436,7 @@ class ModerationApp(commands.Cog):
         )
     ):
         if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.ban_members:
+            await interaction.response.defer()
             try:
                 is_banned = await interaction.guild.fetch_ban(member)
                 if reason:
@@ -439,13 +448,13 @@ class ModerationApp(commands.Cog):
                 embed_body += '\n'
                 embed_body += f'**Reason:** {reason}'
                 em = discord.Embed(title = '', description = f"{embed_body}", colour=0xf1e40f, timestamp = pen.now('Asia/Jakarta'))
-                await interaction.response.send_message(embed = em)
+                await interaction.send(embed = em)
             except NotFound:
-                await interaction.response.send_message('That is not a banned user.')
+                await interaction.send('That is not a banned user.')
         elif not interaction.user.guild_permissions.ban_members:
-            await interaction.response.send_message("You don't have `Ban Members` permission.", ephemeral=True)
+            await interaction.send("You don't have `Ban Members` permission.", ephemeral=True)
         else:
-            await interaction.response.send_message("I don't have `Ban Members` permission.")
+            await interaction.send("I don't have `Ban Members` permission.")
 
     # @discord.slash_command(name="prune", description="Kick users with a certain condition from the server")
     # async def prune_slash(
@@ -483,7 +492,7 @@ class ModerationApp(commands.Cog):
     #             msg_body = f'Users with no role to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
     #         elif arg.lower() == 'noavatar':
     #             msg_body = f'Users with default avatar to be pruned = {len(to_be_kicked)} users.\nDo you wish to see all the IDs to be pruned? Press 🛑 if you wish to cancel prune.'
-    #         msg = await interaction.response.send_message(msg_body)
+    #         msg = await interaction.send(msg_body)
     #         await msg.add_reaction("✅")
     #         await msg.add_reaction("❌")
     #         await msg.add_reaction("🛑")
@@ -506,23 +515,23 @@ class ModerationApp(commands.Cog):
     #             await msg1.add_reaction("❌")
     #             reaction1, user1 = await self.client.wait_for('reaction_add', timeout=180.0, check=check)
     #             if str(reaction1.emoji) == yas:
-    #                 processing_message = await interaction.response.send_message('Pruning...')
+    #                 processing_message = await interaction.send('Pruning...')
     #                 for kick in to_be_kicked:
     #                     await interaction.guild.kick(kick, reason = reason)
     #                 await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.')
     #             else:
-    #                 await interaction.response.send_message('Prune cancelled.')
+    #                 await interaction.send('Prune cancelled.')
     #             await msg1.clear_reactions()
     #         elif str(reaction.emoji) == nay:
-    #             processing_message = await interaction.response.send_message('Pruning...')
+    #             processing_message = await interaction.send('Pruning...')
     #             for kick in to_be_kicked:
     #                 await interaction.guild.kick(kick, reason = reason)
     #             await processing_message.edit(f'{len(to_be_kicked)} users have been pruned.')
     #         else:
-    #             await interaction.response.send_message('Prune cancelled.')
+    #             await interaction.send('Prune cancelled.')
     #         await msg.clear_reactions()
     #     else:
-    #         await interaction.response.send_message('No members to be pruned.')
+    #         await interaction.send('No members to be pruned.')
 
 def setup(client):
     client.add_cog(ModerationApp(client))
