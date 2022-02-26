@@ -25,6 +25,7 @@ class MiscApp(commands.Cog):
     @discord.message_command(name="Sticker Info")
     async def stickerinfo_msg_command(self, interaction: Interaction, message: discord.Message):
         if message.stickers:
+            await interaction.response.defer()
             for sticker in message.stickers:
                 s = sticker
             embed_body = f"**Sticker name:** {s.name}\n"
