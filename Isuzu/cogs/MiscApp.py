@@ -26,6 +26,7 @@ class MiscApp(commands.Cog):
 
     @discord.message_command(name="Sticker Info")
     async def stickerinfo_msg_command(self, interaction: Interaction, message: discord.Message):
+        await interaction.response.defer(ephemeral=True)
         if message.stickers:
             for sticker in message.stickers:
                 s = sticker
@@ -33,15 +34,16 @@ class MiscApp(commands.Cog):
             embed_body += f"**Sticker ID:** {s.id}\n"
             em = discord.Embed(title = 'Sticker Information', description = embed_body, color = 0xcaa686, timestamp = pen.now('Asia/Jakarta'))
             em.set_image(url = s.url)
-            await interaction.send(embed = em, ephemeral=True)
+            await interaction.send(embed = em)
         else:
-            await interaction.send("Message doesn't contain sticker.", ephemeral=True)       
+            await interaction.send("Message doesn't contain sticker.")      
 
     # Just me messing around
 
     @discord.message_command(name="Hilih", guild_ids=[Moonacord])
     async def hilih_msg_command(self, interaction: Interaction, message: discord.Message):
         if message.content:
+            await interaction.response.defer()
             string = message.content
             output = ''
             vocal = ['a', 'u', 'e', 'o']
