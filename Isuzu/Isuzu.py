@@ -237,8 +237,8 @@ def main():
     client = commands.Bot(command_prefix = get_prefix, intents = intents, help_command = None)
 
     WIB = 'Asia/Jakarta'
-    myid = 302064098739355652
-    ServersImod = [735868176595812422, 913649915467542529, 862115140345135125]
+    myid = 302064098739355652  # change this to your ID
+    ServersImod = [913649915467542529, 862115140345135125] # change this to server IDs of the server you mod 
 
     async def status_task():
         while True:
@@ -275,6 +275,15 @@ def main():
             collection.insert_one(default_assigned)
         else: return
 
+    @client.listen()
+    async def on_guild_join(guild):
+        user = await client.fetch_user(myid)
+        embed_body = f"**{client.user.name} joined {guild.name}.**"
+        em = discord.Embed(description=embed_body, colour=0xcaa686, timestamp = pen.now(WIB))
+        em.set_author(name = f'{guild.owner.name}#{guild.owner.discriminator}', icon_url = guild.owner.display_avatar)
+        em.set_thumbnail(url = guild.display_avatar)
+        await user.send(embed = em)
+
     @client.event
     async def on_thread_join(thread):
         try:
@@ -291,6 +300,64 @@ def main():
         else:
             pass
         await client.process_commands(message)
+
+    @client.listen()
+    async def on_message(message):
+        await asyncio.sleep(2)        
+        if message.guild or message.author.bot: return
+
+        user = await client.fetch_user(myid)
+
+        embed_body = f'**{message.author.mention} sent me a message.**\n'
+        if message.content: 
+            embed_body += f'\n{message.content}'
+        if message.attachments:
+            for file_contained in message.attachments:
+                if not (file_contained.content_type).startswith("image"):
+                    embed_body += f'\n{file_contained.url}'
+        if message.stickers:
+            embed_body += '\n**(Message contained sticker)**'
+        em = discord.Embed(description=embed_body, colour=0xcaa686, timestamp = pen.now(WIB))
+        em1 = discord.Embed(description=embed_body, colour=0xcaa686, timestamp = pen.now(WIB))
+        em.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)
+        em1.set_author(name = f'{message.author.name}#{message.author.discriminator}', icon_url = message.author.display_avatar)        
+        em.set_thumbnail(url = message.author.display_avatar)
+        em.set_footer(text = f"Author ID: {message.author.id}")
+        if message.stickers:
+            for sticker in message.stickers:
+                sticker_url = sticker.url
+                em.set_image(url = sticker_url)
+
+        if message.attachments and len(message.attachments) == 1:
+            if message.stickers:
+                em.set_image(url = sticker_url)
+                await user.send(embed = em)
+                for image in message.attachments:
+                    if (image.content_type).startswith("image"):
+                        em1.set_image(url = image.url)
+                        await user.send(embed = em1)
+            else: 
+                for image in message.attachments:
+                    if (image.content_type).startswith("image"):
+                        em.set_image(url = image.url)
+                    await user.send(embed = em)
+
+        elif message.attachments and len(message.attachments) > 1:
+            if message.stickers:
+                em.set_image(url = sticker_url)
+                await user.send(embed = em)
+            else: await user.send(embed = em)
+            for image in message.attachments:
+                if (image.content_type).startswith("image"):
+                    em1.set_image(url = image.url)
+                    await user.send(embed = em1)
+
+        elif message.stickers:
+            em.set_image(url = sticker_url)
+            await user.send(embed = em)
+
+        else:
+            await user.send(embed = em)
 
     @client.listen()
     async def on_message(message):
@@ -433,7 +500,9 @@ def main():
                         embed_body += f'\n{file_contained.url}'
                         has_non_image = True
             if message.stickers:
-                embed_body += '\n**(Message contained sticker)**'
+                for sticker in message.stickers:
+                    sticker_name = sticker.name
+                embed_body += f'**\n(Message contained sticker)**\n:{sticker_name}:'
 
             em = discord.Embed(description= embed_body, colour=0xf00000, timestamp = pen.now(WIB))
             em1 = discord.Embed(description= embed_body1, colour=0xf00000, timestamp = pen.now(WIB))
@@ -504,7 +573,7 @@ def main():
 
             if before.content: 
                 before_body = f'{before.content}\n'
-            else: before_body = '<no message>'
+            else: before_body = '<no message>\n'
             if before.attachments:
                 for file_contained in before.attachments:
                     if not (file_contained.content_type).startswith("image"):
@@ -516,7 +585,9 @@ def main():
                     if not (file_contained.content_type).startswith("image"):
                         after_body += f'{file_contained.url}\n'
             if before.stickers:
-                after_body += '**\n(Message contained sticker)**'
+                for sticker in before.stickers:
+                    sticker_name = sticker.name
+                after_body += f'**\n(Message contained sticker)**\n:{sticker_name}:'
             after_body += f'\n[Jump to message]({after.jump_url})'
 
             em = discord.Embed(description=f"**Message by {before.author.mention} edited in {before.channel.mention}**\n", colour=0xcaa686, timestamp = pen.now(WIB))
@@ -656,12 +727,14 @@ def main():
         if member.bot or not voicelink_toggle(member) or member.guild_permissions.administrator: return
         
         collection = loadsettings()
-        role = check_voicelink_role(member, collection)
+        roleID = check_voicelink_role(member, collection)
         if member.guild.me.guild_permissions.manage_roles:
-            if role:
-                role = member.guild.get_role(role)
+            if roleID:
+                role = member.guild.get_role(roleID)
             else: return
 
+            if not role:
+                return
             if after.channel != None:
                 await member.add_roles(role)
             else:
@@ -673,13 +746,15 @@ def main():
         if member.bot or not streamlink_toggle(member) or member.guild_permissions.administrator: return
         
         collection = loadsettings()
-        role = check_streamlink_role(member, collection)
+        roleID = check_streamlink_role(member, collection)
         if member.guild.me.guild_permissions.manage_roles:
-            if role:
-                role = member.guild.get_role(role)
+            if roleID:
+                role = member.guild.get_role(roleID)
             else: return
             
-            if after.self_stream:
+            if not role:
+                return
+            elif after.self_stream:
                 await member.add_roles(role)
             else:
                 await member.remove_roles(role)
