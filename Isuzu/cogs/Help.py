@@ -148,7 +148,7 @@ class Help(commands.Cog):
     @help.command(aliases = ['filtering'])
     async def filter(self, ctx):
         em = discord.Embed(title = '**filter**', description = "Toggle on or off content filtering module. Turned off by default", colour=0xf00000, timestamp = pen.now('Asia/Jakarta'))
-        em.add_field(name = 'Description', value = 'Filter message containing video from a blacklisted clipper.')
+        em.add_field(name = 'Description', value = 'Filter message containing video from a blacklisted clipper. **NOTE:** It will ignore messages from someone with administrator permission.')
         em.add_field(name = 'Command options', value = '`on`, `off`, `list`, `status`', inline = False)        
         command_usage = "filter on\n"
         command_usage += "filter off\n"
@@ -161,7 +161,7 @@ class Help(commands.Cog):
 
     @help.command(aliases=['vl'])
     async def voicelink(self, ctx):
-        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to user joining voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**voicelink**', description = "Automatically give a set role to user joining voice chat. **NOTE:** It will ignore anyone with administrator permission.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
         command_addition = "`voicelink on/off/status` to turn on/off or see the current settings of voicelink.\n"
         command_addition += "`voicelink role` to set a role which bot will give to users who join voice chat.\n"
@@ -176,7 +176,7 @@ class Help(commands.Cog):
 
     @help.command(aliases=['sl'])
     async def streamlink(self, ctx):
-        em = discord.Embed(title = '**streamlink**', description = "Automatically give a set role to user going live in voice chat.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
+        em = discord.Embed(title = '**streamlink**', description = "Automatically give a set role to user going live in voice chat. **NOTE:** It will ignore anyone with administrator permission.", colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         em.add_field(name = 'Command options', value = '`on`, `off`, `status`, `role`')
         command_addition = "`streamlink on/off/status` to turn on/off or see the current settings of streamlink.\n"
         command_addition += "`streamlink role` to set a role which bot will give to users who go live in voice chat.\n"
