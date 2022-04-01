@@ -94,6 +94,7 @@ class Utility(commands.Cog):
         except:
             output = 'Invalid data input. Error possibilities:\n'
             output += "• You inputted a time that exceed 23:59\n"
+            output += "• You inputted a 24-hour format time with am/pm\n"
             output += "• You didn't put '~' between the date and activity title\n"
             output += "• Your didn't put the correct format, run `help schedule` for more information\n"
             await ctx.reply(output, mention_author = False)
