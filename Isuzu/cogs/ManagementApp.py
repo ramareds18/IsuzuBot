@@ -273,7 +273,7 @@ class ManagementApp(commands.Cog):
         if interaction.user.guild_permissions.manage_guild:
             await interaction.response.defer()
             collection = i.loadsettings()
-            if remove or remove == 'True':
+            if remove == 'True':
                 collection.update_one({"_id": interaction.guild.id}, {"$unset":{"minage.message":""}})
                 await interaction.send("Minage message has been removed. Will be back using the default one.")
             else:
