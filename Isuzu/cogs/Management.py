@@ -187,6 +187,35 @@ class Management(commands.Cog):
         output += f'```\n{guild_list}```'
         await ctx.reply(output, mention_author = False)
 
+    @commands.command(aliases=["lg"])
+    @commands.is_owner()
+    async def leaveguild(self, ctx, guildID):
+        guild = await self.client.fetch_guild(guildID)
+        if guild:
+            output = f'Are you sure you want {self.client.user.name} to leave {guild.name}? You have 1 minute.'
+            msg = await ctx.reply(output)
+            await msg.add_reaction("✅")
+            await msg.add_reaction("❌")
+            yas = '✅'
+            nay = '❌'
+            valid_reactions = ['✅', '❌']
+            def check(reaction, user):
+                return user == ctx.author and str(reaction.emoji) in valid_reactions
+            reaction, user = await self.client.wait_for('reaction_add', timeout=60.0, check=check)
+
+            if str(reaction.emoji) == yas:
+                confirm = True
+            else:
+                confirm = False
+
+            if confirm:
+                await guild.leave()
+                await ctx.reply(f"{self.client.user.name} has left {guild.name}.")
+            else:
+                await ctx.reply("You cancelled the interaction.")
+        else:
+            await ctx.reply(f"{self.client.user.name} isn't in that guild/guild ID is unrecognizable.")
+
     @commands.command()
     @commands.is_owner()
     async def checkdb(self, ctx):
@@ -696,6 +725,13 @@ class Management(commands.Cog):
             await ctx.reply('Please provide channels to unignore.', mention_author = False)
 
     # Error handler
+
+    @leaveguild.error
+    async def leaveguild_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply('Missing guild ID.', mention_author = False)
+        elif isinstance(error, commands.CommandInvokeError) and 'TimeoutError' in str(error):
+            await ctx.reply('You ran out of time.')
 
     @voicelink.error
     async def voicelink_error(self, ctx, error):
