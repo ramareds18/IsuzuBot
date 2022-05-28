@@ -243,10 +243,7 @@ def main():
     ServersImod = [913649915467542529, 862115140345135125]
 
     async def status_task():
-        while True:
-            dtN = pen.now(WIB)
-            await client.change_presence(activity=discord.Game(dtN.format("HH:mm zz, D MMM YYYY")))
-            await asyncio.sleep(30)
+        await client.change_presence(activity=discord.Game('with your life'))
 
     @client.event
     async def on_ready():
