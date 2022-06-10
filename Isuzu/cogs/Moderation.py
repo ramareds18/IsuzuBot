@@ -153,7 +153,7 @@ class Moderation(commands.Cog):
                     embed_body += f"Failed to kick [{len(forbidden_accounts)}] because of role hierarchy (either you or the bot): ```\n{forbidden_output}```"
 
                 if not_in_guild:
-                    not_in_guild_output = "".join(f"{not_member}\n" for not_member in not_in_guild)
+                    not_in_guild_output = "".join(f"{not_member.id}\n" for not_member in not_in_guild)
                     embed_body += f"Failed to kick [{len(not_in_guild)}] because user is not a member of the server: ```\n{not_in_guild_output}```"
 
                 if comment:
@@ -375,7 +375,6 @@ class Moderation(commands.Cog):
             string = []
             is_banned = []
             not_banned = []
-            banlist = []
             valid_accounts = []
             invalid_accounts = []
             wait = False
@@ -402,12 +401,6 @@ class Moderation(commands.Cog):
                         users.append(arg)
                     elif isinstance(arg, str):
                         string.append(arg)
-
-            for arg in args:
-                if isinstance(arg, int):
-                    users.append(arg)
-                elif isinstance(arg, str):
-                    string.append(arg)
             
             if users:
                 comment = ''
@@ -432,24 +425,16 @@ class Moderation(commands.Cog):
                     except:
                         invalid_accounts.append(user)
 
-                if len(valid_accounts) > 15:
-                    for valid in valid_accounts:
-                        try:
-                            is_banned.append(await ctx.guild.fetch_ban(valid)) 
-                        except:
-                            not_banned.append(valid)
-                else:
-                    banlist = await ctx.guild.bans()
-                    for valid in valid_accounts:
-                        if valid in banlist:
-                            is_banned.append(valid)
-                        else:
-                            not_banned.append(valid)
+                for valid in valid_accounts:
+                    try:
+                        is_banned.append(await ctx.guild.fetch_ban(valid)) 
+                    except:
+                        not_banned.append(valid)
 
                 for unbanned in is_banned:
-                    await ctx.guild.unban(unbanned, reason = reason)
+                    await ctx.guild.unban(unbanned.user, reason = reason)
                     unban_check += 1
-            
+
                 if unban_check != 0:
                     embed_body += f'**Unbanned {unban_check}/{len(users)} users.**\n'
                     embed_body += '\n'
@@ -474,6 +459,7 @@ class Moderation(commands.Cog):
                         await ctx.reply(embed = em, mention_author = False)
                 else:
                     await ctx.reply('No valid user to unban.', mention_author = False)
+                    await ctx.message.remove_reaction('🔄', self.client.user)
             else:
                 await ctx.reply('Please provide userID(s) and reason (optional) or file to unban.')
         else:
