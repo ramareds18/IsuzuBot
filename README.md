@@ -4,7 +4,7 @@ This Discord bot is named after, but has no association to the anime character [
 
 Isuzu is a discord bot for moderation purposes and some other convenience features built with Nextcord library, it is free to be customized.
 
-This bot is using Linode cloud as its hosting service and mongodb as its database system.
+This bot is using $5 tier of Linode cloud as its hosting service and mongodb as its database system.
 
 Self-host instructions will follow. (If you wish to self-host the bot, contact AceOrion 🤖#8888 on discord for now.)
 
