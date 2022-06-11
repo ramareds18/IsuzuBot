@@ -238,13 +238,10 @@ def main():
 
     WIB = 'Asia/Jakarta'
     myid = 302064098739355652  # change this to your ID
-    ServersImod = [913649915467542529, 862115140345135125] # change this to server IDs of the server you mod 
+    ServersImod = [913649915467542529, 862115140345135125] # change this to server IDs of the server you mod (optional)
 
     async def status_task():
-        while True:
-            dtN = pen.now(WIB)
-            await client.change_presence(activity=discord.Game(dtN.format("HH:mm zz, D MMM YYYY")))
-            await asyncio.sleep(30)
+        await client.change_presence(activity=discord.Game('with your life'))
 
     @client.event
     async def on_ready():
