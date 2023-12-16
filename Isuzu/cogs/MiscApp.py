@@ -14,10 +14,12 @@ class MiscApp(commands.Cog):
 
     @discord.slash_command(name="ping", description="Get the bot latency")
     async def ping_slash(self, interaction: Interaction):
+        await interaction.response.defer()
         await interaction.send(f'🏓 Pong! `{round(self.client.latency * 1000)}ms`')
 
     @discord.slash_command(name="invitelink", description="Get invite link of the bot")
     async def invitelink_slash(self, interaction: Interaction):
+        await interaction.response.defer()
         output = 'Here is the invite link for the bot\n'
         output += "https://discord.com/api/oauth2/authorize?client_id=873300341150613554&permissions=1514311904470&scope=applications.commands%20bot"
         await interaction.send(output) 
@@ -36,7 +38,7 @@ class MiscApp(commands.Cog):
             em.set_image(url = s.url)
             await interaction.send(embed = em)
         else:
-            await interaction.send("Message doesn't contain sticker.")      
+            await interaction.send("Message doesn't contain sticker.")       
 
     # Just me messing around
 
@@ -48,7 +50,7 @@ class MiscApp(commands.Cog):
             output = ''
             vocal = ['a', 'u', 'e', 'o']
             for letter in string:
-                if letter in vocal:
+                if letter.lower() in vocal:
                     output += 'i'
                 else:
                     output += letter
