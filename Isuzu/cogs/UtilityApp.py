@@ -128,9 +128,15 @@ class UtilityApp(commands.Cog):
             em = discord.Embed(description= f'{embed_body}', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
             if isinstance(member, discord.Member):
                 if member.nick:
-                    em.set_author(name = f'{member.name}#{member.discriminator}  ({member.nick})', icon_url = member.display_avatar)
+                    if member.discriminator != '0':
+                        em.set_author(name = f'{member.name}#{member.discriminator}  ({member.nick})', icon_url = member.display_avatar)
+                    else:
+                        em.set_author(name = f'{member.name}  ({member.nick})', icon_url = member.display_avatar)
                 else:
-                    em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+                    if member.discriminator != '0':
+                        em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+                    else:
+                        em.set_author(name = f'{member.name}', icon_url = member.display_avatar)
                 field_body = ""
                 if len(member.roles) > 1:
                     roles = [role for role in reversed(member.roles)]
@@ -139,7 +145,10 @@ class UtilityApp(commands.Cog):
                         field_body += f"{role.mention} "
                     em.add_field(name = f'ROLES [{len(member.roles) - 1}]:', value = field_body, inline = False)
             else:
-                em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+                if member.discriminator != '0':
+                    em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+                else:
+                    em.set_author(name = f'{member.name}', icon_url = member.display_avatar)    
             if user.banner:
                 em.set_image(url = user.banner)
 
