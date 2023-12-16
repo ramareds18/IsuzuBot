@@ -229,7 +229,7 @@ class ModerationApp(commands.Cog):
             channel_types = [ChannelType.text],
         )
     ):
-        if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
+        if (interaction.user.guild_permissions.manage_messages or interaction.channel.permissions_for(interaction.user).manage_messages) and interaction.user.guild.me.guild_permissions.manage_roles:
             await interaction.response.defer()
             reason = f'Locked down by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
@@ -266,7 +266,7 @@ class ModerationApp(commands.Cog):
             channel_types = [ChannelType.text],
         )
     ):
-        if interaction.user.guild_permissions.manage_messages and interaction.user.guild.me.guild_permissions.manage_roles:
+        if (interaction.user.guild_permissions.manage_messages or interaction.channel.permissions_for(interaction.user).manage_messages) and interaction.user.guild.me.guild_permissions.manage_roles:
             await interaction.response.defer()
             reason = f'Lockdown removed by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id})'
             if not channel:
@@ -335,15 +335,15 @@ class ModerationApp(commands.Cog):
         interaction: Interaction,
         member: discord.Member = SlashOption(
             name="user",
-            description="The user you want to ban",
+            description="The user you want to kick",
         ),
         reason = SlashOption(
             name="reason",
-            description="Your reason to ban the user",
+            description="Your reason to kick the user",
             required=False,
         )
     ):
-        if interaction.user.guild_permissions.ban_members and interaction.user.guild.me.guild_permissions.kick_members:
+        if interaction.user.guild_permissions.kick_members and interaction.user.guild.me.guild_permissions.kick_members:
             if isinstance(member, discord.User):
                 await interaction.send("User is not a member of the server.")
             else:
