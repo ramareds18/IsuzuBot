@@ -280,7 +280,7 @@ def main():
         embed_body = f"**{client.user.name} joined {guild.name}.**"
         em = discord.Embed(description=embed_body, colour=0xcaa686, timestamp = pen.now(WIB))
         em.set_author(name = f'{guild.owner.name}#{guild.owner.discriminator}', icon_url = guild.owner.display_avatar)
-        em.set_thumbnail(url = guild.display_avatar)
+        em.set_thumbnail(url = guild.icon)
         await user.send(embed = em)
 
     @client.event
@@ -357,14 +357,6 @@ def main():
 
         else:
             await user.send(embed = em)
-
-    @client.listen()
-    async def on_message(message):
-        if not message.guild: return
-        if message.guild.id != 735868176595812422 and message.author.id != 692399869998006303: return
-
-        if ':pinched_fingers:' in message.content:
-            await message.reply("Stop using that emote, it's annoying, sIeNn.")
 
     @client.listen()
     async def on_message(message):
