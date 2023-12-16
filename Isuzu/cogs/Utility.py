@@ -122,9 +122,15 @@ class Utility(commands.Cog):
         em = discord.Embed(description= f'{embed_body}', colour=0xcaa686, timestamp = pen.now('Asia/Jakarta'))
         if isinstance(member, discord.Member):
             if member.nick:
-                em.set_author(name = f'{member.name}#{member.discriminator}  ({member.nick})', icon_url = member.display_avatar)
+                if member.discriminator != '0':
+                    em.set_author(name = f'{member.name}#{member.discriminator}  ({member.nick})', icon_url = member.display_avatar)
+                else:
+                    em.set_author(name = f'{member.name}  ({member.nick})', icon_url = member.display_avatar)
             else:
-                em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+                if member.discriminator != '0':
+                    em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+                else:
+                    em.set_author(name = f'{member.name}', icon_url = member.display_avatar)
             field_body = ""
             if len(member.roles) > 1:
                 roles = [role for role in reversed(member.roles)]
@@ -133,7 +139,10 @@ class Utility(commands.Cog):
                     field_body += f"{role.mention} "
                 em.add_field(name = f'ROLES [{len(member.roles) - 1}]:', value = field_body, inline = False)
         else:
-            em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+            if member.discriminator != '0':
+                em.set_author(name = f'{member.name}#{member.discriminator}', icon_url = member.display_avatar)
+            else:
+                em.set_author(name = f'{member.name}', icon_url = member.display_avatar)                
         if user.banner:
             em.set_image(url = user.banner)
 
@@ -145,7 +154,7 @@ class Utility(commands.Cog):
         em.set_thumbnail(url = url)
 
         em.set_footer(text = f"{ctx.author.display_name} ({ctx.author.id})", icon_url = ctx.author.display_avatar)
-        await ctx.reply(content = 'Commands are now migrating to slash commands, try /who as well.',embed = em, mention_author = False)
+        await ctx.reply(embed = em, mention_author = False)
 
     # Error-handling section
 
