@@ -183,7 +183,7 @@ class Management(commands.Cog):
     async def get_guilds(self, ctx):
         guilds = self.client.guilds
         output = f'{self.client.user.name} is in {len(guilds)} servers:\n'
-        guild_list = "".join(f'{guild.id} - {guild.name} ~> {guild.owner.name}#{guild.owner.discriminator} ({guild.owner.id})\n' for guild in guilds)
+        guild_list = "".join(f'{guild.name} ~> {guild.owner.name} ({guild.owner.id})\n' for guild in guilds)
         output += f'```\n{guild_list}```'
         await ctx.reply(output, mention_author = False)
 
@@ -241,7 +241,7 @@ class Management(commands.Cog):
         ch['Restart Message'] = ctx.message.channel.id, mid
 
         writerestart(ch)
-        os.execv(sys.executable, ['python'] + sys.argv)
+        os.execv(sys.executable, ['python3.9'] + sys.argv)
 
     @commands.command(aliases=['cp'])
     @commands.check_any(commands.is_owner(), commands.has_permissions(administrator = True))
