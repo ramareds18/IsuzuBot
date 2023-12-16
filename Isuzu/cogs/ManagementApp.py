@@ -333,7 +333,7 @@ class ManagementApp(commands.Cog):
     async def filter_slash(self, interaction: Interaction):
         await interaction.send('This will never be called.')
 
-    @filter_slash.subcommand(name="status", description="Filter status")
+    @filter_slash.subcommand(name="status", description="Set filter status to on/off")
     async def filter_status(
         self, 
         interaction: Interaction, 
@@ -365,7 +365,7 @@ class ManagementApp(commands.Cog):
         else:
             await interaction.send("I don't have 'Manage Messages' permission.")
 
-    @filter_slash.subcommand(name="settings", description="Filter settings")
+    @filter_slash.subcommand(name="settings", description="See filter settings")
     async def filter_settings(
         self, 
         interaction: Interaction, 
