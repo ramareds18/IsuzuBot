@@ -6,5 +6,6 @@ Isuzu is a discord bot for moderation purposes and some other convenience featur
 
 If anyone wants to take over the bot and cover the hosting ($5/mo), let me know by 18th of May 2026 to @aceorion on discord, though I'd advise against it.
 If nobody reaches out by then, I'm shutting down the bot in 1-2 months.
+Please also send me a message along with the friend request if possible, I don't accept random friend requests.
 
 If you wish to support me, I have a Ko-Fi account which you can find [here](https://ko-fi.com/aceorion18). Any amount is very much appreciated!
